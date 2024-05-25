@@ -4,7 +4,7 @@ project(Espyntar)
 set(CMAKE_C_STANDARD 99)
 
 # Dependencies
-set(RAYLIB_VERSION 4.5.0)
+set(RAYLIB_VERSION 5.0)
 find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
 if (NOT raylib_FOUND) # If there's none, fetch and build raylib
   include(FetchContent)
