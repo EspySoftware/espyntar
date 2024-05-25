@@ -22,7 +22,11 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
   endif()
 endif()
 
-add_executable(Espyntar src/main.cpp)
+add_executable(Espyntar src/main.cpp
+src/components/Canvas.cpp src/headers/Canvas.h
+src/components/ColorPalette.cpp src/headers/ColorPalette.h
+src/components/Painter.cpp src/headers/Painter.h
+)
 
 target_link_libraries(Espyntar PUBLIC raylib)
 target_compile_definitions(Espyntar PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/" AUDIO_PATH="${CMAKE_CURRENT_SOURCE_DIR}/audio/")
