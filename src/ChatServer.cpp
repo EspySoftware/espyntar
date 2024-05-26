@@ -88,6 +88,20 @@ public:
         WSACleanup();
     }
 
+    void Broadcast(ChatClient &sender, string message)
+    {
+        for (auto const &otherClient : clients)
+        {
+            if (otherClient.first != sender.id)
+            {
+                if (otherClient.second.clientSocket != INVALID_SOCKET) // Check if the client is still connected
+                {
+                    send(otherClient.second.clientSocket, message.c_str(), message.length(), 0);
+                }
+            }
+        }
+    }
+
     ChatClient AddClient(SOCKET clientSocket, string name)
     {
         clientCount++;
@@ -102,6 +116,10 @@ public:
 
         cout << "Client connected: " << "[" << client.id << "] " << client.name << endl;
 
+        // broadcast connection message
+        string msg = "[" + client.name + "] has connected.";
+        Broadcast(client, msg);
+
         return client;
     }
 
@@ -109,6 +127,10 @@ public:
     {
         clients.erase(client.id);
         cout << "Client disconnected: " << "[" << client.id << "] " << client.name << endl;
+
+        // broadcast disconnection message
+        string msg = "[" + client.name + "] has disconnected.";
+        Broadcast(client, msg);
     }
 
     void InteractWithClient(SOCKET csocket)
@@ -141,16 +163,8 @@ public:
             }
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;
 
-            for (auto const &otherClient : clients)
-            {
-                if (otherClient.first != client.id)
-                {
-                    if (otherClient.second.clientSocket != INVALID_SOCKET) // Check if the client is still connected
-                    {
-                        send(otherClient.second.clientSocket, message.c_str(), message.length(), 0);
-                    }
-                }
-            }
+            string msg = "[" + client.name + "]: " + message;
+            Broadcast(client, msg);
         }
 
         RemoveClient(client);

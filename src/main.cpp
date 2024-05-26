@@ -22,7 +22,16 @@ int main(void)
     }
 
     // Conexión al servidor
-    cout << "Espyntar Client" << endl;
+    cout << R"(
+     ______                       _             
+    |  ____|                     | |            
+    | |__   ___ _ __  _   _ _ __ | |_ __ _ _ __ 
+    |  __| / __|  _ \| | | |  _ \| __/ _  |  __|
+    | |____\__ \ |_) | |_| | | | | || (_| | |   
+    |______|___/  __/ \__, |_| |_|\__\__,_|_|   
+               | |     __/ |                    
+               |_|    |___/                     
+    )" << endl;
 
     string name;
     cout << "Ingrese su nombre: ";
