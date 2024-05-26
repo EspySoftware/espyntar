@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include "./headers/ColorPalette.h"
 #include "./headers/Canvas.h"
@@ -9,8 +10,8 @@
 using std::cin;
 using std::cout;
 using std::endl;
-using std::getline;
 using std::string;
+using std::thread;
 
 int main(void)
 {
@@ -20,70 +21,79 @@ int main(void)
         return 1;
     }
 
+    // Conexión al servidor
     cout << "Espyntar Client" << endl;
 
-    // Conexión al servidor
     string name;
     cout << "Ingrese su nombre: ";
     getline(cin, name);
     ChatClient client("127.0.0.1", 12345, name);
 
-    // Juego
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    thread senderThread([&client]()
+                        { client.Send(); });
 
-    InitWindow(screenWidth, screenHeight, "Espyntar");
+    thread receiverThread([&client]()
+                          { client.Receive(); });
 
-    ColorPalette palette;
-    Canvas canvas(screenWidth, screenHeight, palette);
-    Painter painter(palette, canvas);
+    senderThread.join();
+    receiverThread.join();
 
-    SetTargetFPS(144);
+    // // Juego
+    // const int screenWidth = 800;
+    // const int screenHeight = 450;
 
-    while (!WindowShouldClose())
-    {
-        Vector2 position = GetMousePosition();
+    // InitWindow(screenWidth, screenHeight, "Espyntar");
 
-        float mouseWheelMove = GetMouseWheelMove();
-        painter.SetBrushSize(mouseWheelMove);
+    // ColorPalette palette;
+    // Canvas canvas(screenWidth, screenHeight, palette);
+    // Painter painter(palette, canvas);
 
-        // Paint if the left mouse button is pressed
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-        {
-            // Check if a color in the palette is clicked
-            int colorIndex = canvas.CheckPaletteClick(palette);
-            if (colorIndex >= 0)
-            {
-                painter.SetColor(colorIndex);
-            }
-            else
-            {
-                painter.Paint(position);
-            }
-        }
-        else
-        {
-            painter.ResetLastPosition();
-        }
+    // SetTargetFPS(144);
 
-        // Draw
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
+    // while (!WindowShouldClose())
+    // {
+    //     Vector2 position = GetMousePosition();
 
-        // Canvas
-        Rectangle rec = {0.0f, 0.0f, (float)canvas.GetTarget().texture.width, (float)-canvas.GetTarget().texture.height};
-        Vector2 vec = {0.0f, 0.0f};
-        DrawTextureRec(canvas.GetTarget().texture, rec, vec, WHITE);
+    //     float mouseWheelMove = GetMouseWheelMove();
+    //     painter.SetBrushSize(mouseWheelMove);
 
-        // Brush
-        DrawCircleLines(GetMouseX(), GetMouseY(), painter.GetBrushSize(), painter.GetColor());
+    //     // Paint if the left mouse button is pressed
+    //     if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+    //     {
+    //         // Check if a color in the palette is clicked
+    //         int colorIndex = canvas.CheckPaletteClick(palette);
+    //         if (colorIndex >= 0)
+    //         {
+    //             painter.SetColor(colorIndex);
+    //         }
+    //         else
+    //         {
+    //             painter.Paint(position);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         painter.ResetLastPosition();
+    //     }
 
-        // Palette
-        canvas.DrawPalette(palette);
-        DrawFPS(GetScreenWidth() - 95, 10);
-        EndDrawing();
-    }
-    CloseWindow();
+    //     // Draw
+    //     BeginDrawing();
+    //     ClearBackground(RAYWHITE);
+
+    //     // Canvas
+    //     Rectangle rec = {0.0f, 0.0f, (float)canvas.GetTarget().texture.width, (float)-canvas.GetTarget().texture.height};
+    //     Vector2 vec = {0.0f, 0.0f};
+    //     DrawTextureRec(canvas.GetTarget().texture, rec, vec, WHITE);
+
+    //     // Brush
+    //     DrawCircleLines(GetMouseX(), GetMouseY(), painter.GetBrushSize(), painter.GetColor());
+
+    //     // Palette
+    //     canvas.DrawPalette(palette);
+    //     DrawFPS(GetScreenWidth() - 95, 10);
+    //     EndDrawing();
+    // }
+    // CloseWindow();
 
     return 0;
 }

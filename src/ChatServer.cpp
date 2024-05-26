@@ -4,26 +4,15 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <tchar.h>
+#include <thread>
+#include "./headers/ChatClient.h"
 
 using std::cout;
 using std::endl;
 using std::map;
 using std::string;
+using std::thread;
 using std::to_string;
-
-#pragma comment(lib, "ws2_32.lib")
-
-bool InitWinsock()
-{
-    WSADATA wsaData;
-    return WSAStartup(MAKEWORD(2, 2), &wsaData) == 0;
-}
-
-typedef struct _client
-{
-    int id;
-    string name;
-} Client;
 
 class ChatServer
 {
@@ -32,7 +21,7 @@ public:
     int port;
     SOCKET listenSocket;
     sockaddr_in serverAddress;
-    map<SOCKET, Client> clients;
+    map<int, ChatClient> clients;
 
     ChatServer(int port = 12345)
     {
@@ -48,6 +37,7 @@ public:
         serverAddress.sin_family = AF_INET;
         serverAddress.sin_port = htons(port);
 
+        // Bind the socket to all available interfaces
         if (InetPton(AF_INET, _T("0.0.0.0"), &serverAddress.sin_addr) != 1)
         {
             cout << "Invalid IP address." << endl;
@@ -65,7 +55,7 @@ public:
             return;
         }
 
-        // Listen for incoming connections
+        // Set the socket to listen for incoming connections
         if (listen(listenSocket, SOMAXCONN) == SOCKET_ERROR)
         {
             cout << "Failed to listen on socket." << endl;
@@ -79,38 +69,91 @@ public:
 
     ~ChatServer()
     {
-        closesocket(listenSocket);
+        if (closesocket(listenSocket) == SOCKET_ERROR)
+        {
+            int errorCode = WSAGetLastError();
+            cout << "Failed to close listen socket. Error code: " << errorCode << endl;
+            // Handle error based on errorCode
+        }
 
         for (auto const &client : clients)
         {
-            closesocket(client.first);
+            if (closesocket(client.first) == SOCKET_ERROR)
+            {
+                int errorCode = WSAGetLastError();
+                cout << "Failed to close client socket. Error code: " << errorCode << endl;
+            }
         }
 
         WSACleanup();
     }
 
-    void AddClient(SOCKET clientSocket, string name)
+    ChatClient AddClient(SOCKET clientSocket, string name)
     {
-        Client client;
-        client.id = clientCount++;
-        client.name = name;
+        clientCount++;
 
-        clients[clientSocket] = client;
+        ChatClient client(clientCount, name, clientSocket);
+
+        clients[clientCount] = client;
 
         // Send the client ID to the client
         string id = to_string(client.id);
         send(clientSocket, id.c_str(), id.length(), 0);
 
         cout << "Client connected: " << "[" << client.id << "] " << client.name << endl;
+
+        return client;
     }
 
-    void RemoveClient(SOCKET clientSocket)
+    void RemoveClient(ChatClient client)
     {
-        Client client = clients[clientSocket];
-        cout << "Client disconnected: " << client.name << endl;
+        clients.erase(client.id);
+        cout << "Client disconnected: " << "[" << client.id << "] " << client.name << endl;
+    }
 
-        closesocket(clientSocket);
-        clients.erase(clientSocket);
+    void InteractWithClient(SOCKET csocket)
+    {
+        // Receive name from the client and send the client ID
+        char buffer[4096];
+        int bytesReceived = recv(csocket, buffer, sizeof(buffer), 0);
+        if (bytesReceived == SOCKET_ERROR || bytesReceived <= 0)
+        {
+            cout << "Failed to receive data from client." << endl;
+            return;
+        }
+        string name(buffer, bytesReceived);
+
+        ChatClient client = AddClient(csocket, name);
+
+        while (true)
+        {
+            bytesReceived = recv(client.clientSocket, buffer, sizeof(buffer), 0);
+
+            if (bytesReceived == SOCKET_ERROR || bytesReceived <= 0)
+            {
+                break;
+            }
+
+            string message(buffer, bytesReceived);
+            if (message == "exit")
+            {
+                break;
+            }
+            cout << "[" << client.id << "] " << client.name << ": " << message << endl;
+
+            for (auto const &otherClient : clients)
+            {
+                if (otherClient.first != client.id)
+                {
+                    if (otherClient.second.clientSocket != INVALID_SOCKET) // Check if the client is still connected
+                    {
+                        send(otherClient.second.clientSocket, message.c_str(), message.length(), 0);
+                    }
+                }
+            }
+        }
+
+        RemoveClient(client);
     }
 };
 
@@ -136,21 +179,23 @@ int main()
 
     ChatServer server;
 
-    // Accept incoming connections
-    SOCKET clientSocket = accept(server.listenSocket, nullptr, nullptr);
-    if (clientSocket == INVALID_SOCKET)
+    while (true)
     {
-        cout << "Failed to accept incoming connection." << endl;
-        closesocket(server.listenSocket);
-        WSACleanup();
-        return -1;
-    }
+        // Accept incoming connections
+        SOCKET clientSocket = accept(server.listenSocket, nullptr, nullptr);
+        if (clientSocket == INVALID_SOCKET)
+        {
+            int errorCode = WSAGetLastError();
+            cout << "Failed to accept incoming connection. Error code: " << errorCode << endl;
+            continue;
+        }
 
-    // Receive name from the client and send the client ID
-    char buffer[4096];
-    int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
-    string name(buffer, bytesReceived);
-    server.AddClient(clientSocket, name);
+        // Interact with the client
+        thread t1([&server, clientSocket]()
+                  { server.InteractWithClient(clientSocket); });
+
+        t1.detach();
+    }
 
     return 0;
 }

@@ -5,7 +5,7 @@ ChatClient::ChatClient(string address, int port, string name)
     this->name = name;
 
     // Create a socket
-    clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    this->clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket == INVALID_SOCKET)
     {
         cout << "Failed to create socket." << endl;
@@ -20,6 +20,7 @@ ChatClient::ChatClient(string address, int port, string name)
     if (connect(clientSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR)
     {
         cout << "Failed to connect to the server." << endl;
+        cout << "Error code: " << WSAGetLastError() << endl;
         closesocket(clientSocket);
         WSACleanup();
         return;
@@ -52,34 +53,58 @@ ChatClient::ChatClient(string address, int port, string name)
 ChatClient::~ChatClient()
 {
     closesocket(clientSocket);
-    WSACleanup();
 }
 
-void ChatClient::Send(string message)
+void ChatClient::Send()
 {
-    int bytesent = send(clientSocket, message.c_str(), message.length(), 0);
+    string message;
 
-    if (bytesent == SOCKET_ERROR)
+    while (true)
     {
-        cout << "Failed to send data to the server." << endl;
+        getline(cin, message);
+        string msg = "[" + name + "]: " + message;
+
+        int bytesent = send(clientSocket, message.c_str(), message.length(), 0);
+
+        if (bytesent == SOCKET_ERROR)
+        {
+            cout << "Failed to send data to the server." << endl;
+            break;
+        }
+
+        if (message == "exit")
+        {
+            break;
+        }
     }
 
-    cout << "Sent: " << message << endl;
+    Disconnect();
 }
 
-string ChatClient::Receive()
+void ChatClient::Receive()
 {
     char buffer[4096];
-    int bytesReceived = recv(clientSocket, buffer, 4096, 0);
+    int bytesReceived;
 
-    if (bytesReceived == SOCKET_ERROR)
+    while (true)
     {
-        cout << "Failed to receive data from the server." << endl;
-        return "";
+        bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
+        if (bytesReceived == SOCKET_ERROR || bytesReceived <= 0)
+        {
+            cout << "Disconnected from the server." << endl;
+            break;
+        }
+
+        buffer[bytesReceived] = '\0';
+        cout << buffer << endl;
     }
 
-    buffer[bytesReceived] = '\0';
-    return string(buffer);
+    Disconnect();
+}
+
+void ChatClient::Disconnect()
+{
+    closesocket(clientSocket);
 }
 
 bool InitWinsock()

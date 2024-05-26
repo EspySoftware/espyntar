@@ -1,3 +1,3 @@
 server:
-	g++ src/ChatServer.cpp -o ChatServer.exe -lws2_32
+	g++ src/ChatServer.cpp src/components/ChatClient.cpp -o ChatServer.exe -lws2_32
 	./ChatServer.exe

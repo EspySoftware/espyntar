@@ -13,8 +13,10 @@
 #undef CloseWindow
 #undef ShowCursor
 
+using std::cin;
 using std::cout;
 using std::endl;
+using std::getline;
 using std::stoi;
 using std::string;
 
@@ -26,10 +28,13 @@ public:
     SOCKET clientSocket;
     sockaddr_in serverAddress;
 
-    ChatClient(string address, int port = 12345, string name = "Fulanito");
+    ChatClient() = default;                                                                                           // Constructor por defecto
+    ChatClient(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
+    ChatClient(string address, int port = 12345, string name = "Fulanito");                                           // Constructor para el cliente
     ~ChatClient();
-    void Send(string message);
-    string Receive();
+    void Send();
+    void Receive();
+    void Disconnect();
 };
 
 bool InitWinsock();
