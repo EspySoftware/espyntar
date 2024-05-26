@@ -4,7 +4,7 @@ Canvas::Canvas(int width, int height, ColorPalette &palette)
 {
     target = LoadRenderTexture(width, height);
     BeginTextureMode(target);
-    ClearBackground(RAYWHITE);
+    ClearBackground(WHITE);
     EndTextureMode();
 }
 

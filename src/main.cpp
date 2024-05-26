@@ -1,10 +1,34 @@
-#include "raylib.h"
+#include <iostream>
+#include <string>
+
 #include "./headers/ColorPalette.h"
 #include "./headers/Canvas.h"
 #include "./headers/Painter.h"
+#include "./headers/ChatClient.h"
+
+using std::cin;
+using std::cout;
+using std::endl;
+using std::getline;
+using std::string;
 
 int main(void)
 {
+    if (!InitWinsock())
+    {
+        cout << "Failed to initialize Winsock." << endl;
+        return 1;
+    }
+
+    cout << "Espyntar Client" << endl;
+
+    // Conexión al servidor
+    string name;
+    cout << "Ingrese su nombre: ";
+    getline(cin, name);
+    ChatClient client("127.0.0.1", 12345, name);
+
+    // Juego
     const int screenWidth = 800;
     const int screenHeight = 450;
 
@@ -52,7 +76,7 @@ int main(void)
         DrawTextureRec(canvas.GetTarget().texture, rec, vec, WHITE);
 
         // Brush
-        DrawCircleLines(GetMouseX(), GetMouseY(), painter.GetBrushSize(), BLACK);
+        DrawCircleLines(GetMouseX(), GetMouseY(), painter.GetBrushSize(), painter.GetColor());
 
         // Palette
         canvas.DrawPalette(palette);

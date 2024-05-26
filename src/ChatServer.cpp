@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <map>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -8,6 +9,7 @@ using std::cout;
 using std::endl;
 using std::map;
 using std::string;
+using std::to_string;
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -17,15 +19,22 @@ bool InitWinsock()
     return WSAStartup(MAKEWORD(2, 2), &wsaData) == 0;
 }
 
+typedef struct _client
+{
+    int id;
+    string name;
+} Client;
+
 class ChatServer
 {
 public:
+    int clientCount = 0;
     int port;
     SOCKET listenSocket;
     sockaddr_in serveraddr;
-    map<SOCKET, string> clients;
+    map<SOCKET, Client> clients;
 
-    ChatServer(int port = 69420)
+    ChatServer(int port = 12345)
     {
         this->port = port;
 
@@ -65,7 +74,7 @@ public:
             return;
         }
 
-        cout << "Listening on port: " << port << endl;
+        cout << "Listening on address: " << inet_ntoa(serveraddr.sin_addr) << ":" << port << endl;
     }
 
     ~ChatServer()
@@ -82,17 +91,26 @@ public:
 
     void AddClient(SOCKET clientSocket, string name)
     {
-        clients[clientSocket] = name;
+        Client client;
+        client.id = clientCount++;
+        client.name = name;
 
-        cout << "Client connected: " << name << endl;
+        clients[clientSocket] = client;
+
+        // Send the client ID to the client
+        string id = to_string(client.id);
+        send(clientSocket, id.c_str(), id.length(), 0);
+
+        cout << "Client connected: " << "[" << client.id << "] " << client.name << endl;
     }
 
     void RemoveClient(SOCKET clientSocket)
     {
-        string name = clients[clientSocket];
-        clients.erase(clientSocket);
+        Client client = clients[clientSocket];
+        cout << "Client disconnected: " << client.name << endl;
 
-        cout << "Client disconnected: " << name << endl;
+        closesocket(clientSocket);
+        clients.erase(clientSocket);
     }
 };
 
@@ -116,7 +134,7 @@ int main()
                |_|    |___/                     
     )" << endl;
 
-    ChatServer server(69420);
+    ChatServer server;
 
     // Accept incoming connections
     SOCKET clientSocket = accept(server.listenSocket, nullptr, nullptr);
@@ -128,15 +146,11 @@ int main()
         return -1;
     }
 
-    // Receive name from the client
+    // Receive name from the client and send the client ID
     char buffer[4096];
     int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
     string name(buffer, bytesReceived);
     server.AddClient(clientSocket, name);
-
-    // Send data to the client
-    string message = "Welcome to the chat server, " + name + "!";
-    send(clientSocket, message.c_str(), message.size() + 1, 0);
 
     return 0;
 }
