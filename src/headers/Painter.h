@@ -19,5 +19,5 @@ public:
     void SetBrushSize(float delta);
     void SetColor(int colorIndex) { currentColor = colorIndex; }
     float GetBrushSize() { return brushSize; }
-    Color GetColor() { return palette.getColor(currentColor); }
+    Color GetColor() { return palette.GetColor(currentColor); }
 };

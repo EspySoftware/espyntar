@@ -24,7 +24,7 @@ public:
     int id;
     string name;
     SOCKET clientSocket;
-    sockaddr_in serveraddr;
+    sockaddr_in serverAddress;
 
     ChatClient(string address, int port = 12345, string name = "Fulanito");
     ~ChatClient();

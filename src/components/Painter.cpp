@@ -17,12 +17,12 @@ void Painter::Paint(Vector2 position)
             Vector2 interpolatedPosition;
             interpolatedPosition.x = lastPosition.x * (1 - t) + position.x * t;
             interpolatedPosition.y = lastPosition.y * (1 - t) + position.y * t;
-            canvas.Draw(interpolatedPosition, brushSize, palette.getColor(currentColor));
+            canvas.Draw(interpolatedPosition, brushSize, palette.GetColor(currentColor));
         }
     }
     else
     {
-        canvas.Draw(position, brushSize, palette.getColor(currentColor));
+        canvas.Draw(position, brushSize, palette.GetColor(currentColor));
     }
 
     lastPosition = position;

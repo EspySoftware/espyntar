@@ -31,7 +31,7 @@ public:
     int clientCount = 0;
     int port;
     SOCKET listenSocket;
-    sockaddr_in serveraddr;
+    sockaddr_in serverAddress;
     map<SOCKET, Client> clients;
 
     ChatServer(int port = 12345)
@@ -45,10 +45,10 @@ public:
             return;
         }
 
-        serveraddr.sin_family = AF_INET;
-        serveraddr.sin_port = htons(port);
+        serverAddress.sin_family = AF_INET;
+        serverAddress.sin_port = htons(port);
 
-        if (InetPton(AF_INET, _T("0.0.0.0"), &serveraddr.sin_addr) != 1)
+        if (InetPton(AF_INET, _T("0.0.0.0"), &serverAddress.sin_addr) != 1)
         {
             cout << "Invalid IP address." << endl;
             closesocket(listenSocket);
@@ -57,7 +57,7 @@ public:
         }
 
         // Bind the socket to the address
-        if (bind(listenSocket, reinterpret_cast<sockaddr *>(&serveraddr), sizeof(serveraddr)) == SOCKET_ERROR)
+        if (bind(listenSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR)
         {
             cout << "Failed to bind the socket." << endl;
             closesocket(listenSocket);
@@ -74,7 +74,7 @@ public:
             return;
         }
 
-        cout << "Listening on address: " << inet_ntoa(serveraddr.sin_addr) << ":" << port << endl;
+        cout << "Listening on address: " << inet_ntoa(serverAddress.sin_addr) << ":" << port << endl;
     }
 
     ~ChatServer()

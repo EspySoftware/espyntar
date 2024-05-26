@@ -13,11 +13,11 @@ ChatClient::ChatClient(string address, int port, string name)
     }
 
     // Connect to the server
-    serveraddr.sin_family = AF_INET;
-    serveraddr.sin_port = htons(port);
-    inet_pton(AF_INET, address.c_str(), &(serveraddr.sin_addr));
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(port);
+    inet_pton(AF_INET, address.c_str(), &(serverAddress.sin_addr));
 
-    if (connect(clientSocket, reinterpret_cast<sockaddr *>(&serveraddr), sizeof(serveraddr)) == SOCKET_ERROR)
+    if (connect(clientSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR)
     {
         cout << "Failed to connect to the server." << endl;
         closesocket(clientSocket);

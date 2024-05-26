@@ -34,7 +34,7 @@ void Canvas::DrawPalette(ColorPalette &palette)
         Rectangle rec = {recWidth * i, 0, recWidth, recHeight};
 
         // Draw pallete background
-        DrawRectangleRec(rec, palette.getColor(colorIndex));
+        DrawRectangleRec(rec, palette.GetColor(colorIndex));
         DrawRectangleLines(rec.x, rec.y, rec.width, rec.height, BLACK);
 
         colorIndex++;
