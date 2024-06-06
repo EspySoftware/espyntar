@@ -110,5 +110,11 @@ void ChatClient::Disconnect()
 bool InitWinsock()
 {
     WSADATA wsaData;
-    return WSAStartup(MAKEWORD(2, 2), &wsaData) == 0;
+    int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (result != 0)
+    {
+        cout << "WSAStartup failed: " << result << endl;
+        return false;
+    }
+    return true;
 }

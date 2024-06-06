@@ -7,6 +7,8 @@
 #include <thread>
 #include "./headers/ChatClient.h"
 
+#pragma comment(lib, "Ws2_32.lib")
+
 using std::cout;
 using std::endl;
 using std::map;
@@ -30,26 +32,47 @@ public:
         listenSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (listenSocket == INVALID_SOCKET)
         {
-            cout << "Failed to create socket." << endl;
+            cout << "Failed to create socket. Error: " << WSAGetLastError() << endl;
             return;
         }
 
-        serverAddress.sin_family = AF_INET;
-        serverAddress.sin_port = htons(port);
-
-        // Bind the socket to all available interfaces
-        if (InetPton(AF_INET, _T("0.0.0.0"), &serverAddress.sin_addr) != 1)
+        // Get the local IP address
+        char hostName[256];
+        if (gethostname(hostName, sizeof(hostName)) == SOCKET_ERROR)
         {
-            cout << "Invalid IP address." << endl;
+            cout << "Failed to get host name. Error: " << WSAGetLastError() << endl;
             closesocket(listenSocket);
             WSACleanup();
             return;
         }
 
+        struct hostent *hostInfo = gethostbyname(hostName);
+        if (hostInfo == NULL)
+        {
+            cout << "Failed to get host info. Error: " << WSAGetLastError() << endl;
+            closesocket(listenSocket);
+            WSACleanup();
+            return;
+        }
+
+        // Use the first IP address returned
+        serverAddress.sin_addr.s_addr = *(u_long *)hostInfo->h_addr_list[0];
+        serverAddress.sin_family = AF_INET;
+        serverAddress.sin_port = htons(port);
+
+        // // Bind the socket to the specific local network IP address
+        // if (InetPton(AF_INET, _T("192.168.100.16"), &serverAddress.sin_addr) != 1) // Replace with desired local IP
+        // {
+        //     cout << "Invalid IP address. Error: " << WSAGetLastError() << endl;
+        //     closesocket(listenSocket);
+        //     WSACleanup();
+        //     return;
+        // }
+
         // Bind the socket to the address
         if (bind(listenSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR)
         {
-            cout << "Failed to bind the socket." << endl;
+            cout << "Failed to bind the socket. Error: " << WSAGetLastError() << endl;
             closesocket(listenSocket);
             WSACleanup();
             return;
@@ -58,7 +81,7 @@ public:
         // Set the socket to listen for incoming connections
         if (listen(listenSocket, SOMAXCONN) == SOCKET_ERROR)
         {
-            cout << "Failed to listen on socket." << endl;
+            cout << "Failed to listen on socket. Error: " << WSAGetLastError() << endl;
             closesocket(listenSocket);
             WSACleanup();
             return;
@@ -78,7 +101,7 @@ public:
 
         for (auto const &client : clients)
         {
-            if (closesocket(client.first) == SOCKET_ERROR)
+            if (closesocket(client.second.clientSocket) == SOCKET_ERROR)
             {
                 int errorCode = WSAGetLastError();
                 cout << "Failed to close client socket. Error code: " << errorCode << endl;
@@ -140,7 +163,7 @@ public:
         int bytesReceived = recv(csocket, buffer, sizeof(buffer), 0);
         if (bytesReceived == SOCKET_ERROR || bytesReceived <= 0)
         {
-            cout << "Failed to receive data from client." << endl;
+            cout << "Failed to receive data from client. Error: " << WSAGetLastError() << endl;
             return;
         }
         string name(buffer, bytesReceived);
@@ -181,14 +204,14 @@ int main()
 
     system("clear");
     cout << R"(
-     ______                       _             
-    |  ____|                     | |            
-    | |__   ___ _ __  _   _ _ __ | |_ __ _ _ __ 
+     ______                       _
+    |  ____|                     | |
+    | |__   ___ _ __  _   _ _ __ | |_ __ _ _ __
     |  __| / __|  _ \| | | |  _ \| __/ _  |  __|
-    | |____\__ \ |_) | |_| | | | | || (_| | |   
-    |______|___/  __/ \__, |_| |_|\__\__,_|_|   
-               | |     __/ |                    
-               |_|    |___/                     
+    | |____\__ \ |_) | |_| | | | | || (_| | |
+    |______|___/  __/ \__, |_| |_|\__\__,_|_|
+               | |     __/ |
+               |_|    |___/
     )" << endl;
 
     ChatServer server;
@@ -201,7 +224,7 @@ int main()
         {
             int errorCode = WSAGetLastError();
             cout << "Failed to accept incoming connection. Error code: " << errorCode << endl;
-            continue;
+            break;
         }
 
         // Interact with the client
