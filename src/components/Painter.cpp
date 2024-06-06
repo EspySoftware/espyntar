@@ -39,3 +39,8 @@ void Painter::SetBrushSize(float delta)
     if (brushSize > 100.0f)
         brushSize = 100.0f;
 }
+
+void Painter::Fill(Vector2 position)
+{
+    canvas.BucketFill(position, GetColor());
+}
