@@ -2,6 +2,7 @@
 #include <queue>
 
 Canvas::Canvas(int width, int height, ColorPalette &palette)
+    : width(width), height(height)
 {
     target = LoadRenderTexture(width, height);
     BeginTextureMode(target);
@@ -34,7 +35,7 @@ void Canvas::DrawPalette(ColorPalette &palette)
     {
         Rectangle rec = {recWidth * i, 0, recWidth, recHeight};
 
-        // Draw pallete background
+        // Draw palette background
         DrawRectangleRec(rec, palette.GetColor(colorIndex));
         DrawRectangleLines(rec.x, rec.y, rec.width, rec.height, BLACK);
 
@@ -69,15 +70,22 @@ int Canvas::CheckPaletteClick(ColorPalette &palette)
 
 bool Canvas::IsWithinBounds(int x, int y)
 {
-    return x >= 0 && x < target.texture.width && y >= 0 && y < target.texture.height;
+    return x >= 0 && x < width && y >= 0 && y < height;
 }
 
 Color Canvas::GetColorAt(int x, int y)
 {
     Image image = LoadImageFromTexture(target.texture);
-    Color color = GetImageColor(image, x, y);
+    Color color = GetImageColor(image, x, y); // Get the color of the pixel at (x, y)
     UnloadImage(image);
     return color;
+}
+
+void Canvas::DrawPixel(int x, int y, Color color)
+{
+    BeginTextureMode(target);
+    DrawPixelV(Vector2{(float)x, (float)y}, color);
+    EndTextureMode();
 }
 
 void Canvas::BucketFill(Vector2 position, Color newColor)
@@ -96,6 +104,7 @@ void Canvas::BucketFill(Vector2 position, Color newColor)
     std::queue<Vector2> nodes;
     nodes.push(position);
 
+    BeginTextureMode(target); // Iniciar modo de dibujo en la textura
     while (!nodes.empty())
     {
         Vector2 node = nodes.front();
@@ -111,9 +120,7 @@ void Canvas::BucketFill(Vector2 position, Color newColor)
 
         if (currentColor.r == targetColor.r && currentColor.g == targetColor.g && currentColor.b == targetColor.b && currentColor.a == targetColor.a)
         {
-            BeginTextureMode(target);
             DrawPixel(nx, ny, newColor);
-            EndTextureMode();
 
             nodes.push(Vector2{node.x + 1, node.y});
             nodes.push(Vector2{node.x - 1, node.y});
@@ -121,4 +128,5 @@ void Canvas::BucketFill(Vector2 position, Color newColor)
             nodes.push(Vector2{node.x, node.y - 1});
         }
     }
+    EndTextureMode(); // Finalizar modo de dibujo en la textura
 }
