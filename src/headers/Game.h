@@ -1,8 +1,11 @@
+#pragma once
 #include "./Inicio.h"
 
-void drawGame(void)
+void drawGame(Screen *screen)
 {
     BeginDrawing();
-    ClearBackground(GREEN);
+    ClearBackground(BLACK);
+    DrawTexture(screen->background, 0, 0, WHITE);
+
     EndDrawing();
 }

@@ -6,30 +6,39 @@
 #include "./headers/Painter.h"
 #include "./headers/ChatClient.h"
 #include "./headers/Inicio.h"
+#include "./headers/Game.h"
 
 using std::string;
 using std::thread;
 
 void Game()
 {
-    // Juego
-    GameScene scene = START;
 
     // SetTraceLogLevel(LOG_NONE); // Disable raylib logging
     InitWindow(screenWidth, screenHeight, "Espyntar");
 
     SetTargetFPS(144);
+    Screen screen;
 
     while (!WindowShouldClose())
     {
-        switch (scene)
         {
-        case START: // ventana de inicio
-            drawStart(&scene);
-            break;
-        case GAME: // ventana de juego 
-            drawGame();
-            break;
+            ChatClient client;
+            switch (screen.scene)
+            {
+            case START: // ventana de inicio
+                drawStart(&screen);
+                break;
+            case GAME: // ventana de juego
+                // if (screen.client.clientSocket == INVALID_SOCKET || screen.client.clientSocket == SOCKET_ERROR)
+                //     screen.scene = START;
+
+                drawGame(&screen);
+                break;
+            case EXIT: // cerrar juego
+                CloseWindow();
+                break;
+            }
         }
     }
 
@@ -44,34 +53,32 @@ int main(void)
         return 1;
     }
 
-    // Conexión al servidor
-    cout << R"(
-     ______                       _             
-    |  ____|                     | |            
-    | |__   ___ _ __  _   _ _ __ | |_ __ _ _ __ 
-    |  __| / __|  _ \| | | |  _ \| __/ _  |  __|
-    | |____\__ \ |_) | |_| | | | | || (_| | |   
-    |______|___/  __/ \__, |_| |_|\__\__,_|_|   
-               | |     __/ |                    
-               |_|    |___/                     
-    )" << endl;
+    // // Conexión al servidor
+    // cout << R"(
+    //  ______                       _
+    // |  ____|                     | |
+    // | |__   ___ _ __  _   _ _ __ | |_ __ _ _ __
+    // |  __| / __|  _ \| | | |  _ \| __/ _  |  __|
+    // | |____\__ \ |_) | |_| | | | | || (_| | |
+    // |______|___/  __/ \__, |_| |_|\__\__,_|_|
+    //            | |     __/ |
+    //            |_|    |___/
+    // )" << endl;
 
-    string name;
-    cout << "Ingrese su nombre: ";
-    getline(cin, name);
-    ChatClient client("127.0.0.1", 12345, name);
+    // string name;
+    // cout << "Ingrese su nombre: ";
+    // getline(cin, name);
+    // ChatClient client("127.0.0.1", 12345, name);
 
-    thread senderThread([&client]()
-                        { client.Send(); });
+    // thread senderThread([&client]()
+    //                     { client.Send(); });
 
-    thread receiverThread([&client]()
-                          { client.Receive(); });
+    // thread receiverThread([&client]()
+    //                       { client.Receive(); });
 
-    thread juegoThread(Game);
-
-    juegoThread.join();
-    senderThread.join();
-    receiverThread.join();
+    Game();
+    // senderThread.join();
+    // receiverThread.join();
 
     return 0;
 }
