@@ -17,25 +17,26 @@ using std::thread;
 #define screenWidth 1160
 #define screenHeight 760
 
-ChatClient connectToServer(string ip, string name, int port, thread *senderThread, thread *receiverThread)
+ChatClient *connectToServer(string ip, string name, int port, thread *senderThread, thread *receiverThread)
 {
     cout << "Trying to connect to server " << ip << " with name " << name << endl;
-    ChatClient client(ip, port, name);
+    ChatClient *client = new ChatClient(ip, port, name);
 
-    if (client.clientSocket == INVALID_SOCKET || client.clientSocket == SOCKET_ERROR)
+    if (client->clientSocket == INVALID_SOCKET || client->clientSocket == SOCKET_ERROR)
     {
         cout << "Failed to create socket. Error code: " << WSAGetLastError() << endl;
-        return client;
+        delete client;
+        return nullptr;
     }
 
-    *senderThread = thread([&client]()
-                           { client.Send(); });
+    *senderThread = thread([client]()
+                           { client->Send(); });
 
-    *receiverThread = thread([&client]()
-                             { client.Receive(); });
+    *receiverThread = thread([client]()
+                             { client->Receive(); });
 
-    senderThread->join();
-    receiverThread->join();
+    // senderThread->join();
+    // receiverThread->join();
 
     return client;
 }
@@ -96,7 +97,7 @@ void startGUI(Screen *screen, ChatClient &client, thread *senderThread, thread *
 
     if (GuiButton({GetScreenWidth() / 2.0f - 100.0f, GetScreenHeight() / 2.0f + 75.0f, 200.0f, 50.0f}, "PLAY"))
     {
-        client = connectToServer(ip, name, 12345, senderThread, receiverThread);
+        client = *connectToServer(ip, name, 12345, senderThread, receiverThread);
 
         if (client.clientSocket != INVALID_SOCKET || client.clientSocket != SOCKET_ERROR)
         {
