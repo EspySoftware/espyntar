@@ -36,38 +36,38 @@ public:
             return;
         }
 
-        // // Get the local IP address
-        // char hostName[256];
-        // if (gethostname(hostName, sizeof(hostName)) == SOCKET_ERROR)
-        // {
-        //     cout << "Failed to get host name. Error: " << WSAGetLastError() << endl;
-        //     closesocket(listenSocket);
-        //     WSACleanup();
-        //     return;
-        // }
-
-        // struct hostent *hostInfo = gethostbyname(hostName);
-        // if (hostInfo == NULL)
-        // {
-        //     cout << "Failed to get host info. Error: " << WSAGetLastError() << endl;
-        //     closesocket(listenSocket);
-        //     WSACleanup();
-        //     return;
-        // }
-
-        // // Use the first IP address returned
-        // serverAddress.sin_addr.s_addr = *(u_long *)hostInfo->h_addr_list[0];
-        serverAddress.sin_family = AF_INET;
-        serverAddress.sin_port = htons(port);
-
-        // Bind the socket to the specific local network IP address
-        if (InetPton(AF_INET, _T("192.168.100.19"), &serverAddress.sin_addr) != 1) // Replace with desired local IP
+        // Get the local IP address
+        char hostName[256];
+        if (gethostname(hostName, sizeof(hostName)) == SOCKET_ERROR)
         {
-            cout << "Invalid IP address. Error: " << WSAGetLastError() << endl;
+            cout << "Failed to get host name. Error: " << WSAGetLastError() << endl;
             closesocket(listenSocket);
             WSACleanup();
             return;
         }
+
+        struct hostent *hostInfo = gethostbyname(hostName);
+        if (hostInfo == NULL)
+        {
+            cout << "Failed to get host info. Error: " << WSAGetLastError() << endl;
+            closesocket(listenSocket);
+            WSACleanup();
+            return;
+        }
+
+        // Use the first IP address returned
+        serverAddress.sin_addr.s_addr = *(u_long *)hostInfo->h_addr_list[0];
+        serverAddress.sin_family = AF_INET;
+        serverAddress.sin_port = htons(port);
+
+        // // Bind the socket to the specific local network IP address
+        // if (InetPton(AF_INET, _T("192.168.100.19"), &serverAddress.sin_addr) != 1) // Replace with desired local IP
+        // {
+        //     cout << "Invalid IP address. Error: " << WSAGetLastError() << endl;
+        //     closesocket(listenSocket);
+        //     WSACleanup();
+        //     return;
+        // }
 
         // Bind the socket to the address
         if (bind(listenSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR)
