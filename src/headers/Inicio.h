@@ -17,10 +17,26 @@ using std::thread;
 #define screenWidth 1160
 #define screenHeight 760
 
-ChatClient connectToServer(string ip, string name = "Fulanito", int port = 12345)
+ChatClient connectToServer(string ip, string name, int port, thread *senderThread, thread *receiverThread)
 {
     cout << "Trying to connect to server " << ip << " with name " << name << endl;
     ChatClient client(ip, port, name);
+
+    if (client.clientSocket == INVALID_SOCKET || client.clientSocket == SOCKET_ERROR)
+    {
+        cout << "Failed to create socket. Error code: " << WSAGetLastError() << endl;
+        return client;
+    }
+
+    *senderThread = thread([&client]()
+                           { client.Send(); });
+
+    *receiverThread = thread([&client]()
+                             { client.Receive(); });
+
+    senderThread->join();
+    receiverThread->join();
+
     return client;
 }
 
@@ -36,8 +52,6 @@ class Screen // clase para manejar las pantallas del juego
 public:
     GameScene scene;
     Texture2D background;
-    thread senderThread;
-    thread receiverThread;
     ChatClient client;
 
     Screen()
@@ -52,7 +66,7 @@ public:
     }
 };
 
-void startGUI(Screen *screen) // GUI de la pantalla de inicio
+void startGUI(Screen *screen, ChatClient &client, thread *senderThread, thread *receiverThread)
 {
     static char name[10] = "Fulanito";
     static char ip[20] = "";
@@ -82,16 +96,10 @@ void startGUI(Screen *screen) // GUI de la pantalla de inicio
 
     if (GuiButton({GetScreenWidth() / 2.0f - 100.0f, GetScreenHeight() / 2.0f + 75.0f, 200.0f, 50.0f}, "PLAY"))
     {
-        screen->client = connectToServer(ip, name);
+        client = connectToServer(ip, name, 12345, senderThread, receiverThread);
 
-        if (screen->client.clientSocket != INVALID_SOCKET || screen->client.clientSocket != SOCKET_ERROR)
+        if (client.clientSocket != INVALID_SOCKET || client.clientSocket != SOCKET_ERROR)
         {
-            screen->senderThread = thread([&screen]()
-                                          { screen->client.Send(); });
-
-            screen->receiverThread = thread([&screen]()
-                                            { screen->client.Receive(); });
-
             screen->scene = GAME;
         }
     }
@@ -102,12 +110,12 @@ void startGUI(Screen *screen) // GUI de la pantalla de inicio
     }
 }
 
-void drawStart(Screen *screen) // dibuja la pantalla de inicio
+void drawStart(Screen *screen, ChatClient &client, thread *senderThread, thread *receiverThread)
 {
     BeginDrawing();
     ClearBackground(BLACK);
     DrawTexture(screen->background, 0, 0, WHITE);
 
-    startGUI(screen);
+    startGUI(screen, client, senderThread, receiverThread);
     EndDrawing();
 }

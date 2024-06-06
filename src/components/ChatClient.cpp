@@ -68,7 +68,8 @@ void ChatClient::Send()
 
         if (bytesent == SOCKET_ERROR)
         {
-            cout << "Failed to send data to the server." << endl;
+            int errorCode = WSAGetLastError();
+            cout << "Failed to send data to the server. Error code: " << errorCode << endl;
             break;
         }
 
@@ -91,7 +92,8 @@ void ChatClient::Receive()
         bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
         if (bytesReceived == SOCKET_ERROR || bytesReceived <= 0)
         {
-            cout << "Disconnected from the server." << endl;
+            int errorCode = WSAGetLastError();
+            cout << "Disconnected from the server. Error code: " << errorCode << endl;
             break;
         }
 

@@ -23,7 +23,7 @@ using std::string;
 class ChatClient
 {
 public:
-    int id;
+    int id = -1;
     string name;
     SOCKET clientSocket;
     sockaddr_in serverAddress;
