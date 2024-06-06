@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ColorPalette.h"
 #include <queue>
 #include <raylib.h>

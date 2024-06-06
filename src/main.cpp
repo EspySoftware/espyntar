@@ -97,8 +97,6 @@ void Game()
         // Palette
         canvas.DrawPalette(palette);
 
-        // Tool indicator
-        //  DrawText(currentTool == BRUSH ? "Tool: Brush" : "Tool: Bucket", 10, 10, 20, DARKGRAY);
 
         DrawFPS(GetScreenWidth() - 95, 10);
         EndDrawing();
