@@ -2,6 +2,8 @@
 #include <string>
 #include <thread>
 
+#define RAYGUI_IMPLEMENTATION
+#include "./headers/raygui.h"
 #include "./headers/ColorPalette.h"
 #include "./headers/Canvas.h"
 #include "./headers/Painter.h"
@@ -69,6 +71,12 @@ void Game()
         // Palette
         canvas.DrawPalette(palette);
         DrawFPS(GetScreenWidth() - 95, 10);
+
+        if (GuiButton({300, 300, 100, 40}, "#191#Ola k ase?"))
+        {
+            cout << "Button pressed" << endl;
+        }
+
         EndDrawing();
     }
 
