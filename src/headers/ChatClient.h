@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 
 #define Rectangle WIN_Rectangle
 #define CloseWindow WIN_CloseWindow
@@ -19,6 +20,7 @@ using std::endl;
 using std::getline;
 using std::stoi;
 using std::string;
+using std::vector;
 
 class ChatClient
 {
@@ -27,6 +29,7 @@ public:
     string name;
     SOCKET clientSocket;
     sockaddr_in serverAddress;
+    vector<string> messages;
 
     ChatClient() = default;                                                                                           // Constructor por defecto
     ChatClient(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
@@ -34,6 +37,8 @@ public:
     ~ChatClient();
     void Send();
     void Receive();
+    vector<string> getMessages();
+
     void Disconnect();
 };
 

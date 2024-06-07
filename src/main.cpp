@@ -25,10 +25,10 @@ void Game(ChatClient *client, thread *senderThread, thread *receiverThread)
             switch (screen.scene)
             {
             case START: // ventana de inicio
-                drawStart(&screen, *client, senderThread, receiverThread);
+                drawStart(&screen, client, senderThread, receiverThread);
                 break;
             case GAME: // ventana de juego
-                drawGame(&screen);
+                drawGame(&screen, client);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();
