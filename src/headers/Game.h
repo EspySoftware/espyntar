@@ -95,6 +95,10 @@ void drawGame(Screen *screen)
         painter->Paint(position);
         painter->SetColor(originalColor); // Restore the original color
     }
+    else
+    {
+        painter->ResetLastPosition();
+    }
 
     // Draw
     BeginDrawing();
