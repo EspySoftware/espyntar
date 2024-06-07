@@ -1,7 +1,9 @@
 #pragma once
+#include "./Words.h"
+#include "./Inicio.h"
 #include "../headers/Inicio.h"
-
 using std::vector;
+using std::array;
 
 // Tools
 enum Tool
@@ -46,12 +48,25 @@ void drawChat(shared_ptr<ChatClient> &client)
 
 void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
 {
+    // Tools
+    enum Tool
+    {
+        BRUSH,
+        BUCKET,
+        ERASER
+    };
+
     static bool initialized = false;
     static ColorPalette *palette;
     static Canvas *canvas;
     static Painter *painter;
     static Tool currentTool = BRUSH;
     int colorIndex, originalColor;
+
+    // Words
+    static Words word;
+    static array<string, 3> words = word.GetRandomWords();
+    static bool chosen = false;
 
     if (!initialized)
     {
@@ -108,6 +123,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
     // Draw
     Color color_bg = {0, 156, 35, 255};
     BeginDrawing();
+
     ClearBackground(color_bg);
     // header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
@@ -135,6 +151,33 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
 
     // Draw chat
     drawChat(client);
+
+    // Boton palabras
+    if (!chosen)
+    {
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
+        {
+            word.SetChosenWord(words[0]);
+            chosen = true;
+        }
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
+        {
+            
+            word.SetChosenWord(words[1]);
+            chosen = true;
+        }
+        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
+        {
+            word.SetChosenWord(words[2]);
+            chosen = true;
+        }
+    }
+
+    // Draw the words
+    if (chosen)
+    {
+        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - 50, 60.0f}, {0, 0}, 0, 20, 4, BLACK);
+    }
 
     EndDrawing();
 }
