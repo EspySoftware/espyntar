@@ -22,6 +22,7 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
     Image icon2 = LoadImageFromTexture(icon);
     UnloadTexture(icon);
     SetWindowIcon(icon2);
+    Texture2D espy = LoadTexture("../assets/espy_peke.png");
 
     SetTargetFPS(144);
     Screen screen;
@@ -35,6 +36,7 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
                 break;
             case GAME: // ventana de juego
                 drawGame(&screen, client);
+                DrawTexture(espy, GetScreenWidth() / 2.0f - (espy.width / 2), 5, WHITE);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();
@@ -42,6 +44,7 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
             }
         }
     }
+    UnloadTexture(espy);
     UnloadImage(icon2);
     CloseWindow();
 }

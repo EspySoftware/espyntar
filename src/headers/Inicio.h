@@ -132,7 +132,7 @@ void drawStart(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThr
     BeginDrawing();
     ClearBackground(BLACK);
     DrawTexture(screen->background, 0, 0, WHITE);
-    DrawTexture(screen->title, (GetScreenWidth() / 2.0f) - 343, 50, WHITE);
+    DrawTexture(screen->title, (GetScreenWidth() / 2.0f) - (screen->title.width / 2.0f), 50, WHITE);
 
     Color color1 = {102, 149, 89, 200};
     DrawRectangleRounded({
