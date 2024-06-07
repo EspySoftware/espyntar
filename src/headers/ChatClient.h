@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #define Rectangle WIN_Rectangle
 #define CloseWindow WIN_CloseWindow
@@ -18,6 +19,8 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::getline;
+using std::make_shared;
+using std::shared_ptr;
 using std::stoi;
 using std::string;
 using std::vector;

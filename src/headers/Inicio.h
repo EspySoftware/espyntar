@@ -17,28 +17,23 @@ using std::thread;
 #define screenWidth 1160
 #define screenHeight 760
 
-ChatClient *connectToServer(string ip, string name, int port, thread *senderThread, thread *receiverThread)
+bool connectToServer(shared_ptr<ChatClient> &client, string ip, string name, int port, thread *senderThread, thread *receiverThread)
 {
     cout << "Trying to connect to server " << ip << " with name " << name << endl;
-    ChatClient *client = new ChatClient(ip, port, name);
+    client = make_shared<ChatClient>(ip, port, name);
 
     if (client->clientSocket == INVALID_SOCKET || client->clientSocket == SOCKET_ERROR)
     {
         cout << "Failed to create socket. Error code: " << WSAGetLastError() << endl;
-        delete client;
-        return nullptr;
+        return false;
     }
 
     *senderThread = thread([client]()
                            { client->Send(); });
-
     *receiverThread = thread([client]()
                              { client->Receive(); });
 
-    // senderThread->join();
-    // receiverThread->join();
-
-    return client;
+    return true;
 }
 
 typedef enum // estructura logica del juego
@@ -54,7 +49,6 @@ public:
     GameScene scene;
     Texture2D background;
     Texture2D title;
-    ChatClient client;
 
     Screen()
     {
@@ -70,7 +64,7 @@ public:
     }
 };
 
-void startGUI(Screen *screen, ChatClient *client, thread *senderThread, thread *receiverThread)
+void startGUI(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThread, thread *receiverThread)
 {
     Color color_base = {44, 74, 36, 200};
     Color color_names = {252, 229, 113, 255};
@@ -122,9 +116,7 @@ void startGUI(Screen *screen, ChatClient *client, thread *senderThread, thread *
 
     if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f}, "JUGAR"))
     {
-        client = connectToServer(ip, name, 12345, senderThread, receiverThread);
-
-        if (client->clientSocket != INVALID_SOCKET || client->clientSocket != SOCKET_ERROR)
+        if (connectToServer(client, ip, name, 12345, senderThread, receiverThread))
         {
             screen->scene = GAME;
         }
@@ -136,7 +128,7 @@ void startGUI(Screen *screen, ChatClient *client, thread *senderThread, thread *
     }
 }
 
-void drawStart(Screen *screen, ChatClient *client, thread *senderThread, thread *receiverThread)
+void drawStart(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThread, thread *receiverThread)
 {
     BeginDrawing();
     ClearBackground(BLACK);

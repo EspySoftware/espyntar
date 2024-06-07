@@ -11,7 +11,7 @@ enum Tool
     ERASER
 };
 
-void drawChat(ChatClient *client)
+void drawChat(shared_ptr<ChatClient> &client)
 {
     Font font = GetFontDefault();
     static char message[18] = {0};
@@ -32,7 +32,7 @@ void drawChat(ChatClient *client)
     GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 75, 205, 35}, message, 18, true);
 }
 
-void drawGame(Screen *screen, ChatClient *client)
+void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
 {
     static bool initialized = false;
     static ColorPalette *palette;
