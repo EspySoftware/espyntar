@@ -83,13 +83,7 @@ void drawGame(Screen *screen)
             }
         }
     }
-    else
-    {
-        painter->ResetLastPosition();
-    }
-
-    // Check if right mouse button is pressed for eraser
-    if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
+    else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
     {
         painter->SetColor(0); // Set color to white for erasing
         painter->Paint(position);
