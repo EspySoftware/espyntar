@@ -34,7 +34,7 @@ void Canvas::DrawPalette(ColorPalette &palette)
 
     for (int i = 0; i < columns; i++)
     {
-        Rectangle rec = {(recWidth * i) + 230.0f, GetScreenHeight() / 2 + 250.0f, recWidth, recHeight};
+        Rectangle rec = {(recWidth * i) + 230.0f, GetScreenHeight() / 2 + 310.0f, recWidth, recHeight};
 
         // Draw palette background
         DrawRectangleRec(rec, palette.GetColor(colorIndex));
@@ -58,7 +58,7 @@ int Canvas::CheckPaletteClick(ColorPalette &palette)
 
     for (int i = 0; i < columns; i++)
     {
-        Rectangle rec = {(recWidth * i) + 230.0f, GetScreenHeight() / 2 + 250.0f, recWidth, recHeight};
+        Rectangle rec = {(recWidth * i) + 230.0f, GetScreenHeight() / 2 + 310.0f, recWidth, recHeight};
 
         if (CheckCollisionPointRec(mousePos, rec))
         {
