@@ -3,7 +3,15 @@
 #include "./Inicio.h"
 using std::vector;
 
-void drawChat(ChatClient *client)
+// Tools
+enum Tool
+{
+    BRUSH,
+    BUCKET,
+    ERASER
+};
+
+void drawChat(shared_ptr<ChatClient> &client)
 {
     Font font = GetFontDefault();
     static char message[18] = {0};
@@ -12,7 +20,7 @@ void drawChat(ChatClient *client)
     vector<string> messages = client->getMessages();
 
     // Draw the chat box (right side of the screen)
-    DrawRectangle(GetScreenWidth() - 215, 100, 205, GetScreenHeight() - 145, WHITE);
+    DrawRectangle(GetScreenWidth() - 215, 150, 205, GetScreenHeight() - 205, WHITE);
 
     // Draw messages in reverse order at the bottom of the chat box
     for (int i = 0; i < messages.size(); i++)
@@ -24,7 +32,7 @@ void drawChat(ChatClient *client)
     GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 75, 205, 35}, message, 18, true);
 }
 
-void drawGame(Screen *screen, ChatClient *client)
+void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
 {
     // Tools
     enum Tool
@@ -95,15 +103,17 @@ void drawGame(Screen *screen, ChatClient *client)
     }
 
     // Draw
+    Color color_bg = {0, 156, 35, 255};
     BeginDrawing();
-    ClearBackground(DARKGRAY);
-    // DrawTexture(screen->background, 0, 0, WHITE);
+    ClearBackground(color_bg);
+    // header
+    DrawRectangle(30.0f, 20.0f, GetScreenWidth() - 60.0f, 100.0f, {122, 236, 104, 255});
 
     // Canvas
     Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
     Vector2 canvasPosition;
     canvasPosition.x = GetScreenWidth() / 2.0f - canvas->GetTarget().texture.width / 2.0f;
-    canvasPosition.y = GetScreenHeight() / 2.0f - canvas->GetTarget().texture.height / 2.0f;
+    canvasPosition.y = GetScreenHeight() / 2.0f - canvas->GetTarget().texture.height / 2.0f + 50.0f;
 
     DrawTextureRec(canvas->GetTarget().texture, rec, canvasPosition, WHITE);
 

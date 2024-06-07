@@ -1,5 +1,6 @@
 #include <string>
 #include <thread>
+#include <memory>
 
 #include "./headers/ColorPalette.h"
 #include "./headers/Canvas.h"
@@ -8,17 +9,22 @@
 #include "./headers/Inicio.h"
 #include "./headers/Game.h"
 
+using std::make_shared;
+using std::shared_ptr;
 using std::string;
 using std::thread;
 
-void Game(ChatClient *client, thread *senderThread, thread *receiverThread)
+void Game(shared_ptr<ChatClient> client, thread *senderThread, thread *receiverThread)
 {
     // SetTraceLogLevel(LOG_NONE); // Disable raylib logging
     InitWindow(screenWidth, screenHeight, "Espyntar");
+    Texture2D icon = LoadTexture("../assets/logo.png");
+    Image icon2 = LoadImageFromTexture(icon);
+    UnloadTexture(icon);
+    SetWindowIcon(icon2);
 
     SetTargetFPS(144);
     Screen screen;
-
     while (!WindowShouldClose())
     {
         {
@@ -36,7 +42,7 @@ void Game(ChatClient *client, thread *senderThread, thread *receiverThread)
             }
         }
     }
-
+    UnloadImage(icon2);
     CloseWindow();
 }
 
@@ -48,12 +54,12 @@ int main(void)
         return 1;
     }
 
-    ChatClient client;
+    shared_ptr<ChatClient> client;
 
     thread senderThread;
     thread receiverThread;
 
-    Game(&client, &senderThread, &receiverThread);
+    Game(client, &senderThread, &receiverThread);
 
     return 0;
 }
