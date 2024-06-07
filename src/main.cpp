@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <thread>
 #include <memory>
@@ -24,84 +23,26 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
     UnloadTexture(icon);
     SetWindowIcon(icon2);
 
-    // Tools
-    enum Tool
-    {
-        BRUSH,
-        BUCKET
-    };
-
-    ColorPalette palette;
-    Canvas canvas(screenWidth, screenHeight, palette);
-    Painter painter(palette, canvas);
-    Tool currentTool = BRUSH;
-
     SetTargetFPS(144);
     Screen screen;
     while (!WindowShouldClose())
     {
-        Vector2 position = GetMousePosition();
-
-        float mouseWheelMove = GetMouseWheelMove();
-        painter.SetBrushSize(mouseWheelMove);
-
-        // Switch tool with SPACE key
-        if (IsKeyPressed(KEY_SPACE))
         {
-            currentTool = (currentTool == BRUSH) ? BUCKET : BRUSH;
-        }
-
-        // Paint or fill if the left mouse button is pressed
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-        {
-            // Check if a color in the palette is clicked
-            int colorIndex = canvas.CheckPaletteClick(palette);
-            if (colorIndex >= 0)
+            switch (screen.scene)
             {
-                painter.SetColor(colorIndex);
-            }
-            else
-            {
-                if (currentTool == BRUSH)
-                {
-                    painter.Paint(position);
-                }
-                else if (currentTool == BUCKET)
-                {
-                    painter.Fill(position);
-                }
+            case START: // ventana de inicio
+                drawStart(&screen, client, senderThread, receiverThread);
+                break;
+            case GAME: // ventana de juego
+                drawGame(&screen, client);
+                break;
+            case EXIT: // cerrar juego
+                CloseWindow();
+                break;
             }
         }
-        else
-        {
-            painter.ResetLastPosition();
-        }
-
-        // Draw
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-
-        // Canvas
-        Rectangle rec = {0.0f, 0.0f, (float)canvas.GetTarget().texture.width, (float)-canvas.GetTarget().texture.height};
-        Vector2 vec = {0.0f, 0.0f};
-        DrawTextureRec(canvas.GetTarget().texture, rec, vec, WHITE);
-
-        // Brush outline
-        if (currentTool == BRUSH)
-        {
-            DrawCircleLines(GetMouseX(), GetMouseY(), painter.GetBrushSize(), painter.GetColor());
-        }
-        else if (currentTool == BUCKET)
-        {
-            DrawCircleLines(GetMouseX(), GetMouseY(), 10, painter.GetColor()); // Small circle for bucket tool indicator
-        }
-
-        // Palette
-        canvas.DrawPalette(palette);
-
-        DrawFPS(GetScreenWidth() - 95, 10);
-        EndDrawing();
     }
+    UnloadImage(icon2);
     CloseWindow();
 }
 

@@ -1,10 +1,8 @@
 
 #include "../headers/Canvas.h"
 #include <queue>
-#include <queue>
 
 Canvas::Canvas(int width, int height, ColorPalette &palette)
-    : width(width), height(height)
     : width(width), height(height)
 {
     target = LoadRenderTexture(width, height);
@@ -38,7 +36,6 @@ void Canvas::DrawPalette(ColorPalette &palette)
     {
         Rectangle rec = {(recWidth * i) + 230.0f, GetScreenHeight() / 2 + 320.0f, recWidth, recHeight};
 
-        // Draw palette background
         // Draw palette background
         DrawRectangleRec(rec, palette.GetColor(colorIndex));
         DrawRectangleLines(rec.x, rec.y, rec.width, rec.height, BLACK);
