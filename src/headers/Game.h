@@ -7,7 +7,8 @@ using std::vector;
 enum Tool
 {
     BRUSH,
-    BUCKET
+    BUCKET,
+    ERASER
 };
 
 void drawChat(ChatClient *client)
@@ -38,6 +39,7 @@ void drawGame(Screen *screen, ChatClient *client)
     static Canvas *canvas;
     static Painter *painter;
     static Tool currentTool = BRUSH;
+    int colorIndex, originalColor;
 
     if (!initialized)
     {
@@ -62,10 +64,11 @@ void drawGame(Screen *screen, ChatClient *client)
     if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
     {
         // Check if a color in the palette is clicked
-        int colorIndex = canvas->CheckPaletteClick(*palette);
+        colorIndex = canvas->CheckPaletteClick(*palette);
         if (colorIndex >= 0)
         {
             painter->SetColor(colorIndex);
+            originalColor = colorIndex;
         }
         else
         {
@@ -82,6 +85,14 @@ void drawGame(Screen *screen, ChatClient *client)
     else
     {
         painter->ResetLastPosition();
+    }
+
+    // Check if right mouse button is pressed for eraser
+    if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
+    {
+        painter->SetColor(0); // Set color to white for erasing
+        painter->Paint(position);
+        painter->SetColor(originalColor); // Restore the original color
     }
 
     // Draw
