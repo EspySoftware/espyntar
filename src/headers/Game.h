@@ -23,17 +23,25 @@ void drawChat(shared_ptr<ChatClient> &client)
     DrawRectangle(GetScreenWidth() - 215, 170, 205, GetScreenHeight() - 200, WHITE);
 
     // Draw messages in reverse order at the bottom of the chat box
-    for (int i = 0; i < messages.size(); i++)
+    int maxMessages = 25 < messages.size() ? 25 : messages.size();
+    for (int i = 0; i < maxMessages; i++)
     {
         string name = messages[messages.size() - i - 1].substr(0, messages[messages.size() - i - 1].find(":") + 1);
         string msg = messages[messages.size() - i - 1].substr(messages[messages.size() - i - 1].find(":") + 1);
 
-        DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 85}, {0, 0}, 0, 12, 2, BLACK);
-        DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 85}, {0, 0}, 0, 12, 2, DARKGRAY);
+        DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
+        DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
     }
 
     // Draw the chat input box
     GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+
+    // Send the message when the user presses Enter
+    if (IsKeyPressed(KEY_ENTER) && strlen(message) > 0)
+    {
+        client->Send(message);
+        strcpy(message, "");
+    }
 }
 
 void drawGame(Screen *screen, shared_ptr<ChatClient> &client)

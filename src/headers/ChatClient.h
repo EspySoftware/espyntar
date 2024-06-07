@@ -39,6 +39,7 @@ public:
     ChatClient(string address, int port = 12345, string name = "Fulanito");                                           // Constructor para el cliente
     ~ChatClient();
     void Send();
+    void Send(string message);
     void Receive();
     vector<string> getMessages();
 
