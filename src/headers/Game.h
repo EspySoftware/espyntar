@@ -61,7 +61,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
     static Canvas *canvas;
     static Painter *painter;
     static Tool currentTool = BRUSH;
-    int colorIndex, originalColor;
+    static int colorIndex;
 
     // Words
     static Words word;
@@ -95,7 +95,6 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
         if (colorIndex >= 0)
         {
             painter->SetColor(colorIndex);
-            originalColor = colorIndex;
         }
         else
         {
@@ -113,7 +112,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
     {
         painter->SetColor(0); // Set color to white for erasing
         painter->Paint(position);
-        painter->SetColor(originalColor); // Restore the original color
+        painter->SetColor(colorIndex); // Restore the original color
     }
     else
     {
