@@ -1,5 +1,5 @@
 #pragma once
-#include "./Inicio.h"
+#include "../headers/Inicio.h"
 
 using std::vector;
 
@@ -11,60 +11,27 @@ enum Tool
     ERASER
 };
 
-void drawChat(shared_ptr<ChatClient> &client)
-{
-    Font font = GetFontDefault();
-    static char message[20] = {0};
-
-    // Get the chat messages from the client
-    vector<string> messages = client->getMessages();
-
-    // Draw the chat box (right side of the screen)
-    DrawRectangle(GetScreenWidth() - 215, 170, 205, GetScreenHeight() - 200, WHITE);
-
-    // Draw messages in reverse order at the bottom of the chat box
-    int maxMessages = 25 < messages.size() ? 25 : messages.size();
-    for (int i = 0; i < maxMessages; i++)
-    {
-        string name = messages[messages.size() - i - 1].substr(0, messages[messages.size() - i - 1].find(":") + 1);
-        string msg = messages[messages.size() - i - 1].substr(messages[messages.size() - i - 1].find(":") + 1);
-
-        DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
-        DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
-    }
-
-    // Draw the chat input box
-    GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
-
-    // Send the message when the user presses Enter
-    if (IsKeyPressed(KEY_ENTER) && strlen(message) > 0)
-    {
-        client->Send(message);
-        strcpy(message, "");
-    }
-}
-
 class Game
 {
 public:
-    bool initialized = false;
-    ColorPalette *palette;
-    Canvas *canvas;
-    Painter *painter;
-    Tool currentTool = BRUSH;
-    int colorIndex, originalColor;
-    GameScene scene;
+    // bool initialized = false;
+    // ColorPalette *palette;
+    // Canvas *canvas;
+    // Painter *painter;
+    // Tool currentTool = BRUSH;
+    // int colorIndex, originalColor;
+    // GameScene scene;
     Texture2D background;
     
 
     Game()
     {
-        this->scene = GAME;
+        // this->scene = GAME;
         this->background = LoadTexture("../assets/espy_peke.png");
-        this->palette = new ColorPalette();
-        this->canvas = new Canvas(700, 560, *palette);
-        this->painter = new Painter(*palette, *canvas);
-        this->initialized = true;
+        // this->palette = new ColorPalette();
+        // this->canvas = new Canvas(700, 560, *palette);
+        // this->painter = new Painter(*palette, *canvas);
+        // this->initialized = true;
     }
     ~Game()
     {
@@ -73,6 +40,9 @@ public:
 
     void drawGame(Screen *screen, shared_ptr<ChatClient> &client);
 };
+
+
+
 
 // void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
 // {

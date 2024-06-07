@@ -14,7 +14,7 @@ using std::shared_ptr;
 using std::string;
 using std::thread;
 
-void Game(shared_ptr<ChatClient> client, thread *senderThread, thread *receiverThread)
+void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *receiverThread)
 {
     // SetTraceLogLevel(LOG_NONE); // Disable raylib logging
     InitWindow(screenWidth, screenHeight, "Espyntar");
@@ -25,6 +25,7 @@ void Game(shared_ptr<ChatClient> client, thread *senderThread, thread *receiverT
 
     SetTargetFPS(144);
     Screen screen;
+    Game game;
     
     while (!WindowShouldClose())
     {
@@ -35,7 +36,7 @@ void Game(shared_ptr<ChatClient> client, thread *senderThread, thread *receiverT
                 drawStart(&screen, client, senderThread, receiverThread);
                 break;
             case GAME: // ventana de juego
-                drawGame(&screen, client);
+                game.drawGame(&screen, client);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();
@@ -60,7 +61,7 @@ int main(void)
     thread senderThread;
     thread receiverThread;
 
-    Game(client, &senderThread, &receiverThread);
+    PlayGame(client, &senderThread, &receiverThread);
 
     return 0;
 }

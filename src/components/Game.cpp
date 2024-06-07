@@ -1,7 +1,55 @@
-#include "Game.h"
+#include "../headers/Game.h"
+
+void drawChat(shared_ptr<ChatClient> &client)
+{
+    Font font = GetFontDefault();
+    static char message[20] = {0};
+
+    // Get the chat messages from the client
+    vector<string> messages = client->getMessages();
+
+    // Draw the chat box (right side of the screen)
+    DrawRectangle(GetScreenWidth() - 215, 170, 205, GetScreenHeight() - 200, WHITE);
+
+    // Draw messages in reverse order at the bottom of the chat box
+    int maxMessages = 25 < messages.size() ? 25 : messages.size();
+    for (int i = 0; i < maxMessages; i++)
+    {
+        string name = messages[messages.size() - i - 1].substr(0, messages[messages.size() - i - 1].find(":") + 1);
+        string msg = messages[messages.size() - i - 1].substr(messages[messages.size() - i - 1].find(":") + 1);
+
+        DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
+        DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
+    }
+
+    // Draw the chat input box
+    GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+
+    // Send the message when the user presses Enter
+    if (IsKeyPressed(KEY_ENTER) && strlen(message) > 0)
+    {
+        client->Send(message);
+        strcpy(message, "");
+    }
+}
 
 void Game::drawGame(Screen *screen, shared_ptr<ChatClient> &client)
 {
+    static bool initialized = false;
+    static ColorPalette *palette;
+    static Canvas *canvas;
+    static Painter *painter;
+    static Tool currentTool = BRUSH;
+    int colorIndex, originalColor;
+
+    if (!initialized)
+    {
+        palette = new ColorPalette();
+        canvas = new Canvas(700, 560, *palette);
+        painter = new Painter(*palette, *canvas);
+        initialized = true;
+    }
+
     Vector2 position = GetMousePosition();
 
     float mouseWheelMove = GetMouseWheelMove();
