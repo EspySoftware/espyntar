@@ -53,7 +53,6 @@ class Screen // clase para manejar las pantallas del juego
 public:
     GameScene scene;
     Texture2D background;
-    ChatClient client;
 
     Screen()
     {
@@ -67,7 +66,7 @@ public:
     }
 };
 
-void startGUI(Screen *screen, ChatClient &client, thread *senderThread, thread *receiverThread)
+void startGUI(Screen *screen, ChatClient *client, thread *senderThread, thread *receiverThread)
 {
     static char name[10] = "Fulanito";
     static char ip[20] = "";
@@ -97,9 +96,9 @@ void startGUI(Screen *screen, ChatClient &client, thread *senderThread, thread *
 
     if (GuiButton({GetScreenWidth() / 2.0f - 100.0f, GetScreenHeight() / 2.0f + 75.0f, 200.0f, 50.0f}, "PLAY"))
     {
-        client = *connectToServer(ip, name, 12345, senderThread, receiverThread);
+        client = connectToServer(ip, name, 12345, senderThread, receiverThread);
 
-        if (client.clientSocket != INVALID_SOCKET || client.clientSocket != SOCKET_ERROR)
+        if (client->clientSocket != INVALID_SOCKET || client->clientSocket != SOCKET_ERROR)
         {
             screen->scene = GAME;
         }
@@ -111,7 +110,7 @@ void startGUI(Screen *screen, ChatClient &client, thread *senderThread, thread *
     }
 }
 
-void drawStart(Screen *screen, ChatClient &client, thread *senderThread, thread *receiverThread)
+void drawStart(Screen *screen, ChatClient *client, thread *senderThread, thread *receiverThread)
 {
     BeginDrawing();
     ClearBackground(BLACK);

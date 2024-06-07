@@ -48,6 +48,7 @@ ChatClient::ChatClient(string address, int port, string name)
     buffer[bytesReceived] = '\0';
     id = stoi(buffer);
     cout << "\nConnected as [" << id << "]: " << name << endl;
+    messages.push_back("Connected to the server.");
 }
 
 ChatClient::~ChatClient()
@@ -77,6 +78,16 @@ void ChatClient::Send()
         {
             break;
         }
+
+        messages.push_back(msg);
+
+        // Debug print
+        cout << "Current messages after sending: ";
+        for (const auto &m : messages)
+        {
+            cout << m << " ";
+        }
+        cout << endl;
     }
 
     Disconnect();
@@ -99,9 +110,24 @@ void ChatClient::Receive()
 
         buffer[bytesReceived] = '\0';
         cout << buffer << endl;
+
+        messages.push_back(buffer);
+
+        // Debug print
+        cout << "Current messages after receiving: ";
+        for (const auto &m : messages)
+        {
+            cout << m << " ";
+        }
+        cout << endl;
     }
 
     Disconnect();
+}
+
+vector<string> ChatClient::getMessages()
+{
+    return messages;
 }
 
 void ChatClient::Disconnect()

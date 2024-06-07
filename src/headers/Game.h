@@ -17,8 +17,7 @@ void drawChat(ChatClient *client)
     static char message[18] = {0};
 
     // Get the chat messages from the client
-    // std::vector<std::string> messages = client->getMessages();
-    vector<std::string> messages = {"Hola", "Mundo", "aaaaaaaaaaaaaaaaa"};
+    vector<string> messages = client->getMessages();
 
     // Draw the chat box (right side of the screen)
     DrawRectangle(GetScreenWidth() - 215, 100, 205, GetScreenHeight() - 145, WHITE);
@@ -33,7 +32,7 @@ void drawChat(ChatClient *client)
     GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 75, 205, 35}, message, 18, true);
 }
 
-void drawGame(Screen *screen)
+void drawGame(Screen *screen, ChatClient *client)
 {
     static bool initialized = false;
     static ColorPalette *palette;
@@ -121,7 +120,7 @@ void drawGame(Screen *screen)
     canvas->DrawPalette(*palette);
 
     // Draw chat
-    drawChat(&screen->client);
+    drawChat(client);
 
     EndDrawing();
 }
