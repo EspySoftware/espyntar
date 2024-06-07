@@ -38,6 +38,12 @@ void drawChat(shared_ptr<ChatClient> &client)
     // Draw the chat input box
     GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
 
+    // Usando GuiTextBox no editable
+    Color color_chat = {252, 229, 113, 255};
+    char text[5] = "CHAT";
+    DrawRectangle((float)GetScreenWidth() - 215, (float)GetScreenHeight() - 590, 205, 35, color_chat);
+    DrawTextPro(GetFontDefault(), text, {(float)GetScreenWidth() - 130, (float)GetScreenHeight() - 580},
+                {0.0f, 0.0f }, 0.0f, 15.0f, 0.0f, BLACK);
     // Send the message when the user presses Enter
     if (IsKeyPressed(KEY_ENTER) && strlen(message) > 0)
     {
@@ -128,6 +134,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     // header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
+
     // Canvas
     Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
     Vector2 canvasPosition;
