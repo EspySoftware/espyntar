@@ -88,8 +88,7 @@ void startGUI(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThre
     GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, ColorToInt(BLACK));
     GuiSetStyle(BUTTON, TEXT_COLOR_FOCUSED, ColorToInt(BLACK));
     GuiSetStyle(BUTTON, TEXT_COLOR_PRESSED, ColorToInt(BLACK));
-
-    static char name[20] = "";
+    static char name[16] = "";
     static char ip[20] = "";
     static bool nameFocus = true;
     static bool ipFocus = false;
@@ -102,13 +101,13 @@ void startGUI(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThre
     }
 
     DrawTextPro(GetFontDefault(), "Nombre:", {1026, 650}, {580, 380}, 0.0f, 20.0f, 4.0f, color_names);
-    if (GuiTextBox({(GetScreenWidth() / 2.0f) - 110.0f, GetScreenHeight() / 2.0f - 90.0f, 220.0f, 60.0f}, name, 20, nameFocus))
+    if (GuiTextBox({(GetScreenWidth() / 2.0f) - 110.0f, GetScreenHeight() / 2.0f - 90.0f, 220.0f, 60.0f}, name, 9, nameFocus))
     {
         nameFocus = true;
         ipFocus = false;
     }
     DrawTextPro(GetFontDefault(), "IP:", {1026, 740}, {580, 380}, 0.0f, 20.0f, 4.0f, color_names);
-    if (GuiTextBox({(GetScreenWidth() / 2.0f) - 110.0f, GetScreenHeight() / 2.0f, 220.0f, 60.0f}, ip, 20, ipFocus))
+    if (GuiTextBox({(GetScreenWidth() / 2.0f) - 110.0f, GetScreenHeight() / 2.0f, 220.0f, 60.0f}, ip, 16, ipFocus))
     {
         ipFocus = true;
         nameFocus = false;

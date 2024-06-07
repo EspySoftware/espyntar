@@ -48,7 +48,7 @@ ChatClient::ChatClient(string address, int port, string name)
     buffer[bytesReceived] = '\0';
     id = stoi(buffer);
     cout << "\nConnected as [" << id << "]: " << name << endl;
-    messages.push_back("Connected to the server.");
+    messages.push_back("Connected as " + name);
 }
 
 ChatClient::~ChatClient()
