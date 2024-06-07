@@ -15,10 +15,13 @@ void Game(ChatClient *client, thread *senderThread, thread *receiverThread)
 {
     // SetTraceLogLevel(LOG_NONE); // Disable raylib logging
     InitWindow(screenWidth, screenHeight, "Espyntar");
+    Texture2D icon=LoadTexture("../assets/logo.png");
+    Image icon2= LoadImageFromTexture(icon);
+    UnloadTexture(icon);
+    SetWindowIcon(icon2);
 
     SetTargetFPS(144);
     Screen screen;
-
     while (!WindowShouldClose())
     {
         {
@@ -36,7 +39,7 @@ void Game(ChatClient *client, thread *senderThread, thread *receiverThread)
             }
         }
     }
-
+    UnloadImage(icon2);
     CloseWindow();
 }
 

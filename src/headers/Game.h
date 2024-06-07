@@ -4,8 +4,8 @@
 void drawGame(Screen *screen)
 {
     BeginDrawing();
-    ClearBackground(BLACK);
-    DrawTexture(screen->background, 0, 0, WHITE);
+    Color background= { 0, 156, 35, 255 };
+    ClearBackground(background);
 
     EndDrawing();
 }
