@@ -10,7 +10,7 @@ Painter::Painter(ColorPalette &palette, Canvas &canvas) : palette(palette), canv
 void Painter::Paint(Vector2 position)
 {
     position.x -= GetScreenWidth() / 2.0f - canvas.GetTarget().texture.width / 2.0f;
-    position.y -= GetScreenHeight() / 2.0f - canvas.GetTarget().texture.height / 2.0f;
+    position.y -= GetScreenHeight() / 2.0f - canvas.GetTarget().texture.height / 2.0f + 50.0f;
 
     if (lastPosition.x >= 0 && lastPosition.y >= 0)
     {
