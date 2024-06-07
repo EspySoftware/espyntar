@@ -1,18 +1,11 @@
 #pragma once
+#include "./Words.h"
 #include "./Inicio.h"
-
 using std::vector;
-
-// Tools
-enum Tool
-{
-    BRUSH,
-    BUCKET,
-    ERASER
-};
 
 void drawChat(ChatClient *client)
 {
+    static Words word;
     Font font = GetFontDefault();
     static char message[18] = {0};
 
@@ -34,6 +27,14 @@ void drawChat(ChatClient *client)
 
 void drawGame(Screen *screen, ChatClient *client)
 {
+    // Tools
+    enum Tool
+    {
+        BRUSH,
+        BUCKET,
+        ERASER
+    };
+
     static bool initialized = false;
     static ColorPalette *palette;
     static Canvas *canvas;
