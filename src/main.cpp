@@ -25,8 +25,6 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
 
     SetTargetFPS(144);
     Screen screen;
-    Game game;
-    
     while (!WindowShouldClose())
     {
         {
@@ -36,7 +34,7 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
                 drawStart(&screen, client, senderThread, receiverThread);
                 break;
             case GAME: // ventana de juego
-                game.drawGame(&screen, client);
+                drawGame(&screen, client);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();
