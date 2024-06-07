@@ -3,8 +3,8 @@
 #include "../headers/Words.h"
 
 using std::endl;
-using std::ifstream;
 using std::getline;
+using std::ifstream;
 
 // Words::Words()
 // {
@@ -20,13 +20,18 @@ Words::Words()
 {
     string line;
     ifstream file("../assets/words.txt");
-    while(getline(file, line))
+    while (getline(file, line))
     {
         words.push_back(line);
     }
     file.close();
 }
-string Words::GetRandomWord() const
+array<string, 3> Words::GetRandomWords() const
 {
-    return words[rand() % words.size()];
+    array<string, 3> three_words;
+    for (int i = 0; i < 3; i++)
+    {
+        three_words[i] = words[rand() % words.size()];
+    }
+    return three_words;
 }
