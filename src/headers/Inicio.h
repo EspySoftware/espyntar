@@ -70,7 +70,7 @@ public:
     }
 };
 
-void startGUI(Screen *screen, ChatClient &client, thread *senderThread, thread *receiverThread)
+void startGUI(Screen *screen, ChatClient *client, thread *senderThread, thread *receiverThread)
 {
     Color color_base = {44, 74, 36, 200};
     Color color_names = {252, 229, 113, 255};
@@ -122,9 +122,9 @@ void startGUI(Screen *screen, ChatClient &client, thread *senderThread, thread *
 
     if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f}, "JUGAR"))
     {
-        client = *connectToServer(ip, name, 12345, senderThread, receiverThread);
+        client = connectToServer(ip, name, 12345, senderThread, receiverThread);
 
-        if (client.clientSocket != INVALID_SOCKET || client.clientSocket != SOCKET_ERROR)
+        if (client->clientSocket != INVALID_SOCKET || client->clientSocket != SOCKET_ERROR)
         {
             screen->scene = GAME;
         }
@@ -136,7 +136,7 @@ void startGUI(Screen *screen, ChatClient &client, thread *senderThread, thread *
     }
 }
 
-void drawStart(Screen *screen, ChatClient &client, thread *senderThread, thread *receiverThread)
+void drawStart(Screen *screen, ChatClient *client, thread *senderThread, thread *receiverThread)
 {
     BeginDrawing();
     ClearBackground(BLACK);
