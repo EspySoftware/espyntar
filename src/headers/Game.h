@@ -1,4 +1,7 @@
 #pragma once
+#include "./Inicio.h"
+
+using std::vector;
 
 // Tools
 enum Tool
@@ -7,6 +10,28 @@ enum Tool
     BUCKET,
     ERASER
 };
+
+void drawChat(ChatClient *client)
+{
+    Font font = GetFontDefault();
+    static char message[18] = {0};
+
+    // Get the chat messages from the client
+    // std::vector<std::string> messages = client->getMessages();
+    vector<std::string> messages = {"Hola", "Mundo", "aaaaaaaaaaaaaaaaa"};
+
+    // Draw the chat box (right side of the screen)
+    DrawRectangle(GetScreenWidth() - 215, 100, 205, GetScreenHeight() - 145, WHITE);
+
+    // Draw messages in reverse order at the bottom of the chat box
+    for (int i = 0; i < messages.size(); i++)
+    {
+        DrawTextPro(font, messages[messages.size() - i - 1].c_str(), {(float)GetScreenWidth() - 205, (float)GetScreenHeight() - 20 * (i + 1) - 85}, {0, 0}, 0, 14, 4, BLACK);
+    }
+
+    // Draw the chat input box
+    GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 75, 205, 35}, message, 18, true);
+}
 
 void drawGame(Screen *screen)
 {
@@ -20,7 +45,7 @@ void drawGame(Screen *screen)
     if (!initialized)
     {
         palette = new ColorPalette();
-        canvas = new Canvas(800, 450, *palette);
+        canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
         initialized = true;
     }
@@ -73,8 +98,8 @@ void drawGame(Screen *screen)
 
     // Draw
     BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawTexture(screen->background, 0, 0, WHITE);
+    ClearBackground(DARKGRAY);
+    // DrawTexture(screen->background, 0, 0, WHITE);
 
     // Canvas
     Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
@@ -96,5 +121,9 @@ void drawGame(Screen *screen)
 
     // Palette
     canvas->DrawPalette(*palette);
+
+    // Draw chat
+    drawChat(&screen->client);
+
     EndDrawing();
 }
