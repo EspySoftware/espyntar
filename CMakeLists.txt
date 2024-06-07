@@ -29,7 +29,7 @@ src/components/ColorPalette.cpp src/headers/ColorPalette.h
 src/components/Painter.cpp src/headers/Painter.h
 src/components/ChatClient.cpp src/headers/ChatClient.h
 src/headers/Inicio.h
-src/headers/Game.h
+src/components/Game.cpp src/headers/Game.h
 )
 
 target_link_libraries(Espyntar PUBLIC raylib ws2_32)

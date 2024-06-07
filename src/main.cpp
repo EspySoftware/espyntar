@@ -25,6 +25,7 @@ void Game(shared_ptr<ChatClient> client, thread *senderThread, thread *receiverT
 
     SetTargetFPS(144);
     Screen screen;
+    
     while (!WindowShouldClose())
     {
         {
