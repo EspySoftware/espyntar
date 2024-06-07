@@ -5,7 +5,6 @@ using std::vector;
 
 void drawChat(ChatClient *client)
 {
-    static Words word;
     Font font = GetFontDefault();
     static char message[18] = {0};
 
@@ -35,6 +34,7 @@ void drawGame(Screen *screen, ChatClient *client)
         ERASER
     };
 
+    static Words word;
     static bool initialized = false;
     static ColorPalette *palette;
     static Canvas *canvas;
