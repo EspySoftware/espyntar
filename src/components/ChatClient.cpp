@@ -48,7 +48,7 @@ ChatClient::ChatClient(string address, int port, string name)
     buffer[bytesReceived] = '\0';
     id = stoi(buffer);
     cout << "\nConnected as [" << id << "]: " << name << endl;
-    messages.push_back("Connected to the server.");
+    messages.push_back("Connected as " + name);
 }
 
 ChatClient::~ChatClient()
@@ -81,16 +81,39 @@ void ChatClient::Send()
 
         messages.push_back(msg);
 
-        // Debug print
-        cout << "Current messages after sending: ";
-        for (const auto &m : messages)
-        {
-            cout << m << " ";
-        }
-        cout << endl;
+        // // Debug print
+        // cout << "Current messages after sending: ";
+        // for (const auto &m : messages)
+        // {
+        //     cout << m << " ";
+        // }
+        // cout << endl;
     }
 
     Disconnect();
+}
+
+void ChatClient::Send(string message)
+{
+    string msg = "[" + name + "]: " + message;
+
+    int bytesent = send(clientSocket, message.c_str(), message.length(), 0);
+
+    if (bytesent == SOCKET_ERROR)
+    {
+        int errorCode = WSAGetLastError();
+        cout << "Failed to send data to the server. Error code: " << errorCode << endl;
+    }
+
+    messages.push_back(msg);
+
+    // // Debug print
+    // cout << "Current messages after sending: ";
+    // for (const auto &m : messages)
+    // {
+    //     cout << m << " ";
+    // }
+    // cout << endl;
 }
 
 void ChatClient::Receive()
@@ -113,13 +136,13 @@ void ChatClient::Receive()
 
         messages.push_back(buffer);
 
-        // Debug print
-        cout << "Current messages after receiving: ";
-        for (const auto &m : messages)
-        {
-            cout << m << " ";
-        }
-        cout << endl;
+        // // Debug print
+        // cout << "Current messages after receiving: ";
+        // for (const auto &m : messages)
+        // {
+        //     cout << m << " ";
+        // }
+        // cout << endl;
     }
 
     Disconnect();
