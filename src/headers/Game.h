@@ -2,8 +2,8 @@
 #include "./Words.h"
 #include "./Inicio.h"
 #include "../headers/Inicio.h"
-using std::vector;
 using std::array;
+using std::vector;
 
 // Tools
 enum Tool
@@ -62,6 +62,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
     static Painter *painter;
     static Tool currentTool = BRUSH;
     static int colorIndex;
+    static int timer = 0;
 
     // Words
     static Words word;
@@ -161,7 +162,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
         }
         if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
         {
-            
+
             word.SetChosenWord(words[1]);
             chosen = true;
         }
@@ -175,7 +176,11 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
     // Draw the words
     if (chosen)
     {
-        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - 50, 60.0f}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20) / 2), + 60 }, {0, 0}, 0, 20, 4, BLACK);
+        for (int i = 0; i < word.GetChosenWord().size(); i++)
+        {
+            DrawRectangle((GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20)) + i * 30 - 15, 90.0f, 20.0f, 5.0f, BLACK);
+        }
     }
 
     EndDrawing();
