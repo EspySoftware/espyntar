@@ -52,7 +52,7 @@ public:
 
     Screen()
     {
-        this->scene = GAME;
+        this->scene = START;
         this->background = LoadTexture("../assets/background.png");
         this->title = LoadTexture("../assets/espy.png");
     }
