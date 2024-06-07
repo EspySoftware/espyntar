@@ -10,4 +10,5 @@ class Words
         vector<string> words;
     public:
         Words();
+        string GetRandomWord() const;
 };

@@ -26,3 +26,7 @@ Words::Words()
     }
     file.close();
 }
+string Words::GetRandomWord() const
+{
+    return words[rand() % words.size()];
+}
