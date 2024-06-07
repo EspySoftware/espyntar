@@ -18,9 +18,6 @@ Canvas::~Canvas()
 
 void Canvas::Draw(Vector2 position, float radius, Color color)
 {
-    position.x += GetScreenWidth() / 2 - this->width / 2;
-    position.y += GetScreenHeight() / 2 - this->height / 2;
-
     BeginTextureMode(target);
     DrawCircleV(position, radius, color);
     EndTextureMode();

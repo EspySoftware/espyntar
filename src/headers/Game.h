@@ -66,8 +66,8 @@ void drawGame(Screen *screen)
     DrawTexture(screen->background, 0, 0, WHITE);
 
     // Canvas
-    Rectangle rec = {screenWidth / 2.0f - 425.0f, screenHeight / 2.0f - 225.0f, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
-    Vector2 vec = {screenWidth / 2.0f - 425.0f, screenHeight / 2.0f - 225.0f};
+    Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
+    Vector2 vec = {0, 0};
     DrawTextureRec(canvas->GetTarget().texture, rec, vec, WHITE);
 
     // Brush outline
