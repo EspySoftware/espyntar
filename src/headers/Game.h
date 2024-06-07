@@ -2,8 +2,8 @@
 #include "./Words.h"
 #include "./Inicio.h"
 #include "../headers/Inicio.h"
-using std::vector;
 using std::array;
+using std::vector;
 
 // Tools
 enum Tool
@@ -46,7 +46,7 @@ void drawChat(shared_ptr<ChatClient> &client)
     }
 }
 
-void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
+void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
 {
     // Tools
     enum Tool
@@ -127,7 +127,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
     ClearBackground(color_bg);
     // header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
-
+    DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
     // Canvas
     Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
     Vector2 canvasPosition;
@@ -162,7 +162,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
         }
         if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
         {
-            
+
             word.SetChosenWord(words[1]);
             chosen = true;
         }

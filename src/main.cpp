@@ -35,8 +35,8 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
                 drawStart(&screen, client, senderThread, receiverThread);
                 break;
             case GAME: // ventana de juego
-                drawGame(&screen, client);
-                DrawTexture(espy, GetScreenWidth() / 2.0f - (espy.width / 2), 5, WHITE);
+                drawGame(&screen, client, &espy);
+
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();
