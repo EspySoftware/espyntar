@@ -200,10 +200,6 @@ public:
             }
 
             string message(buffer, bytesReceived);
-            if (message == "exit")
-            {
-                break;
-            }
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;
 
             string msg = "[" + client.name + "]: " + message;
