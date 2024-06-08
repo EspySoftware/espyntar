@@ -1,6 +1,6 @@
-#include "../headers/ChatClient.h"
+#include "../headers/Client.h"
 
-ChatClient::ChatClient(string address, int port, string name)
+Client::Client(string address, int port, string name)
 {
     this->name = name;
 
@@ -64,30 +64,50 @@ ChatClient::ChatClient(string address, int port, string name)
     string connectedClients(buffer);
 
     // Add connected clients to the vector
-    // Example string: Connected clients: Client1, Client2, Client3
-    stringstream ss(connectedClients.substr(19)); // Skip the "Connected clients: " part
-    string clientName;
-    while (getline(ss, clientName, ','))
+    // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
+
+    // Remove the "Connected clients: " prefix
+    string clientsString = connectedClients.substr(19);
+
+    // Split the string by commas
+    stringstream ss(clientsString);
+    string client;
+    vector<string> clients;
+    while (getline(ss, client, ','))
     {
-        // Remove leading and trailing whitespace
-        clientName.erase(clientName.begin(), std::find_if(clientName.begin(), clientName.end(), [](unsigned char ch)
-                                                          { return !std::isspace(ch); }));
+        clients.push_back(client);
+    }
 
-        clientName.erase(std::find_if(clientName.rbegin(), clientName.rend(), [](unsigned char ch)
-                                      { return !std::isspace(ch); })
-                             .base(),
-                         clientName.end());
+    // Regular expression to match the client format
+    regex clientRegex("\\[(\\d+)\\](\\w+)\\((\\d+)\\)");
 
-        this->connectedClients.push_back(clientName);
+    cout << "Connected clients:" << endl;
+    for (const string &client : clients)
+    {
+        smatch matches;
+        if (regex_search(client, matches, clientRegex))
+        {
+            int id = stoi(matches[1].str());
+            string name = matches[2].str();
+            int points = stoi(matches[3].str());
+
+            // Add the client to the vector
+            this->connectedClients.push_back({id, name, points});
+            cout << "Client: [" << id << "] " << name << " (" << points << ")" << endl;
+        }
+        else
+        {
+            cout << "Failed to parse client: " << client << endl;
+        }
     }
 }
 
-ChatClient::~ChatClient()
+Client::~Client()
 {
     closesocket(clientSocket);
 }
 
-void ChatClient::Send()
+void Client::Send()
 {
     string message;
 
@@ -124,7 +144,7 @@ void ChatClient::Send()
     Disconnect();
 }
 
-void ChatClient::Send(string message)
+void Client::Send(string message)
 {
     string msg = "[" + name + "]: " + message;
 
@@ -147,7 +167,7 @@ void ChatClient::Send(string message)
     // cout << endl;
 }
 
-void ChatClient::Receive()
+void Client::Receive()
 {
     char buffer[4096];
     int bytesReceived;
@@ -167,32 +187,46 @@ void ChatClient::Receive()
 
         messages.push_back(buffer);
 
-        // Add newly connected client to the vector
-        // Example string: [Client1] has connected.
-        if (string(buffer).find("has connected.") != string::npos)
-        {
-            string clientName = string(buffer).substr(1, string(buffer).find("]") - 1);
-            connectedClients.push_back(clientName);
-        }
+        // Add and remove clients from the vector
+        // Format: (1) Client1 disconnected. or (22) Client22 connected. (add id and name to the vector)
+        string message = buffer;
+        regex r("(\\d+)\\)\\s+(\\w+)");
+        smatch match;
 
-        // Remove disconnected client from the vector
-        // Example string: [Client1] has disconnected.
-        if (string(buffer).find("has disconnected.") != string::npos)
+        if (regex_search(message, match, r) && match.size() > 2)
         {
-            string clientName = string(buffer).substr(1, string(buffer).find("]") - 1);
-            connectedClients.erase(std::remove(connectedClients.begin(), connectedClients.end(), clientName), connectedClients.end());
+            int id = stoi(match.str(1));
+            string name = match.str(2);
+
+            // Client disconnected
+            if (message.find("disconnected") != string::npos)
+            {
+                for (int i = 0; i < connectedClients.size(); i++)
+                {
+                    if (connectedClients[i].id == id)
+                    {
+                        connectedClients.erase(connectedClients.begin() + i);
+                        break;
+                    }
+                }
+            }
+            // Client connected
+            else if (message.find("connected") != string::npos)
+            {
+                connectedClients.push_back({id, name, 0});
+            }
         }
     }
 
     Disconnect();
 }
 
-vector<string> ChatClient::getMessages()
+vector<string> Client::getMessages()
 {
     return messages;
 }
 
-void ChatClient::Disconnect()
+void Client::Disconnect()
 {
     closesocket(clientSocket);
 }

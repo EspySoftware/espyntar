@@ -13,10 +13,10 @@ enum Tool
     ERASER
 };
 
-void drawConnectedClients(shared_ptr<ChatClient> &client)
+void drawConnectedClients(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
-    vector<string> connectedClients = client->connectedClients;
+    vector<OtherClient> connectedClients = client->connectedClients;
 
     // Draw connected clients box (left)
     DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
@@ -25,15 +25,21 @@ void drawConnectedClients(shared_ptr<ChatClient> &client)
     for (int i = 0; i < connectedClients.size(); i++)
     {
         // Draw box for each client
-        DrawRectangle(15, 200.0f + 20 * i, 190, 20, WHITE);
-        DrawRectangleLines(15, 200.0f + 20 * i, 190, 20, DARKGRAY);
+        DrawRectangle(15, 200.0f + 40 * i, 190, 20, WHITE);
+        DrawRectangleLines(15, 200.0f + 40 * i, 190, 20, DARKGRAY);
 
-        // Draw the client name
-        DrawTextPro(font, connectedClients[i].c_str(), {20, 205.0f + 20 * i}, {0, 0}, 0, 14, 2, BLACK);
+        // Draw the client id
+        DrawTextPro(font, ("(" + std::to_string(connectedClients[i].id) + ")").c_str(), {20, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, BLACK);
+
+        // Draw the client name (right side)
+        DrawTextPro(font, connectedClients[i].name.c_str(), {50, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
+
+        // Draw the client points (bottom)
+        DrawTextPro(font, std::to_string(connectedClients[i].points).c_str(), {180, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
     }
 }
 
-void drawChat(shared_ptr<ChatClient> &client)
+void drawChat(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
     static char message[20] = {0};
@@ -72,7 +78,7 @@ void drawChat(shared_ptr<ChatClient> &client)
     }
 }
 
-void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
+void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 {
     // Tools
     enum Tool

@@ -27,7 +27,7 @@ add_executable(Espyntar src/main.cpp
 src/components/Canvas.cpp src/headers/Canvas.h
 src/components/ColorPalette.cpp src/headers/ColorPalette.h
 src/components/Painter.cpp src/headers/Painter.h
-src/components/ChatClient.cpp src/headers/ChatClient.h
+src/components/Client.cpp src/headers/Client.h
 src/components/Words.cpp src/headers/Words.h
 src/headers/Inicio.h
 src/headers/Game.h
