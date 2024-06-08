@@ -12,7 +12,18 @@ enum Tool
     BUCKET,
     ERASER
 };
+void buttons(float x, float y, float widght, float height, char text[])
+{
+    Rectangle buttonRect = {x, y, widght, height};
+    Rectangle buttonRect2 = {x - 2.0f, y - 2.0f, widght + 5.0f, height + 5.0f};
 
+    DrawRectangleRounded(buttonRect2, 0.3f, 6, {215, 182, 15, 255});
+    // Dibuja el texto del botón
+    if (GuiButton(buttonRect, text))
+    {
+        // Acción del botón
+    }
+}
 void drawConnectedClients(shared_ptr<ChatClient> &client)
 {
     Font font = GetFontDefault();
