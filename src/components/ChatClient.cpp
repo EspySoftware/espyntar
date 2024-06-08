@@ -36,6 +36,8 @@ ChatClient::ChatClient(string address, int port, string name)
         return;
     }
 
+    /* Process the server response */
+
     // Receive the client ID from the server
     char buffer[4096];
     int bytesReceived = recv(clientSocket, buffer, 4096, 0);
@@ -49,6 +51,35 @@ ChatClient::ChatClient(string address, int port, string name)
     id = stoi(buffer);
     cout << "\nConnected as [" << id << "]: " << name << endl;
     messages.push_back("Connected as " + name);
+
+    // Receive the list of connected clients from the server
+    bytesReceived = recv(clientSocket, buffer, 4096, 0);
+    if (bytesReceived == SOCKET_ERROR)
+    {
+        cout << "Failed to receive data from the server." << endl;
+        return;
+    }
+
+    buffer[bytesReceived] = '\0';
+    string connectedClients(buffer);
+
+    // Add connected clients to the vector
+    // Example string: Connected clients: Client1, Client2, Client3
+    stringstream ss(connectedClients.substr(19)); // Skip the "Connected clients: " part
+    string clientName;
+    while (getline(ss, clientName, ','))
+    {
+        // Remove leading and trailing whitespace
+        clientName.erase(clientName.begin(), std::find_if(clientName.begin(), clientName.end(), [](unsigned char ch)
+                                                          { return !std::isspace(ch); }));
+
+        clientName.erase(std::find_if(clientName.rbegin(), clientName.rend(), [](unsigned char ch)
+                                      { return !std::isspace(ch); })
+                             .base(),
+                         clientName.end());
+
+        this->connectedClients.push_back(clientName);
+    }
 }
 
 ChatClient::~ChatClient()
@@ -136,13 +167,21 @@ void ChatClient::Receive()
 
         messages.push_back(buffer);
 
-        // // Debug print
-        // cout << "Current messages after receiving: ";
-        // for (const auto &m : messages)
-        // {
-        //     cout << m << " ";
-        // }
-        // cout << endl;
+        // Add newly connected client to the vector
+        // Example string: [Client1] has connected.
+        if (string(buffer).find("has connected.") != string::npos)
+        {
+            string clientName = string(buffer).substr(1, string(buffer).find("]") - 1);
+            connectedClients.push_back(clientName);
+        }
+
+        // Remove disconnected client from the vector
+        // Example string: [Client1] has disconnected.
+        if (string(buffer).find("has disconnected.") != string::npos)
+        {
+            string clientName = string(buffer).substr(1, string(buffer).find("]") - 1);
+            connectedClients.erase(std::remove(connectedClients.begin(), connectedClients.end(), clientName), connectedClients.end());
+        }
     }
 
     Disconnect();

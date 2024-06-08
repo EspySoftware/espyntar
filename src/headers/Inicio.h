@@ -64,6 +64,14 @@ public:
     }
 };
 
+void buttons(float x, float y, float width, float height, const char *text)
+{
+    Rectangle buttonRect = {x, y, width, height};
+    Rectangle buttonRect2 = {x - 2.0f, y - 2.0f, width + 4.0f, height + 4.0f};
+
+    DrawRectangleRounded(buttonRect2, 0.3f, 6, {215, 182, 15, 255});
+}
+
 void startGUI(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThread, thread *receiverThread)
 {
     Color color_base = {44, 74, 36, 200};
@@ -112,7 +120,7 @@ void startGUI(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThre
         ipFocus = true;
         nameFocus = false;
     }
-
+    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f, "JUGAR");
     if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f}, "JUGAR"))
     {
         if (connectToServer(client, ip, name, 12345, senderThread, receiverThread))
@@ -120,7 +128,7 @@ void startGUI(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThre
             screen->scene = GAME;
         }
     }
-
+    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 160.0f, 120.0f, 50.0f, "SALIR");
     if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 160.0f, 120.0f, 50.0f}, "SALIR"))
     {
         screen->scene = EXIT;
@@ -132,7 +140,7 @@ void drawStart(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThr
     BeginDrawing();
     ClearBackground(BLACK);
     DrawTexture(screen->background, 0, 0, WHITE);
-    DrawTexture(screen->title, (GetScreenWidth() / 2.0f) - 343, 50, WHITE);
+    DrawTexture(screen->title, (GetScreenWidth() / 2.0f) - (screen->title.width / 2.0f), 50, WHITE);
 
     Color color1 = {102, 149, 89, 200};
     DrawRectangleRounded({

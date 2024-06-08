@@ -13,6 +13,27 @@ enum Tool
     ERASER
 };
 
+
+void drawConnectedClients(shared_ptr<ChatClient> &client)
+{
+    Font font = GetFontDefault();
+    vector<string> connectedClients = client->connectedClients;
+
+    // Draw connected clients box (left)
+    DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
+    DrawTextPro(font, "Connected Clients", {15, 175}, {0, 0}, 0, 20, 2, BLACK);
+
+    for (int i = 0; i < connectedClients.size(); i++)
+    {
+        // Draw box for each client
+        DrawRectangle(15, 200.0f + 20 * i, 190, 20, WHITE);
+        DrawRectangleLines(15, 200.0f + 20 * i, 190, 20, DARKGRAY);
+
+        // Draw the client name
+        DrawTextPro(font, connectedClients[i].c_str(), {20, 205.0f + 20 * i}, {0, 0}, 0, 14, 2, BLACK);
+    }
+}
+
 void drawChat(shared_ptr<ChatClient> &client)
 {
     Font font = GetFontDefault();
@@ -38,6 +59,12 @@ void drawChat(shared_ptr<ChatClient> &client)
     // Draw the chat input box
     GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
 
+    // Usando GuiTextBox no editable
+    Color color_chat = {252, 229, 113, 255};
+    char text[5] = "CHAT";
+    DrawRectangle((float)GetScreenWidth() - 215, (float)GetScreenHeight() - 590, 205, 35, color_chat);
+    DrawTextPro(GetFontDefault(), text, {(float)GetScreenWidth() - 130, (float)GetScreenHeight() - 580},
+                {0.0f, 0.0f}, 0.0f, 15.0f, 2.0f, BLACK);
     // Send the message when the user presses Enter
     if (IsKeyPressed(KEY_ENTER) && strlen(message) > 0)
     {
@@ -46,7 +73,7 @@ void drawChat(shared_ptr<ChatClient> &client)
     }
 }
 
-void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
+void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
 {
     // Tools
     enum Tool
@@ -125,6 +152,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
     ClearBackground(color_bg);
     // header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
+    DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
 
     // Canvas
     Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
@@ -149,6 +177,9 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client)
 
     // Draw chat
     drawChat(client);
+
+    // Draw connected clients
+    drawConnectedClients(client);
 
     // Boton palabras
     if (!word.GetChosen())

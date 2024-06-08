@@ -143,6 +143,26 @@ public:
         string msg = "[" + client.name + "] has connected.";
         Broadcast(client, msg);
 
+        // Create a string with the names of all connected clients
+        string connectedClients = "Connected clients: ";
+        for (const auto &otherClient : clients)
+        {
+            // Check if the client is still connected
+            if (otherClient.second.clientSocket != INVALID_SOCKET)
+            {
+                connectedClients += otherClient.second.name + ", ";
+            }
+        }
+
+        // Remove the trailing comma and space
+        if (connectedClients.length() > 0)
+        {
+            connectedClients = connectedClients.substr(0, connectedClients.length() - 2);
+        }
+
+        // Send the list of connected clients to the new client
+        send(clientSocket, connectedClients.c_str(), connectedClients.length(), 0);
+
         return client;
     }
 
@@ -180,10 +200,6 @@ public:
             }
 
             string message(buffer, bytesReceived);
-            if (message == "exit")
-            {
-                break;
-            }
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;
 
             string msg = "[" + client.name + "]: " + message;
