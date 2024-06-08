@@ -5,7 +5,7 @@
 #include <WS2tcpip.h>
 #include <tchar.h>
 #include <thread>
-#include "./headers/ChatClient.h"
+#include "./headers/Client.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -16,16 +16,16 @@ using std::string;
 using std::thread;
 using std::to_string;
 
-class ChatServer
+class Server
 {
 public:
     int clientCount = 0;
     int port;
     SOCKET listenSocket;
     sockaddr_in serverAddress;
-    map<int, ChatClient> clients;
+    map<int, Client> clients;
 
-    ChatServer(int port = 12345)
+    Server(int port = 12345)
     {
         this->port = port;
 
@@ -90,7 +90,7 @@ public:
         cout << "Listening on address: " << inet_ntoa(serverAddress.sin_addr) << ":" << port << endl;
     }
 
-    ~ChatServer()
+    ~Server()
     {
         if (closesocket(listenSocket) == SOCKET_ERROR)
         {
@@ -111,7 +111,7 @@ public:
         WSACleanup();
     }
 
-    void Broadcast(ChatClient &sender, string message)
+    void Broadcast(Client &sender, string message)
     {
         for (auto const &otherClient : clients)
         {
@@ -125,11 +125,11 @@ public:
         }
     }
 
-    ChatClient AddClient(SOCKET clientSocket, string name)
+    Client AddClient(SOCKET clientSocket, string name)
     {
         clientCount++;
 
-        ChatClient client(clientCount, name, clientSocket);
+        Client client(clientCount, name, clientSocket);
 
         clients[clientCount] = client;
 
@@ -137,20 +137,22 @@ public:
         string id = to_string(client.id);
         send(clientSocket, id.c_str(), id.length(), 0);
 
-        cout << "Client connected: " << "[" << client.id << "] " << client.name << endl;
+        // Format: "(1) Client1 connected."
+        string msg = "(" + to_string(client.id) + ") " + client.name + " connected.";
 
-        // broadcast connection message
-        string msg = "[" + client.name + "] has connected.";
+        // broadcast connection message with the client's id and name
+        cout << msg << endl;
         Broadcast(client, msg);
 
-        // Create a string with the names of all connected clients
+        // Create a string with the id, name and points of all connected clients
+        // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
         string connectedClients = "Connected clients: ";
         for (const auto &otherClient : clients)
         {
             // Check if the client is still connected
             if (otherClient.second.clientSocket != INVALID_SOCKET)
             {
-                connectedClients += otherClient.second.name + ", ";
+                connectedClients += "[" + to_string(otherClient.second.id) + "]" + otherClient.second.name + "(" + to_string(otherClient.second.points) + "), ";
             }
         }
 
@@ -166,13 +168,14 @@ public:
         return client;
     }
 
-    void RemoveClient(ChatClient client)
+    void RemoveClient(Client client)
     {
         clients.erase(client.id);
         cout << "Client disconnected: " << "[" << client.id << "] " << client.name << endl;
 
         // broadcast disconnection message
-        string msg = "[" + client.name + "] has disconnected.";
+        // Format: "(1) Client1 disconnected."
+        string msg = "(" + to_string(client.id) + ") " + client.name + " disconnected.";
         Broadcast(client, msg);
     }
 
@@ -188,7 +191,7 @@ public:
         }
         string name(buffer, bytesReceived);
 
-        ChatClient client = AddClient(csocket, name);
+        Client client = AddClient(csocket, name);
 
         while (true)
         {
@@ -200,10 +203,6 @@ public:
             }
 
             string message(buffer, bytesReceived);
-            if (message == "exit")
-            {
-                break;
-            }
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;
 
             string msg = "[" + client.name + "]: " + message;
@@ -234,7 +233,7 @@ int main()
                |_|    |___/
     )" << endl;
 
-    ChatServer server;
+    Server server;
 
     while (true)
     {

@@ -13,10 +13,10 @@ enum Tool
     ERASER
 };
 
-void drawConnectedClients(shared_ptr<ChatClient> &client)
+void drawConnectedClients(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
-    vector<string> connectedClients = client->connectedClients;
+    vector<OtherClient> connectedClients = client->connectedClients;
 
     // Draw connected clients box (left)
     DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
@@ -25,15 +25,21 @@ void drawConnectedClients(shared_ptr<ChatClient> &client)
     for (int i = 0; i < connectedClients.size(); i++)
     {
         // Draw box for each client
-        DrawRectangle(15, 200.0f + 20 * i, 190, 20, WHITE);
-        DrawRectangleLines(15, 200.0f + 20 * i, 190, 20, DARKGRAY);
+        DrawRectangle(15, 200.0f + 40 * i, 190, 20, WHITE);
+        DrawRectangleLines(15, 200.0f + 40 * i, 190, 20, DARKGRAY);
 
-        // Draw the client name
-        DrawTextPro(font, connectedClients[i].c_str(), {20, 205.0f + 20 * i}, {0, 0}, 0, 14, 2, BLACK);
+        // Draw the client id
+        DrawTextPro(font, ("(" + std::to_string(connectedClients[i].id) + ")").c_str(), {20, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, BLACK);
+
+        // Draw the client name (right side)
+        DrawTextPro(font, connectedClients[i].name.c_str(), {50, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
+
+        // Draw the client points (bottom)
+        DrawTextPro(font, std::to_string(connectedClients[i].points).c_str(), {180, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
     }
 }
 
-void drawChat(shared_ptr<ChatClient> &client)
+void drawChat(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
     static char message[20] = {0};
@@ -72,7 +78,7 @@ void drawChat(shared_ptr<ChatClient> &client)
     }
 }
 
-void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
+void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 {
     // Tools
     enum Tool
@@ -92,8 +98,6 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
 
     // Words
     static Words word;
-    static array<string, 3> words = word.GetRandomWords();
-    static bool chosen = false;
 
     if (!initialized)
     {
@@ -188,36 +192,14 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     drawConnectedClients(client);
 
     // Boton palabras
-    if (!chosen)
+    if (!word.GetChosen())
     {
-        buttons((GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f, words[0].c_str());
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
-        {
-            word.SetChosenWord(words[0]);
-            chosen = true;
-        }
-        buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f, words[1].c_str());
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
-        {
-            word.SetChosenWord(words[1]);
-            chosen = true;
-        }
-        buttons(GetScreenWidth() / 2.0f + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f, words[2].c_str());
-        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
-        {
-            word.SetChosenWord(words[2]);
-            chosen = true;
-        }
+        word.SetChosenWord();
     }
-
-    // Draw the words
-    if (chosen)
+    if (word.GetChosen())
     {
-        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20) / 2), +60}, {0, 0}, 0, 20, 4, BLACK);
-        for (int i = 0; i < word.GetChosenWord().size(); i++)
-        {
-            DrawRectangle((GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20)) + i * 30 - 15, 90.0f, 20.0f, 5.0f, BLACK);
-        }
+        word.SetIsPlayer(true);
+        word.DrawChosenWord();
     }
 
     EndDrawing();

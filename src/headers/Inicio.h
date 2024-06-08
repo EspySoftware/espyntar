@@ -6,7 +6,7 @@
 #include "./ColorPalette.h"
 #include "./Canvas.h"
 #include "./Painter.h"
-#include "./ChatClient.h"
+#include "./Client.h"
 
 using std::cin;
 using std::cout;
@@ -17,10 +17,10 @@ using std::thread;
 #define screenWidth 1160
 #define screenHeight 760
 
-bool connectToServer(shared_ptr<ChatClient> &client, string ip, string name, int port, thread *senderThread, thread *receiverThread)
+bool connectToServer(shared_ptr<Client> &client, string ip, string name, int port, thread *senderThread, thread *receiverThread)
 {
     cout << "Trying to connect to server " << ip << " with name " << name << endl;
-    client = make_shared<ChatClient>(ip, port, name);
+    client = make_shared<Client>(ip, port, name);
 
     if (client->clientSocket == INVALID_SOCKET || client->clientSocket == SOCKET_ERROR)
     {
@@ -73,7 +73,7 @@ void buttons(float x, float y, float width, float height, const char *text)
     DrawRectangleRounded(buttonRect2, 0.3f, 6, {215, 182, 15, 255});
 }
 
-void startGUI(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThread, thread *receiverThread)
+void startGUI(Screen *screen, shared_ptr<Client> &client, thread *senderThread, thread *receiverThread)
 {
     Color color_base = {44, 74, 36, 200};
     Color color_names = {252, 229, 113, 255};
@@ -136,7 +136,7 @@ void startGUI(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThre
     }
 }
 
-void drawStart(Screen *screen, shared_ptr<ChatClient> &client, thread *senderThread, thread *receiverThread)
+void drawStart(Screen *screen, shared_ptr<Client> &client, thread *senderThread, thread *receiverThread)
 {
     BeginDrawing();
     ClearBackground(BLACK);

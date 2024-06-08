@@ -5,8 +5,7 @@
 #include "./headers/ColorPalette.h"
 #include "./headers/Canvas.h"
 #include "./headers/Painter.h"
-#include "./headers/ChatClient.h"
-#include "./headers/Configuration.h"
+#include "./headers/Client.h"
 #include "./headers/Inicio.h"
 #include "./headers/Game.h"
 
@@ -15,7 +14,7 @@ using std::shared_ptr;
 using std::string;
 using std::thread;
 
-void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *receiverThread)
+void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverThread)
 {
     // SetTraceLogLevel(LOG_NONE); // Disable raylib logging
     InitWindow(screenWidth, screenHeight, "Espyntar");
@@ -62,7 +61,7 @@ int main(void)
         return 1;
     }
 
-    shared_ptr<ChatClient> client;
+    shared_ptr<Client> client;
 
     thread senderThread;
     thread receiverThread;
