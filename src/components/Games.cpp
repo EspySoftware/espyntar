@@ -49,20 +49,23 @@ void Games::SetChosenWord()
 
     if (!isGuesser)
     {
+        DrawTextPro(GetFontDefault(), "Selecciona:", {(GetScreenWidth() / 2.0f) - (MeasureText("Selecciona:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         painter.SetBrushSize(0.0f);
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
+        DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
+
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 320, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, words[0].c_str()))
         {
             chosenWord = words[0];
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 80, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, words[1].c_str()))
         {
             chosenWord = words[1];
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) + 160, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, words[2].c_str()))
         {
             chosenWord = words[2];
             chosen = true;
@@ -72,6 +75,7 @@ void Games::SetChosenWord()
     else
     {
         painter.SetBrushSize(0.0f);
+        DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
         DrawTextPro(GetFontDefault(), "Esperando a NOMBRE-DE-JUGADOR", {(GetScreenWidth() / 2.0f) - (MeasureText("Esperando a NOMBRE-DE-JUGADOR", 20) / 2), GetScreenHeight() - 500.0f}, {0, 0}, 0, 20, 4, BLACK);
     }
 }
@@ -89,7 +93,7 @@ void Games::DrawChosenWord() // mandarle como referencia al cliente
     filtered = FilterChat(messages);
     for (int i = 0; i < filtered.size(); i++)
     {
-        if (filtered[i] == chosenWord)
+        if (filtered[i] == chosenWord) // modificar para sumar puntos (no hay cliente para sumar puntos aun)
         {
             DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +300}, {0, 0}, 0, 20, 4, BLACK);
             client->points += 100;
@@ -103,10 +107,14 @@ void Games::DrawChosenWord() // mandarle como referencia al cliente
     // Draw the word
     if (!isGuesser)
     {
+        DrawTextPro(GetFontDefault(), "Dibuja:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+        // agregar paleta solo al que dibuja
     }
     else
     {
+        DrawTextPro(GetFontDefault(), "Adivina:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
+
         painter.SetBrushSize(0.0f);
         if (timer >= (80 * FRAMES))
         {
