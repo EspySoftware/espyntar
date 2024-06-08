@@ -29,9 +29,9 @@ bool connectToServer(shared_ptr<Client> &client, string ip, string name, int por
     }
 
     *senderThread = thread([client]()
-                        { client->Send(); });
+                           { client->Send(); });
     *receiverThread = thread([client]()
-                        { client->Receive(); });
+                             { client->Receive(); });
 
     return true;
 }
@@ -40,6 +40,7 @@ typedef enum // estructura logica del juego
 {
     START,
     GAME,
+    CONFIG,
     EXIT
 } GameScene;
 
@@ -77,6 +78,11 @@ void startGUI(Screen *screen, shared_ptr<Client> &client, thread *senderThread, 
     Color color_base = {44, 74, 36, 200};
     Color color_names = {252, 229, 113, 255};
     Color color_button = {249, 217, 53, 255};
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 15);
+
+    GuiSetStyle(DEFAULT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER);
+    GuiSetStyle(DEFAULT, TEXT_SPACING, 3);
+
     GuiSetStyle(TEXTBOX, TEXT_COLOR_NORMAL, ColorToInt(WHITE));
     GuiSetStyle(TEXTBOX, TEXT_COLOR_PRESSED, ColorToInt(WHITE));
     GuiSetStyle(TEXTBOX, BORDER_COLOR_NORMAL, ColorToInt(color_base));

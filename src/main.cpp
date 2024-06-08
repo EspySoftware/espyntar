@@ -7,6 +7,7 @@
 #include "./headers/Painter.h"
 #include "./headers/Client.h"
 #include "./headers/Inicio.h"
+#include "./headers/Configuration.h"
 #include "./headers/Game.h"
 
 using std::make_shared;
@@ -26,6 +27,8 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
 
     SetTargetFPS(144);
     Screen screen;
+    Configuration configScene;
+
     while (!WindowShouldClose())
     {
         {
@@ -36,7 +39,9 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
                 break;
             case GAME: // ventana de juego
                 drawGame(&screen, client, &espy);
-
+                break;
+            case CONFIG: // ventana configuracion
+                configScene.drawConfig(&screen);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();

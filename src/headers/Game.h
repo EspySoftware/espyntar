@@ -13,11 +13,10 @@ enum Tool
     ERASER
 };
 
-
 void drawConnectedClients(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
-    vector<string> connectedClients = client->connectedClients;
+    vector<OtherClient> connectedClients = client->connectedClients;
 
     // Draw connected clients box (left)
     DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
@@ -26,11 +25,17 @@ void drawConnectedClients(shared_ptr<Client> &client)
     for (int i = 0; i < connectedClients.size(); i++)
     {
         // Draw box for each client
-        DrawRectangle(15, 200.0f + 20 * i, 190, 20, WHITE);
-        DrawRectangleLines(15, 200.0f + 20 * i, 190, 20, DARKGRAY);
+        DrawRectangle(15, 200.0f + 40 * i, 190, 20, WHITE);
+        DrawRectangleLines(15, 200.0f + 40 * i, 190, 20, DARKGRAY);
 
-        // Draw the client name
-        DrawTextPro(font, connectedClients[i].c_str(), {20, 205.0f + 20 * i}, {0, 0}, 0, 14, 2, BLACK);
+        // Draw the client id
+        DrawTextPro(font, ("(" + std::to_string(connectedClients[i].id) + ")").c_str(), {20, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, BLACK);
+
+        // Draw the client name (right side)
+        DrawTextPro(font, connectedClients[i].name.c_str(), {50, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
+
+        // Draw the client points (bottom)
+        DrawTextPro(font, std::to_string(connectedClients[i].points).c_str(), {180, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
     }
 }
 
@@ -153,7 +158,12 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
-
+    buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
+    if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
+    {
+        screen->scene = CONFIG;
+        cout << "Pantalla configuracion" << endl;
+    }
     // Canvas
     Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
     Vector2 canvasPosition;
@@ -190,7 +200,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     {
         word.SetIsPlayer(true);
         word.DrawChosenWord();
-    } 
+    }
 
     EndDrawing();
 }

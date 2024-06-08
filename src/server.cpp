@@ -16,7 +16,7 @@ using std::string;
 using std::thread;
 using std::to_string;
 
-class ChatServer
+class Server
 {
 public:
     int clientCount = 0;
@@ -25,7 +25,7 @@ public:
     sockaddr_in serverAddress;
     map<int, Client> clients;
 
-    ChatServer(int port = 12345)
+    Server(int port = 12345)
     {
         this->port = port;
 
@@ -90,7 +90,7 @@ public:
         cout << "Listening on address: " << inet_ntoa(serverAddress.sin_addr) << ":" << port << endl;
     }
 
-    ~ChatServer()
+    ~Server()
     {
         if (closesocket(listenSocket) == SOCKET_ERROR)
         {
@@ -137,20 +137,22 @@ public:
         string id = to_string(client.id);
         send(clientSocket, id.c_str(), id.length(), 0);
 
-        cout << "Client connected: " << "[" << client.id << "] " << client.name << endl;
+        // Format: "(1) Client1 connected."
+        string msg = "(" + to_string(client.id) + ") " + client.name + " connected.";
 
-        // broadcast connection message
-        string msg = "[" + client.name + "] has connected.";
+        // broadcast connection message with the client's id and name
+        cout << msg << endl;
         Broadcast(client, msg);
 
-        // Create a string with the names of all connected clients
+        // Create a string with the id, name and points of all connected clients
+        // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
         string connectedClients = "Connected clients: ";
         for (const auto &otherClient : clients)
         {
             // Check if the client is still connected
             if (otherClient.second.clientSocket != INVALID_SOCKET)
             {
-                connectedClients += otherClient.second.name + ", ";
+                connectedClients += "[" + to_string(otherClient.second.id) + "]" + otherClient.second.name + "(" + to_string(otherClient.second.points) + "), ";
             }
         }
 
@@ -172,7 +174,8 @@ public:
         cout << "Client disconnected: " << "[" << client.id << "] " << client.name << endl;
 
         // broadcast disconnection message
-        string msg = "[" + client.name + "] has disconnected.";
+        // Format: "(1) Client1 disconnected."
+        string msg = "(" + to_string(client.id) + ") " + client.name + " disconnected.";
         Broadcast(client, msg);
     }
 
@@ -230,7 +233,7 @@ int main()
                |_|    |___/
     )" << endl;
 
-    ChatServer server;
+    Server server;
 
     while (true)
     {

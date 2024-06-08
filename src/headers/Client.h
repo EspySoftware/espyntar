@@ -5,6 +5,7 @@
 #include <memory>
 #include <sstream>
 #include <algorithm>
+#include <regex>
 
 // Function collision with raylib
 #define Rectangle WIN_Rectangle
@@ -23,21 +24,36 @@ using std::cout;
 using std::endl;
 using std::getline;
 using std::make_shared;
+using std::regex;
 using std::shared_ptr;
+using std::smatch;
 using std::stoi;
 using std::string;
 using std::stringstream;
 using std::vector;
+
+class OtherClient
+{
+public:
+    int id;
+    string name;
+    int points;
+
+    OtherClient(int id, string name, int points) { this->id = id, this->name = name, this->points = points; }
+};
 
 class Client
 {
 public:
     int id = -1;
     string name;
+    int points = 0;
+
     SOCKET clientSocket;
     sockaddr_in serverAddress;
+
     vector<string> messages;
-    vector<string> connectedClients;
+    vector<OtherClient> connectedClients;
 
     Client() = default;                                                                                           // Constructor por defecto
     Client(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
