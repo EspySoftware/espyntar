@@ -21,4 +21,6 @@ class Words
         bool GetChosen() const {return chosen; }
         void DrawChosenWord();
         void SetIsPlayer(bool isPlayer) {this->isPlayer = isPlayer; }
+        string CensorWord(string word);
+        void DrawTimer(double timer);
 };

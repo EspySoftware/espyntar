@@ -7,7 +7,7 @@ Morir
 Crecer
 Cambiar
 Aprender
-Enseñar
+Miti
 Ganar
 Perder
 Crear
@@ -52,14 +52,14 @@ Casa
 Sala
 Playa
 Montaña
-Rio
+Danna
 Lago
 Bosque
 Desierto
 Ciudad
 Pueblo
 Parque
-Jardin
+Haro
 Escuela
 Universidad
 Biblioteca
@@ -98,3 +98,5 @@ Juguete
 Tormenta
 Desvanecer
 Escalera
+Espy
+Software
