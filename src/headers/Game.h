@@ -67,7 +67,8 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     static Canvas *canvas;
     static Painter *painter;
     static Tool currentTool = BRUSH;
-    int colorIndex, originalColor;
+    static int colorIndex;
+    static int timer = 0;
 
     // Words
     static Words word;
@@ -101,7 +102,6 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
         if (colorIndex >= 0)
         {
             painter->SetColor(colorIndex);
-            originalColor = colorIndex;
         }
         else
         {
@@ -119,7 +119,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     {
         painter->SetColor(0); // Set color to white for erasing
         painter->Paint(position);
-        painter->SetColor(originalColor); // Restore the original color
+        painter->SetColor(colorIndex); // Restore the original color
     }
     else
     {
@@ -183,7 +183,11 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     // Draw the words
     if (chosen)
     {
-        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - 50, 60.0f}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20) / 2), + 60 }, {0, 0}, 0, 20, 4, BLACK);
+        for (int i = 0; i < word.GetChosenWord().size(); i++)
+        {
+            DrawRectangle((GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20)) + i * 30 - 15, 90.0f, 20.0f, 5.0f, BLACK);
+        }
     }
 
     EndDrawing();

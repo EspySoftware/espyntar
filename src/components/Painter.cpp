@@ -5,6 +5,7 @@ Painter::Painter(ColorPalette &palette, Canvas &canvas) : palette(palette), canv
     brushSize = 20.0f;
     currentColor = 0;
     lastPosition = {-1.0f, -1.0f};
+    SetColor(0);
 }
 
 void Painter::Paint(Vector2 position)
