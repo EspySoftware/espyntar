@@ -29,9 +29,9 @@ bool connectToServer(shared_ptr<ChatClient> &client, string ip, string name, int
     }
 
     *senderThread = thread([client]()
-                           { client->Send(); });
+                        { client->Send(); });
     *receiverThread = thread([client]()
-                             { client->Receive(); });
+                        { client->Receive(); });
 
     return true;
 }
