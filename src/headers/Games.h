@@ -16,7 +16,7 @@ private:
     vector<string> words;
     string chosenWord;
     bool chosen = false;
-    bool isGuesser = true; // False means player is the drawer
+    bool isGuesser = false; // False means player is the drawer
     bool guessed = false;  // True means player has guessed the word
     Painter &painter;
     Canvas &canvas;
@@ -33,6 +33,6 @@ public:
     void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
     bool GetIsGuesser() { return isGuesser; }
     string CensorWord(string word);
-    void DrawTimer(int &timer);
+    void DrawTimer(double timer);
     vector<string> FilterChat(vector<string> messages);
 };

@@ -4,7 +4,6 @@
 #include "../headers/Inicio.h"
 using std::array;
 using std::vector;
-#define FRAMES 144
 
 // Tools
 enum Tool
@@ -35,13 +34,8 @@ void drawConnectedClients(shared_ptr<Client> &client)
         // Draw the client name (right side)
         DrawTextPro(font, connectedClients[i].name.c_str(), {50, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
 
-        // Draw the client id (left side of the box)
-        std::string idStr = "#" + std::to_string(connectedClients[i].id);
-        textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
-        float idX = recPlayer.x + 5;
-        float idY = nameY + textSize.y - 5;
-
-        DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 15, 2, BLACK);
+        // Draw the client points (bottom)
+        DrawTextPro(font, std::to_string(connectedClients[i].points).c_str(), {180, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
     }
 }
 
@@ -82,20 +76,6 @@ void drawChat(shared_ptr<Client> &client)
         client->Send(message);
         strcpy(message, "");
     }
-}
-
-void drawPaintMessages(shared_ptr<Client> &client, Painter *painter)
-{
-    vector<PaintMessage> paintMessages = client->getPaintMessages();
-
-    for (int i = 0; i < paintMessages.size(); i++)
-    {
-        Vector2 position = {(float)paintMessages[i].x, (float)paintMessages[i].y};
-        painter->Paint(position, paintMessages[i].color, paintMessages[i].size);
-    }
-
-    // Clear the paint messages
-    client->paintMessages.clear();
 }
 
 void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
@@ -154,15 +134,9 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
             }
             else if (currentTool == BRUSH)
             {
-                painter->Paint(position, client);
+                painter->Paint(position);
             }
         }
-    }
-    else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
-    {
-        painter->SetColor(0); // Set color to white for erasing
-        painter->Paint(position, client);
-        painter->SetColor(colorIndex); // Restore the original color
     }
     else
     {
@@ -177,7 +151,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
-
     buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
     if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
     {
@@ -212,11 +185,9 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Draw chat
     drawChat(client);
 
-    // Draw paint messages
-    drawPaintMessages(client, painter);
-
     // Draw connected clients
     drawConnectedClients(client);
+
     // Draw option games
     if (!game->GetChosen())
     {

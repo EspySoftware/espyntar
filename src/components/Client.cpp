@@ -1,5 +1,4 @@
 #include "../headers/Client.h"
-#include "../headers/Painter.h"
 
 Client::Client(string address, int port, string name)
 {
@@ -147,20 +146,17 @@ void Client::Send()
 
 void Client::Send(string message)
 {
-    // PAINT command
-    if (message.find("PAINT:") != 0)
-    {
-        string msg = "[" + name + "]: " + message;
-        messages.push_back(msg);
-    }
+    string msg = "[" + name + "]: " + message;
 
-    // Send the message to the server
     int bytesent = send(clientSocket, message.c_str(), message.length(), 0);
+
     if (bytesent == SOCKET_ERROR)
     {
         int errorCode = WSAGetLastError();
         cout << "Failed to send data to the server. Error code: " << errorCode << endl;
     }
+
+    messages.push_back(msg);
 
     // // Debug print
     // cout << "Current messages after sending: ";
@@ -186,65 +182,48 @@ void Client::Receive()
             break;
         }
 
-        /* Process the server response */
         buffer[bytesReceived] = '\0';
+        cout << buffer << endl;
+
+        messages.push_back(buffer);
+
+        // Add and remove clients from the vector
+        // Format: (1) Client1 disconnected. or (22) Client22 connected. (add id and name to the vector)
         string message = buffer;
+        regex r("(\\d+)\\)\\s+(\\w+)");
+        smatch match;
 
-        // PAINT COMMAND
-        // Format: "PAINT:100,200,1,10" (x, y, color, brushSize)
-        if (message.find("PAINT:") == 0)
+        if (regex_search(message, match, r) && match.size() > 2)
         {
-            // Extract the paint data
-            regex r("PAINT:(\\d+),(\\d+),(\\d+),(\\d+)");
-            smatch match;
-            if (regex_search(message, match, r) && match.size() > 4)
+            int id = stoi(match.str(1));
+            string name = match.str(2);
+
+            // Client disconnected
+            if (message.find("disconnected") != string::npos)
             {
-                int x = stoi(match.str(1));
-                int y = stoi(match.str(2));
-                int color = stoi(match.str(3));
-                int brushSize = stoi(match.str(4));
-
-                // Add the paint message to the vector
-                paintMessages.push_back((PaintMessage){x, y, color, (float)brushSize});
-            }
-        }
-        else
-        {
-            // Add and remove clients from the vector
-            // Format: (1) Client1 disconnected. or (22) Client22 connected. (add id and name to the vector)
-            regex r("(\\d+)\\)\\s+(\\w+)");
-            smatch match;
-
-            if (regex_search(message, match, r) && match.size() > 2)
-            {
-                int id = stoi(match.str(1));
-                string name = match.str(2);
-
-                // Client disconnected
-                if (message.find("disconnected") != string::npos)
+                for (int i = 0; i < connectedClients.size(); i++)
                 {
-                    for (int i = 0; i < connectedClients.size(); i++)
+                    if (connectedClients[i].id == id)
                     {
-                        if (connectedClients[i].id == id)
-                        {
-                            connectedClients.erase(connectedClients.begin() + i);
-                            break;
-                        }
+                        connectedClients.erase(connectedClients.begin() + i);
+                        break;
                     }
                 }
-                // Client connected
-                else if (message.find("connected") != string::npos)
-                {
-                    connectedClients.push_back({id, name, 0});
-                }
             }
-
-            cout << buffer << endl;
-            messages.push_back(buffer);
+            // Client connected
+            else if (message.find("connected") != string::npos)
+            {
+                connectedClients.push_back({id, name, 0});
+            }
         }
     }
 
     Disconnect();
+}
+
+vector<string> Client::getMessages()
+{
+    return messages;
 }
 
 void Client::Disconnect()
