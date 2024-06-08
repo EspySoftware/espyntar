@@ -109,6 +109,6 @@ string Words::CensorWord(string word)
 
 void Words::DrawTimer(double timer)
 {
-    DrawTextPro(GetFontDefault(), "Tiempo:", {float(GetScreenWidth()) - 200, 80}, {0, 0}, 0, 20, 4, BLACK);
-    DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {float(GetScreenWidth()) - 200, 100}, {0, 0}, 0, 20, 4, BLACK);
+    DrawTextPro(GetFontDefault(), "Tiempo:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
+    DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
 } 
