@@ -205,10 +205,7 @@ void Client::Receive()
                 int brushSize = stoi(match.str(4));
 
                 // Draw the paint action
-                painter->Paint({static_cast<float>(x), static_cast<float>(y)});
-
-                // Debug print
-                cout << "PAINT: " << x << ", " << y << ", " << color << ", " << brushSize << endl;
+                painter->Paint({(float)x, (float)y}, color, brushSize);
             }
         }
         else

@@ -18,6 +18,10 @@ Canvas::~Canvas()
 
 void Canvas::Draw(Vector2 position, float radius, Color color)
 {
+    cout << "Draw at " << position.x << ", " << position.y << endl;
+    cout << "Size: " << radius << endl;
+    cout << "Target [" << target.texture.id << "] " << target.texture.width << "x" << target.texture.height << endl;
+
     BeginTextureMode(target);
     DrawCircleV(position, radius, color);
     EndTextureMode();

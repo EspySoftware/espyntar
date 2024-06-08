@@ -64,7 +64,7 @@ public:
 
     vector<string> messages;
     vector<OtherClient> connectedClients;
-    Painter *painter = nullptr;
+    Painter *painter;
 
     Client() = default;                                                                                           // Constructor por defecto
     Client(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
