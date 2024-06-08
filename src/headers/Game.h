@@ -189,12 +189,11 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
-    DrawTextPro(GetFontDefault(), "Adivina:", {(GetScreenWidth() - 20.0f) / 2.1f, 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
 
     buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
     if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
     {
-        // screen->scene = CONFIG;
+        screen->scene = CONFIG;
     }
 
     // Canvas

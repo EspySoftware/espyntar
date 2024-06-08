@@ -41,8 +41,8 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
                 drawGame(&screen, client, &espy);
                 break;
             case CONFIG: // ventana configuracion
-                cout << "ola" << endl;
-                // configScene.drawConfig(&screen);
+                // cout << "ola" << endl;
+                configScene.drawConfig(&screen);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();
