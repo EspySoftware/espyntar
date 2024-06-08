@@ -29,8 +29,8 @@ public:
     void SetChosenWord();
     bool GetChosen() const { return chosen; }
     void DrawChosenWord();
-    void SetisGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
-    bool GetisGuesser() { return isGuesser; }
+    void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
+    bool GetIsGuesser() { return isGuesser; }
     string CensorWord(string word);
     void DrawTimer(double timer);
     vector<string> FilterChat(vector<string> messages);

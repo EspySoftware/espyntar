@@ -167,7 +167,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     DrawTextureRec(canvas->GetTarget().texture, rec, canvasPosition, WHITE);
 
     // Brush outline
-    if (!game->GetisGuesser())
+    if (!game->GetIsGuesser())
     {
         if (currentTool == BRUSH)
         {
