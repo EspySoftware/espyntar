@@ -82,7 +82,7 @@ void Games::DrawChosenWord() // mandarle como referencia al cliente
     static string censoredString = CensorWord(chosenWord);
     static vector<string> filtered;
 
-    static int timer = 120 * FRAMES;
+    static int timer = 80 * FRAMES;
     DrawTimer(timer);
 
     vector<string> messages = client->getMessages();
@@ -96,18 +96,17 @@ void Games::DrawChosenWord() // mandarle como referencia al cliente
             guessed = true;
         }
     }
+    int i = censoredString.size();
+    std::string str = std::to_string(i);
+    DrawTextPro(GetFontDefault(), str.c_str(), {(GetScreenWidth() / 2.0f) + (MeasureText(censoredString.c_str(), 20)), 90}, {0, 0}, 0.0f, 10.0f, 2.0f, BLACK);
 
     // Draw the word
     if (!isGuesser)
     {
-        int i = censoredString.size();
-        std::string str = std::to_string(i);
-        DrawTextPro(GetFontDefault(), str.c_str(), {(GetScreenWidth() / 2.0f) + (MeasureText(censoredString.c_str(), 20)), 90}, {0, 0}, 0.0f, 10.0f, 2.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
     }
     else
     {
-
         painter.SetBrushSize(0.0f);
         if (timer >= (80 * FRAMES))
         {
@@ -117,12 +116,12 @@ void Games::DrawChosenWord() // mandarle como referencia al cliente
         else
         {
             DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            if (timer >= (35 * FRAMES))
+            if (timer <= (35 * FRAMES))
             {
                 static int rand1 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand1) = chosenWord.at(rand1);
             }
-            if (timer >= (50 * FRAMES))
+            if (timer <= (50 * FRAMES))
             {
                 static int rand2 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand2) = chosenWord.at(rand2);
