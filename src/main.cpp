@@ -7,6 +7,7 @@
 #include "./headers/Painter.h"
 #include "./headers/Client.h"
 #include "./headers/Inicio.h"
+#include "./headers/Configuration.h"
 #include "./headers/Game.h"
 
 using std::make_shared;
