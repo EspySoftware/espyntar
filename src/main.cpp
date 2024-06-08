@@ -24,7 +24,7 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
     SetWindowIcon(icon2);
     Texture2D espy = LoadTexture("../assets/espy_peke.png");
 
-    SetTargetFPS(144);
+    SetTargetFPS(60);
     Screen screen;
     while (!WindowShouldClose())
     {

@@ -203,6 +203,14 @@ public:
             }
 
             string message(buffer, bytesReceived);
+
+            // Check if message is PAINT: x,y,color,brushSize
+            if (message.find("PAINT:") == 0)
+            {
+                Broadcast(client, message);
+                continue;
+            }
+
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;
 
             string msg = "[" + client.name + "]: " + message;

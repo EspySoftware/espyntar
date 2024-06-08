@@ -104,6 +104,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         palette = new ColorPalette();
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
+        client->SetPainter(painter);
         initialized = true;
     }
 
@@ -131,7 +132,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         {
             if (currentTool == BRUSH)
             {
-                painter->Paint(position);
+                painter->Paint(position, client);
             }
             else if (currentTool == BUCKET)
             {
@@ -142,7 +143,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
     {
         painter->SetColor(0); // Set color to white for erasing
-        painter->Paint(position);
+        painter->Paint(position, client);
         painter->SetColor(colorIndex); // Restore the original color
     }
     else

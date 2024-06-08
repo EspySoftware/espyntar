@@ -1,4 +1,5 @@
 #include "../headers/Painter.h"
+#include "../headers/Client.h"
 
 Painter::Painter(ColorPalette &palette, Canvas &canvas) : palette(palette), canvas(canvas)
 {
@@ -10,6 +11,7 @@ Painter::Painter(ColorPalette &palette, Canvas &canvas) : palette(palette), canv
 
 void Painter::Paint(Vector2 position)
 {
+    cout << "Painting at " << position.x << ", " << position.y << endl;
     position.x -= GetScreenWidth() / 2.0f - canvas.GetTarget().texture.width / 2.0f;
     position.y -= GetScreenHeight() / 2.0f - canvas.GetTarget().texture.height / 2.0f + 70.0f;
 
@@ -30,6 +32,18 @@ void Painter::Paint(Vector2 position)
     }
 
     lastPosition = position;
+}
+
+void Painter::Paint(Vector2 position, shared_ptr<Client> client)
+{
+    Paint(position);
+
+    // Create a message containing the paint action data
+    stringstream ss;
+    ss << "PAINT:" << position.x << "," << position.y << "," << currentColor << "," << brushSize;
+
+    // Send the message to the server
+    client->Send(ss.str());
 }
 
 void Painter::SetBrushSize(float delta)
