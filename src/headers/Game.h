@@ -21,39 +21,38 @@ void drawConnectedClients(shared_ptr<Client> &client)
     // Draw connected clients box (left)
     DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
     DrawTextPro(font, "JUGADORES", {50, 175}, {0, 0}, 0, 20, 2, BLACK);
-    Rectangle recPlayer = {15, 200.0f + 40, 190, 50};
 
     for (int i = 0; i < connectedClients.size(); i++)
     {
         float yOffset = 200.0f + 60 * i;
-        Rectangle recPlayer = {15, yOffset, 190, 50};
+        Rectangle recPlayer = {15, yOffset, 190, 70};
 
         // Draw box for each client
         DrawRectangleRec(recPlayer, {122, 236, 104, 255});
         DrawRectangleLinesEx(recPlayer, 1, {122, 236, 104, 255});
 
         // Draw the client name (centered in the box)
-        Vector2 textSize = MeasureTextEx(font, connectedClients[i].name.c_str(), 12, 2);
+        Vector2 textSize = MeasureTextEx(font, connectedClients[i].name.c_str(), 15, 2);
         float nameX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
         float nameY = recPlayer.y + (recPlayer.height - textSize.y) / 4;
 
-        DrawTextPro(font, connectedClients[i].name.c_str(), {nameX, nameY}, {0, 0}, 0, 12, 2, DARKGRAY);
+        DrawTextPro(font, connectedClients[i].name.c_str(), {nameX, nameY}, {0, 0}, 0, 15, 2, DARKGRAY);
 
         // Draw the client points (centered below the name)
         std::string pointsStr = std::to_string(connectedClients[i].points);
-        textSize = MeasureTextEx(font, pointsStr.c_str(), 12, 2);
+        textSize = MeasureTextEx(font, pointsStr.c_str(), 15, 2);
         float pointsX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
-        float pointsY = nameY + textSize.y + 5; 
+        float pointsY = nameY + textSize.y + 5;
 
-        DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 12, 2, DARKGRAY);
+        DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 15, 2, DARKGRAY);
 
         // Draw the client id (left side of the box)
-        std::string idStr = "(" + std::to_string(connectedClients[i].id) + ")";
-        textSize = MeasureTextEx(font, idStr.c_str(), 12, 2);
-        float idX = recPlayer.x + 5; 
-        float idY = nameY;
+        std::string idStr = "#" + std::to_string(connectedClients[i].id);
+        textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
+        float idX = recPlayer.x + 5;
+        float idY = nameY + textSize.y-5 ;
 
-        DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 12, 2, BLACK);
+        DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 15, 2, BLACK);
     }
 }
 
