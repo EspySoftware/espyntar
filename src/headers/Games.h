@@ -33,6 +33,6 @@ public:
     void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
     bool GetIsGuesser() { return isGuesser; }
     string CensorWord(string word);
-    void DrawTimer(double timer);
+    void DrawTimer(int &timer);
     vector<string> FilterChat(vector<string> messages);
 };

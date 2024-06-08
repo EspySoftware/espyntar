@@ -4,6 +4,7 @@
 #include "../headers/Inicio.h"
 using std::array;
 using std::vector;
+#define FRAMES 144
 
 // Tools
 enum Tool
@@ -50,7 +51,7 @@ void drawConnectedClients(shared_ptr<Client> &client)
         std::string idStr = "#" + std::to_string(connectedClients[i].id);
         textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
         float idX = recPlayer.x + 5;
-        float idY = nameY + textSize.y-5 ;
+        float idY = nameY + textSize.y - 5;
 
         DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 15, 2, BLACK);
     }
@@ -168,10 +169,12 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
+    DrawTextPro(GetFontDefault(), "Adivina:", {(GetScreenWidth() - 20.0f) / 2.1f, 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
+
     buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
     if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
     {
-        screen->scene = CONFIG;
+        // screen->scene = CONFIG;
     }
 
     // Canvas
@@ -203,7 +206,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 
     // Draw connected clients
     drawConnectedClients(client);
-
     // Draw option games
     if (!game->GetChosen())
     {

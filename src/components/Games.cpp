@@ -37,16 +37,14 @@ array<string, 3> Games::GetRandomWords() const
 
 void Games::SetChosenWord()
 {
-    static double timer = 0;
+    static int timer = 10 * FRAMES;
     static array<string, 3> words = GetRandomWords();
-    timer += 1;
     DrawTimer(timer);
 
-    if (timer == (15 * FRAMES))
+    if (timer <= 0 && !chosen)
     {
         chosenWord = words[0];
         chosen = true;
-        return;
     }
 
     if (!isGuesser)
@@ -78,15 +76,13 @@ void Games::SetChosenWord()
     }
 }
 
-void Games::DrawChosenWord()
+void Games::DrawChosenWord() // mandarle como referencia al cliente
 {
-
     static bool censored = false;
     static string censoredString = CensorWord(chosenWord);
     static vector<string> filtered;
 
-    static double timer = 0;
-    timer += 1;
+    static int timer = 120 * FRAMES;
     DrawTimer(timer);
 
     vector<string> messages = client->getMessages();
@@ -100,7 +96,7 @@ void Games::DrawChosenWord()
             guessed = true;
         }
     }
-    
+
     // Draw the word
     if (!isGuesser)
     {
@@ -142,9 +138,13 @@ string Games::CensorWord(string word)
     return censoredString;
 }
 
-void Games::DrawTimer(double timer)
+void Games::DrawTimer(int& timer)
 {
     DrawTextPro(GetFontDefault(), "Tiempo:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
+    if (timer > 0)
+    {
+        timer--;
+    }
     DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
 }
 
@@ -163,3 +163,4 @@ vector<string> Games::FilterChat(vector<string> messages)
     }
     return filteredMessages;
 }
+
