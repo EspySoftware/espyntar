@@ -13,7 +13,6 @@ enum Tool
     ERASER
 };
 
-
 void drawConnectedClients(shared_ptr<ChatClient> &client)
 {
     Font font = GetFontDefault();
@@ -155,7 +154,12 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     // header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
-
+    buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
+    if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
+    {
+        screen->scene = CONFIG;
+        cout << "Pantalla configuracion" << endl;
+    }
     // Canvas
     Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
     Vector2 canvasPosition;

@@ -6,6 +6,7 @@
 #include "./headers/Canvas.h"
 #include "./headers/Painter.h"
 #include "./headers/ChatClient.h"
+#include "./headers/Configuration.h"
 #include "./headers/Inicio.h"
 #include "./headers/Game.h"
 
@@ -26,6 +27,8 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
 
     SetTargetFPS(144);
     Screen screen;
+    Configuration configScene;
+
     while (!WindowShouldClose())
     {
         {
@@ -36,7 +39,9 @@ void PlayGame(shared_ptr<ChatClient> client, thread *senderThread, thread *recei
                 break;
             case GAME: // ventana de juego
                 drawGame(&screen, client, &espy);
-
+                break;
+            case CONFIG:
+                configScene.drawConfig(&screen);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();

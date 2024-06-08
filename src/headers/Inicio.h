@@ -40,6 +40,7 @@ typedef enum // estructura logica del juego
 {
     START,
     GAME,
+    CONFIG,
     EXIT
 } GameScene;
 
