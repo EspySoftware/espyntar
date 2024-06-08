@@ -96,6 +96,20 @@ void drawChat(shared_ptr<Client> &client)
     }
 }
 
+void drawPaintMessages(shared_ptr<Client> &client, Painter *painter)
+{
+    vector<PaintMessage> paintMessages = client->getPaintMessages();
+
+    for (int i = 0; i < paintMessages.size(); i++)
+    {
+        Vector2 position = {(float)paintMessages[i].x, (float)paintMessages[i].y};
+        painter->Paint(position, paintMessages[i].color, paintMessages[i].size);
+    }
+
+    // Clear the paint messages
+    client->paintMessages.clear();
+}
+
 void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 {
     // Tools
@@ -118,7 +132,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         palette = new ColorPalette();
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
-        client->SetPainter(painter);
         game = new Games(*painter, *canvas, *palette, client);
         initialized = true;
     }
@@ -210,6 +223,9 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 
     // Draw chat
     drawChat(client);
+
+    // Draw paint messages
+    drawPaintMessages(client, painter);
 
     // Draw connected clients
     drawConnectedClients(client);

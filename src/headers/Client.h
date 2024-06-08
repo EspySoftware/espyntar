@@ -50,7 +50,13 @@ public:
     OtherClient(int id, string name, int points) { this->id = id, this->name = name, this->points = points; }
 };
 
-class Painter;
+struct PaintMessage
+{
+    int x;
+    int y;
+    int color;
+    float size;
+};
 
 class Client
 {
@@ -63,20 +69,20 @@ public:
     sockaddr_in serverAddress;
 
     vector<string> messages;
+    vector<PaintMessage> paintMessages;
     vector<OtherClient> connectedClients;
-    Painter *painter;
 
     Client() = default;                                                                                           // Constructor por defecto
     Client(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
     Client(string address, int port = 12345, string name = "Fulanito");                                           // Constructor para el cliente
     ~Client();
 
-    void SetPainter(Painter *painter) { this->painter = painter; }
-
     void Send();
     void Send(string message);
     void Receive();
-    vector<string> getMessages();
+
+    vector<string> getMessages() { return messages; }
+    vector<PaintMessage> getPaintMessages() { return paintMessages; }
 
     void Disconnect();
 };

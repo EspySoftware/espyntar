@@ -28,7 +28,7 @@ void Painter::Paint(Vector2 position)
     }
     else
     {
-        this->canvas.Draw(position, brushSize, palette.GetColor(currentColor));
+        canvas.Draw(position, brushSize, palette.GetColor(currentColor));
     }
 
     lastPosition = position;
@@ -37,12 +37,26 @@ void Painter::Paint(Vector2 position)
 // Paint from other clients
 void Painter::Paint(Vector2 position, int color, float size)
 {
-    cout << "PAINT FROM OTHER CLIENT" << endl;
-    cout << "Position: " << position.x << ", " << position.y << endl;
-    cout << "Color: " << color << endl;
-    cout << "Size: " << size << endl;
+    position.x -= GetScreenWidth() / 2.0f - canvas.GetTarget().texture.width / 2.0f;
+    position.y -= GetScreenHeight() / 2.0f - canvas.GetTarget().texture.height / 2.0f + 70.0f;
 
-    canvas.Draw(position, size, palette.GetColor(color));
+    if (lastPosition.x >= 0 && lastPosition.y >= 0)
+    {
+        // Interpolate between lastPosition and position
+        for (float t = 0.0f; t < 1.0f; t += 0.05f)
+        {
+            Vector2 interpolatedPosition;
+            interpolatedPosition.x = lastPosition.x * (1 - t) + position.x * t;
+            interpolatedPosition.y = lastPosition.y * (1 - t) + position.y * t;
+            canvas.Draw(interpolatedPosition, size, palette.GetColor(color));
+        }
+    }
+    else
+    {
+        canvas.Draw(position, size, palette.GetColor(color));
+    }
+
+    lastPosition = position;
 }
 
 // Paint from the local client and send the message to the server

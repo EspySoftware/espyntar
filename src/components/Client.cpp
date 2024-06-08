@@ -204,8 +204,8 @@ void Client::Receive()
                 int color = stoi(match.str(3));
                 int brushSize = stoi(match.str(4));
 
-                // Draw the paint action
-                painter->Paint({(float)x, (float)y}, color, brushSize);
+                // Add the paint message to the vector
+                paintMessages.push_back((PaintMessage){x, y, color, (float)brushSize});
             }
         }
         else
@@ -245,11 +245,6 @@ void Client::Receive()
     }
 
     Disconnect();
-}
-
-vector<string> Client::getMessages()
-{
-    return messages;
 }
 
 void Client::Disconnect()
