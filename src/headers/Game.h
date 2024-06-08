@@ -20,22 +20,39 @@ void drawConnectedClients(shared_ptr<Client> &client)
 
     // Draw connected clients box (left)
     DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
-    DrawTextPro(font, "Connected Clients", {15, 175}, {0, 0}, 0, 20, 2, BLACK);
+    DrawTextPro(font, "JUGADORES", {50, 175}, {0, 0}, 0, 20, 2, BLACK);
 
     for (int i = 0; i < connectedClients.size(); i++)
     {
+        float yOffset = 200.0f + 60 * i;
+        Rectangle recPlayer = {15, yOffset, 190, 70};
+
         // Draw box for each client
-        DrawRectangle(15, 200.0f + 40 * i, 190, 20, WHITE);
-        DrawRectangleLines(15, 200.0f + 40 * i, 190, 20, DARKGRAY);
+        DrawRectangleRec(recPlayer, {122, 236, 104, 255});
+        DrawRectangleLinesEx(recPlayer, 1, {122, 236, 104, 255});
 
-        // Draw the client id
-        DrawTextPro(font, ("(" + std::to_string(connectedClients[i].id) + ")").c_str(), {20, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, BLACK);
+        // Draw the client name (centered in the box)
+        Vector2 textSize = MeasureTextEx(font, connectedClients[i].name.c_str(), 15, 2);
+        float nameX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
+        float nameY = recPlayer.y + (recPlayer.height - textSize.y) / 4;
 
-        // Draw the client name (right side)
-        DrawTextPro(font, connectedClients[i].name.c_str(), {50, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
+        DrawTextPro(font, connectedClients[i].name.c_str(), {nameX, nameY}, {0, 0}, 0, 15, 2, DARKGRAY);
 
-        // Draw the client points (bottom)
-        DrawTextPro(font, std::to_string(connectedClients[i].points).c_str(), {180, 200.0f + 20 * i}, {0, 0}, 0, 12, 2, DARKGRAY);
+        // Draw the client points (centered below the name)
+        std::string pointsStr = std::to_string(connectedClients[i].points);
+        textSize = MeasureTextEx(font, pointsStr.c_str(), 15, 2);
+        float pointsX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
+        float pointsY = nameY + textSize.y + 5;
+
+        DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 15, 2, DARKGRAY);
+
+        // Draw the client id (left side of the box)
+        std::string idStr = "#" + std::to_string(connectedClients[i].id);
+        textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
+        float idX = recPlayer.x + 5;
+        float idY = nameY + textSize.y-5 ;
+
+        DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 15, 2, BLACK);
     }
 }
 
@@ -155,7 +172,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
     {
         screen->scene = CONFIG;
-        cout << "Pantalla configuracion" << endl;
     }
 
     // Canvas
