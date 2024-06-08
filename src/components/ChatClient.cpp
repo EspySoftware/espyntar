@@ -49,6 +49,18 @@ ChatClient::ChatClient(string address, int port, string name)
     id = stoi(buffer);
     cout << "\nConnected as [" << id << "]: " << name << endl;
     messages.push_back("Connected as " + name);
+
+    // Receive the list of connected clients from the server
+    bytesReceived = recv(clientSocket, buffer, 4096, 0);
+    if (bytesReceived == SOCKET_ERROR)
+    {
+        cout << "Failed to receive data from the server." << endl;
+        return;
+    }
+
+    buffer[bytesReceived] = '\0';
+    string connectedClients(buffer);
+    cout << connectedClients << endl; // Print the list of connected clients
 }
 
 ChatClient::~ChatClient()
