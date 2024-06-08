@@ -102,7 +102,7 @@ void Games::DrawChosenWord() // mandarle como referencia al cliente
     {
         int i = censoredString.size();
         std::string str = std::to_string(i);
-        DrawTextPro(GetFontDefault(), str.c_str(), {(GetScreenWidth() / 2.0f) + (MeasureText(censoredString.c_str(), 20) / 2), 90}, {0, 0}, 0.0f, 10.0f, 2.0f, BLACK);
+        DrawTextPro(GetFontDefault(), str.c_str(), {(GetScreenWidth() / 2.0f) + (MeasureText(censoredString.c_str(), 20)), 90}, {0, 0}, 0.0f, 10.0f, 2.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
     }
     else
