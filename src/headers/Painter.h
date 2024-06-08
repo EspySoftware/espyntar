@@ -1,6 +1,15 @@
 #pragma once
 #include "ColorPalette.h"
 #include "Canvas.h"
+#include <sstream>
+#include <iostream>
+#include <memory>
+
+using std::shared_ptr;
+using std::string;
+using std::stringstream;
+
+class Client;
 
 class Painter
 {
@@ -14,6 +23,8 @@ private:
 public:
     Painter(ColorPalette &palette, Canvas &canvas);
     void Paint(Vector2 position);
+    void Paint(Vector2 position, int color, float size);
+    void Paint(Vector2 position, shared_ptr<Client> client);
     void Erase(Vector2 position);
     void Fill(Vector2 position);
 

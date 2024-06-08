@@ -11,6 +11,10 @@
 #define Rectangle WIN_Rectangle
 #define CloseWindow WIN_CloseWindow
 #define ShowCursor WIN_ShowCursor
+#define LoadImage WIN_LoadImage
+#define DrawText WIN_DrawText
+#define DrawTextEx WIN_DrawTextEx
+#define PlaySound WIN_PlaySound
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -18,6 +22,10 @@
 #undef Rectangle
 #undef CloseWindow
 #undef ShowCursor
+#undef LoadImage
+#undef DrawText
+#undef DrawTextEx
+#undef PlaySound
 
 using std::cin;
 using std::cout;
@@ -42,6 +50,14 @@ public:
     OtherClient(int id, string name, int points) { this->id = id, this->name = name, this->points = points; }
 };
 
+struct PaintMessage
+{
+    int x;
+    int y;
+    int color;
+    float size;
+};
+
 class Client
 {
 public:
@@ -53,16 +69,20 @@ public:
     sockaddr_in serverAddress;
 
     vector<string> messages;
+    vector<PaintMessage> paintMessages;
     vector<OtherClient> connectedClients;
 
     Client() = default;                                                                                           // Constructor por defecto
     Client(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
     Client(string address, int port = 12345, string name = "Fulanito");                                           // Constructor para el cliente
     ~Client();
+
     void Send();
     void Send(string message);
     void Receive();
-    vector<string> getMessages();
+
+    vector<string> getMessages() { return messages; }
+    vector<PaintMessage> getPaintMessages() { return paintMessages; }
 
     void Disconnect();
 };

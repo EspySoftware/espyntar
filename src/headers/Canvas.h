@@ -3,6 +3,10 @@
 #include "ColorPalette.h"
 #include <queue>
 #include <raylib.h>
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 #define MAX_COLORS_COUNT 23
 
