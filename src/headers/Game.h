@@ -84,7 +84,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     enum Tool
     {
         BRUSH,
-        BUCKET,
         ERASER
     };
 
@@ -92,18 +91,16 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     static ColorPalette *palette;
     static Canvas *canvas;
     static Painter *painter;
+    static Words *word;
     static Tool currentTool = BRUSH;
     static int colorIndex;
-    static int timer = 0;
-
-    // Words
-    static Words word;
 
     if (!initialized)
     {
         palette = new ColorPalette();
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
+        word = new Words(*painter, *canvas, *palette);
         initialized = true;
     }
 
@@ -113,15 +110,17 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     painter->SetBrushSize(mouseWheelMove);
 
     // Switch tool with SPACE key
-    if (IsKeyPressed(KEY_SPACE))
-    {
-        currentTool = (currentTool == BRUSH) ? BUCKET : BRUSH;
-    }
+    // if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, currentTool == BRUSH ? "Eraser" : "Brush"))
+    // {
+    //     currentTool = (currentTool == BRUSH) ? BRUSH : ERASER;
+    // }
+    // {
+    //     currentTool = (currentTool == BRUSH) ? BRUSH : ERASER;
+    // }
 
-    // Paint or fill if the left mouse button is pressed
+    // Paint
     if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
     {
-        // Check if a color in the palette is clicked
         colorIndex = canvas->CheckPaletteClick(*palette);
         if (colorIndex >= 0)
         {
@@ -129,21 +128,15 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         }
         else
         {
-            if (currentTool == BRUSH)
+            if (currentTool == ERASER)
+            {
+                painter->Erase(position);
+            }
+            else if (currentTool == BRUSH)
             {
                 painter->Paint(position);
             }
-            else if (currentTool == BUCKET)
-            {
-                painter->Fill(position);
-            }
         }
-    }
-    else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
-    {
-        painter->SetColor(0); // Set color to white for erasing
-        painter->Paint(position);
-        painter->SetColor(colorIndex); // Restore the original color
     }
     else
     {
@@ -153,9 +146,9 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Draw
     Color color_bg = {0, 156, 35, 255};
     BeginDrawing();
-
     ClearBackground(color_bg);
-    // header
+
+    // Header
     DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
     buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
@@ -164,6 +157,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         screen->scene = CONFIG;
         cout << "Pantalla configuracion" << endl;
     }
+
     // Canvas
     Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
     Vector2 canvasPosition;
@@ -173,13 +167,16 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     DrawTextureRec(canvas->GetTarget().texture, rec, canvasPosition, WHITE);
 
     // Brush outline
-    if (currentTool == BRUSH)
+    if (!word->GetisGuesser())
     {
-        DrawCircleLines(GetMouseX(), GetMouseY(), painter->GetBrushSize(), painter->GetColor());
-    }
-    else if (currentTool == BUCKET)
-    {
-        DrawCircleLines(GetMouseX(), GetMouseY(), 10, painter->GetColor()); // Small circle for bucket tool indicator
+        if (currentTool == BRUSH)
+        {
+            DrawCircleLines(GetMouseX(), GetMouseY(), painter->GetBrushSize(), painter->GetColor());
+        }
+        else if (currentTool == ERASER)
+        {
+            DrawCircleLines(GetMouseX(), GetMouseY(), 10, painter->GetColor()); // Small circle for bucket tool indicator
+        }
     }
 
     // Palette
@@ -191,15 +188,14 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Draw connected clients
     drawConnectedClients(client);
 
-    // Boton palabras
-    if (!word.GetChosen())
+    // Draw option words
+    if (!word->GetChosen())
     {
-        word.SetChosenWord();
+        word->SetChosenWord();
     }
-    if (word.GetChosen())
+    if (word->GetChosen())
     {
-        word.SetIsPlayer(true);
-        word.DrawChosenWord();
+        word->DrawChosenWord();
     }
 
     EndDrawing();

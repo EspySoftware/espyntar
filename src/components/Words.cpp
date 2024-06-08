@@ -7,7 +7,7 @@
 using std::endl;
 using std::getline;
 using std::ifstream;
-Words::Words()
+Words::Words(Painter &painter, Canvas &canvas, ColorPalette &palette) : painter(painter), canvas(canvas), palette(palette)
 {
     string line;
     ifstream file("../assets/words.txt");
@@ -26,33 +26,47 @@ array<string, 3> Words::GetRandomWords() const
     }
     return three_words;
 }
+
 void Words::SetChosenWord()
 {
     static double timer = 0;
     static array<string, 3> words = GetRandomWords();
-    std::cout << timer << std::endl;
     timer += 1;
     DrawTimer(timer);
+
     if (timer == (15 * FRAMES))
     {
         chosenWord = words[0];
         chosen = true;
         return;
     }
-    if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
+
+    if (!isGuesser)
     {
-        chosenWord = words[0];
-        chosen = true;
+        painter.SetBrushSize(0.0f);
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
+        {
+            chosenWord = words[0];
+            chosen = true;
+            painter.SetColor(22);
+        }
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
+        {
+            chosenWord = words[1];
+            chosen = true;
+            painter.SetColor(22);
+        }
+        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
+        {
+            chosenWord = words[2];
+            chosen = true;
+            painter.SetColor(22);
+        }
     }
-    if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
+    else
     {
-        chosenWord = words[1];
-        chosen = true;
-    }
-    if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
-    {
-        chosenWord = words[2];
-        chosen = true;
+        painter.SetBrushSize(0.0f);
+        DrawTextPro(GetFontDefault(), "Esperando a NOMBRE-DE-JUGADOR", {(GetScreenWidth() / 2.0f) - (MeasureText("Esperando a NOMBRE-DE-JUGADOR", 20) / 2), GetScreenHeight() - 500.0f}, {0, 0}, 0, 20, 4, BLACK);
     }
 }
 void Words::DrawChosenWord()
@@ -64,20 +78,21 @@ void Words::DrawChosenWord()
     timer += 1;
     DrawTimer(timer);
     // Draw the word
-    if (!isPlayer)
+    if (!isGuesser)
     {
-        DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +70}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +80}, {0, 0}, 0, 20, 4, BLACK);
     }
     else
     {
+        painter.SetBrushSize(0.0f);
         if (timer >= (80 * FRAMES))
         {
             censoredString = chosenWord;
-            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +70}, {0, 0}, 0, 20, 4, BLACK);
+            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +80}, {0, 0}, 0, 20, 4, BLACK);
         }
         else
         {
-            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +70}, {0, 0}, 0, 20, 4, BLACK);
+            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +80}, {0, 0}, 0, 20, 4, BLACK);
             if (timer >= (35 * FRAMES))
             {
                 static int rand1 = rand() % static_cast<int>(chosenWord.size());
@@ -85,13 +100,8 @@ void Words::DrawChosenWord()
             }
             if (timer >= (50 * FRAMES))
             {
-                static int rand2 = rand() % chosenWord.size();
+                static int rand2 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand2) = chosenWord.at(rand2);
-            }
-            if (timer >= (65 * FRAMES))
-            {
-                static int rand3 = rand() % chosenWord.size();
-                censoredString.at(rand3) = chosenWord.at(rand3);
             }
         }
     }
@@ -111,4 +121,4 @@ void Words::DrawTimer(double timer)
 {
     DrawTextPro(GetFontDefault(), "Tiempo:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
     DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
-} 
+}

@@ -65,7 +65,6 @@ Universidad
 Biblioteca
 Oficina
 Mercado
-Supermercado
 Restaurante
 Estadio
 Alegria
@@ -75,7 +74,6 @@ Miedo
 Sorpresa
 Ansiedad
 Amor
-Desesperacion
 Esperanza
 Gratitud
 Envidia

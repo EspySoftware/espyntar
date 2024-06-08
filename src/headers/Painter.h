@@ -14,6 +14,7 @@ private:
 public:
     Painter(ColorPalette &palette, Canvas &canvas);
     void Paint(Vector2 position);
+    void Erase(Vector2 position);
     void Fill(Vector2 position);
 
     void ResetLastPosition() { lastPosition = {-1.0f, -1.0f}; }
