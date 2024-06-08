@@ -10,7 +10,7 @@ using std::array;
 using std::string;
 using std::vector;
 
-class Words
+class Games
 {
 private:
     vector<string> words;
@@ -23,7 +23,7 @@ private:
     shared_ptr<Client> client;
 
 public:
-    Words(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr<Client> client);
+    Games(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr<Client> client);
     array<string, 3> GetRandomWords() const;
     string GetChosenWord() const { return chosenWord; }
     void SetChosenWord();

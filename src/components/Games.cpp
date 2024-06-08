@@ -1,6 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include "../headers/Words.h"
+#include "../headers/Games.h"
 #include "../headers/raygui.h"
 #define FRAMES 144
 
@@ -8,10 +8,10 @@ using std::endl;
 using std::getline;
 using std::ifstream;
 
-Words::Words(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr<Client> client) : painter(painter), canvas(canvas), palette(palette), client(client)
+Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr<Client> client) : painter(painter), canvas(canvas), palette(palette), client(client)
 {
     string line;
-    ifstream file("../assets/words.txt");
+    ifstream file("../assets/Games.txt");
     while (getline(file, line))
     {
         words.push_back(line);
@@ -25,26 +25,26 @@ Words::Words(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr
         }
     }
 }
-array<string, 3> Words::GetRandomWords() const
+array<string, 3> Games::GetRandomWords() const
 {
-    array<string, 3> three_words;
+    array<string, 3> three_Games;
     for (int i = 0; i < 3; i++)
     {
-        three_words[i] = words[rand() % words.size()];
+        three_Games[i] = words[rand() % words.size()];
     }
-    return three_words;
+    return three_Games;
 }
 
-void Words::SetChosenWord()
+void Games::SetChosenWord()
 {
     static double timer = 0;
-    static array<string, 3> words = GetRandomWords();
+    static array<string, 3> Games = GetRandomWords();
     timer += 1;
     DrawTimer(timer);
 
     if (timer == (15 * FRAMES))
     {
-        chosenWord = words[0];
+        chosenWord = Games[0];
         chosen = true;
         return;
     }
@@ -52,21 +52,21 @@ void Words::SetChosenWord()
     if (!isGuesser)
     {
         painter.SetBrushSize(0.0f);
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, Games[0].c_str()))
         {
-            chosenWord = words[0];
+            chosenWord = Games[0];
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, Games[1].c_str()))
         {
-            chosenWord = words[1];
+            chosenWord = Games[1];
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, Games[2].c_str()))
         {
-            chosenWord = words[2];
+            chosenWord = Games[2];
             chosen = true;
             painter.SetColor(22);
         }
@@ -78,7 +78,7 @@ void Words::SetChosenWord()
     }
 }
 
-void Words::DrawChosenWord()
+void Games::DrawChosenWord()
 {
 
     static bool censored = false;
@@ -130,7 +130,7 @@ void Words::DrawChosenWord()
     }
 }
 
-string Words::CensorWord(string word)
+string Games::CensorWord(string word)
 {
     static string censoredString = chosenWord;
     for (int i = 0; i < censoredString.size(); i++)
@@ -140,13 +140,13 @@ string Words::CensorWord(string word)
     return censoredString;
 }
 
-void Words::DrawTimer(double timer)
+void Games::DrawTimer(double timer)
 {
     DrawTextPro(GetFontDefault(), "Tiempo:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
     DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
 }
 
-vector<string> Words::FilterChat(vector<string> messages)
+vector<string> Games::FilterChat(vector<string> messages)
 {
     vector<string> filteredMessages;
     for (int i = 0; i < messages.size(); i++)

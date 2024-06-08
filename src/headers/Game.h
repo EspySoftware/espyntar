@@ -1,5 +1,5 @@
 #pragma once
-#include "./Words.h"
+#include "./Games.h"
 #include "./Inicio.h"
 #include "../headers/Inicio.h"
 using std::array;
@@ -91,7 +91,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     static ColorPalette *palette;
     static Canvas *canvas;
     static Painter *painter;
-    static Words *word;
+    static Games *game;
     static Tool currentTool = BRUSH;
     static int colorIndex;
 
@@ -100,7 +100,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         palette = new ColorPalette();
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
-        word = new Words(*painter, *canvas, *palette, client);
+        game = new Games(*painter, *canvas, *palette, client);
         initialized = true;
     }
 
@@ -167,7 +167,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     DrawTextureRec(canvas->GetTarget().texture, rec, canvasPosition, WHITE);
 
     // Brush outline
-    if (!word->GetisGuesser())
+    if (!game->GetisGuesser())
     {
         if (currentTool == BRUSH)
         {
@@ -188,14 +188,14 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Draw connected clients
     drawConnectedClients(client);
 
-    // Draw option words
-    if (!word->GetChosen())
+    // Draw option games
+    if (!game->GetChosen())
     {
-        word->SetChosenWord();
+        game->SetChosenWord();
     }
-    if (word->GetChosen())
+    if (game->GetChosen())
     {
-        word->DrawChosenWord();
+        game->DrawChosenWord();
     }
 
     EndDrawing();
