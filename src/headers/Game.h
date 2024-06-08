@@ -14,7 +14,7 @@ enum Tool
 };
 
 
-void drawConnectedClients(shared_ptr<ChatClient> &client)
+void drawConnectedClients(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
     vector<string> connectedClients = client->connectedClients;
@@ -34,7 +34,7 @@ void drawConnectedClients(shared_ptr<ChatClient> &client)
     }
 }
 
-void drawChat(shared_ptr<ChatClient> &client)
+void drawChat(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
     static char message[20] = {0};
@@ -73,7 +73,7 @@ void drawChat(shared_ptr<ChatClient> &client)
     }
 }
 
-void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
+void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 {
     // Tools
     enum Tool
