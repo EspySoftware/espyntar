@@ -13,6 +13,26 @@ enum Tool
     ERASER
 };
 
+void drawConnectedClients(shared_ptr<ChatClient> &client)
+{
+    Font font = GetFontDefault();
+    vector<string> connectedClients = client->connectedClients;
+
+    // Draw connected clients box (left)
+    DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
+    DrawTextPro(font, "Connected Clients", {15, 175}, {0, 0}, 0, 20, 2, BLACK);
+
+    for (int i = 0; i < connectedClients.size(); i++)
+    {
+        // Draw box for each client
+        DrawRectangle(15, 200.0f + 20 * i, 190, 20, WHITE);
+        DrawRectangleLines(15, 200.0f + 20 * i, 190, 20, DARKGRAY);
+
+        // Draw the client name
+        DrawTextPro(font, connectedClients[i].c_str(), {20, 205.0f + 20 * i}, {0, 0}, 0, 14, 2, BLACK);
+    }
+}
+
 void drawChat(shared_ptr<ChatClient> &client)
 {
     Font font = GetFontDefault();
@@ -43,7 +63,7 @@ void drawChat(shared_ptr<ChatClient> &client)
     char text[5] = "CHAT";
     DrawRectangle((float)GetScreenWidth() - 215, (float)GetScreenHeight() - 590, 205, 35, color_chat);
     DrawTextPro(GetFontDefault(), text, {(float)GetScreenWidth() - 130, (float)GetScreenHeight() - 580},
-                {0.0f, 0.0f }, 0.0f, 15.0f, 0.0f, BLACK);
+                {0.0f, 0.0f}, 0.0f, 15.0f, 0.0f, BLACK);
     // Send the message when the user presses Enter
     if (IsKeyPressed(KEY_ENTER) && strlen(message) > 0)
     {
@@ -159,6 +179,9 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     // Draw chat
     drawChat(client);
 
+    // Draw connected clients
+    drawConnectedClients(client);
+
     // Boton palabras
     if (!chosen)
     {
@@ -183,7 +206,7 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     // Draw the words
     if (chosen)
     {
-        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20) / 2), + 60 }, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20) / 2), +60}, {0, 0}, 0, 20, 4, BLACK);
         for (int i = 0; i < word.GetChosenWord().size(); i++)
         {
             DrawRectangle((GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20)) + i * 30 - 15, 90.0f, 20.0f, 5.0f, BLACK);

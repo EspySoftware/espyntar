@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <sstream>
+#include <algorithm>
 
 #define Rectangle WIN_Rectangle
 #define CloseWindow WIN_CloseWindow
@@ -23,6 +25,7 @@ using std::make_shared;
 using std::shared_ptr;
 using std::stoi;
 using std::string;
+using std::stringstream;
 using std::vector;
 
 class ChatClient
@@ -33,6 +36,7 @@ public:
     SOCKET clientSocket;
     sockaddr_in serverAddress;
     vector<string> messages;
+    vector<string> connectedClients;
 
     ChatClient() = default;                                                                                           // Constructor por defecto
     ChatClient(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
