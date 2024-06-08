@@ -69,7 +69,7 @@ void drawChat(shared_ptr<Client> &client)
     char text[5] = "CHAT";
     DrawRectangle((float)GetScreenWidth() - 215, (float)GetScreenHeight() - 590, 205, 35, color_chat);
     DrawTextPro(GetFontDefault(), text, {(float)GetScreenWidth() - 130, (float)GetScreenHeight() - 580},
-                {0.0f, 0.0f}, 0.0f, 15.0f, 0.0f, BLACK);
+                {0.0f, 0.0f}, 0.0f, 15.0f, 2.0f, BLACK);
     // Send the message when the user presses Enter
     if (IsKeyPressed(KEY_ENTER) && strlen(message) > 0)
     {
@@ -98,8 +98,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 
     // Words
     static Words word;
-    static array<string, 3> words = word.GetRandomWords();
-    static bool chosen = false;
 
     if (!initialized)
     {
@@ -189,34 +187,14 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     drawConnectedClients(client);
 
     // Boton palabras
-    if (!chosen)
+    if (!word.GetChosen())
     {
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
-        {
-            word.SetChosenWord(words[0]);
-            chosen = true;
-        }
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
-        {
-
-            word.SetChosenWord(words[1]);
-            chosen = true;
-        }
-        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
-        {
-            word.SetChosenWord(words[2]);
-            chosen = true;
-        }
+        word.SetChosenWord();
     }
-
-    // Draw the words
-    if (chosen)
+    if (word.GetChosen())
     {
-        DrawTextPro(GetFontDefault(), word.GetChosenWord().c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20) / 2), +60}, {0, 0}, 0, 20, 4, BLACK);
-        for (int i = 0; i < word.GetChosenWord().size(); i++)
-        {
-            DrawRectangle((GetScreenWidth() / 2.0f) - (MeasureText(word.GetChosenWord().c_str(), 20)) + i * 30 - 15, 90.0f, 20.0f, 5.0f, BLACK);
-        }
+        word.SetIsPlayer(true);
+        word.DrawChosenWord();
     }
 
     EndDrawing();

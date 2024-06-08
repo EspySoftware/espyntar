@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <regex>
 
+// Function collision with raylib
 #define Rectangle WIN_Rectangle
 #define CloseWindow WIN_CloseWindow
 #define ShowCursor WIN_ShowCursor
