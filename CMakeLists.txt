@@ -28,7 +28,8 @@ src/components/Canvas.cpp src/headers/Canvas.h
 src/components/ColorPalette.cpp src/headers/ColorPalette.h
 src/components/Painter.cpp src/headers/Painter.h
 src/components/Client.cpp src/headers/Client.h
-src/components/Words.cpp src/headers/Words.h
+src/components/Games.cpp src/headers/Games.h
+src/headers/Configuration.h 
 src/headers/Inicio.h
 src/headers/Game.h
 )

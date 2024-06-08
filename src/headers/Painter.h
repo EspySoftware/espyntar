@@ -25,6 +25,7 @@ public:
     void Paint(Vector2 position);
     void Paint(Vector2 position, int color, float size);
     void Paint(Vector2 position, shared_ptr<Client> client);
+    void Erase(Vector2 position);
     void Fill(Vector2 position);
 
     void ResetLastPosition() { lastPosition = {-1.0f, -1.0f}; }

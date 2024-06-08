@@ -5248,7 +5248,7 @@ static void GuiDrawText(const char *text, Rectangle textBounds, int alignment, C
                     textOffsetX = 0.0f;
                     textOffsetY += GuiGetStyle(DEFAULT, TEXT_LINE_SPACING);
 
-                    if (tempWrapCharMode) // Wrap at char level when too long words
+                    if (tempWrapCharMode) // Wrap at char level when too long Games
                     {
                         wrapMode = TEXT_WRAP_WORD;
                         tempWrapCharMode = false;
@@ -5265,9 +5265,9 @@ static void GuiDrawText(const char *text, Rectangle textBounds, int alignment, C
                 float nextSpaceWidth = GetNextSpaceWidth(lines[i] + c, &nextSpaceIndex);
 
                 int nextSpaceIndex2 = 0;
-                float nextWordSize = GetNextSpaceWidth(lines[i] + lastSpaceIndex + 1, &nextSpaceIndex2);
+                float nextGamesize = GetNextSpaceWidth(lines[i] + lastSpaceIndex + 1, &nextSpaceIndex2);
 
-                if (nextWordSize > textBounds.width - textBoundsWidthOffset)
+                if (nextGamesize > textBounds.width - textBoundsWidthOffset)
                 {
                     // Considering the case the next word is longer than bounds
                     tempWrapCharMode = true;

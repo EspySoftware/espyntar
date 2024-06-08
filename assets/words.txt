@@ -7,7 +7,7 @@ Morir
 Crecer
 Cambiar
 Aprender
-Enseñar
+Miti
 Ganar
 Perder
 Crear
@@ -52,20 +52,19 @@ Casa
 Sala
 Playa
 Montaña
-Rio
+Danna
 Lago
 Bosque
 Desierto
 Ciudad
 Pueblo
 Parque
-Jardin
+Haro
 Escuela
 Universidad
 Biblioteca
 Oficina
 Mercado
-Supermercado
 Restaurante
 Estadio
 Alegria
@@ -75,7 +74,6 @@ Miedo
 Sorpresa
 Ansiedad
 Amor
-Desesperacion
 Esperanza
 Gratitud
 Envidia
@@ -98,3 +96,5 @@ Juguete
 Tormenta
 Desvanecer
 Escalera
+Espy
+Software
