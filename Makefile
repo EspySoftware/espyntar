@@ -1,3 +1,3 @@
 server:
-	g++ src/ChatServer.cpp src/components/ChatClient.cpp -o ChatServer.exe -lws2_32
-	./ChatServer.exe
+	g++ src/server.cpp src/components/ChatClient.cpp -o EspyntarServer.exe -lws2_32
+	./EspyntarServer.exe
