@@ -100,7 +100,10 @@ void Games::DrawChosenWord() // mandarle como referencia al cliente
     // Draw the word
     if (!isGuesser)
     {
-        DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +80}, {0, 0}, 0, 20, 4, BLACK);
+        int i = censoredString.size();
+        std::string str = std::to_string(i);
+        DrawTextPro(GetFontDefault(), str.c_str(), {(GetScreenWidth() / 2.0f) + (MeasureText(censoredString.c_str(), 20) / 2), 90}, {0, 0}, 0.0f, 10.0f, 2.0f, BLACK);
+        DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
     }
     else
     {
@@ -109,11 +112,11 @@ void Games::DrawChosenWord() // mandarle como referencia al cliente
         if (timer >= (80 * FRAMES))
         {
             censoredString = chosenWord;
-            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +80}, {0, 0}, 0, 20, 4, BLACK);
+            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
         }
         else
         {
-            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +80}, {0, 0}, 0, 20, 4, BLACK);
+            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
             if (timer >= (35 * FRAMES))
             {
                 static int rand1 = rand() % static_cast<int>(chosenWord.size());
@@ -138,7 +141,7 @@ string Games::CensorWord(string word)
     return censoredString;
 }
 
-void Games::DrawTimer(int& timer)
+void Games::DrawTimer(int &timer)
 {
     DrawTextPro(GetFontDefault(), "Tiempo:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
     if (timer > 0)
@@ -163,4 +166,3 @@ vector<string> Games::FilterChat(vector<string> messages)
     }
     return filteredMessages;
 }
-

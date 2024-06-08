@@ -174,7 +174,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
     if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
     {
-        // screen->scene = CONFIG;
+        screen->scene = CONFIG;
     }
 
     // Canvas
