@@ -11,7 +11,7 @@ using std::ifstream;
 Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr<Client> client) : painter(painter), canvas(canvas), palette(palette), client(client)
 {
     string line;
-    ifstream file("../assets/Games.txt");
+    ifstream file("../assets/words.txt");
     while (getline(file, line))
     {
         words.push_back(line);
@@ -27,24 +27,24 @@ Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr
 }
 array<string, 3> Games::GetRandomWords() const
 {
-    array<string, 3> three_Games;
+    array<string, 3> three_word;
     for (int i = 0; i < 3; i++)
     {
-        three_Games[i] = words[rand() % words.size()];
+        three_word[i] = words[rand() % words.size()];
     }
-    return three_Games;
+    return three_word;
 }
 
 void Games::SetChosenWord()
 {
     static double timer = 0;
-    static array<string, 3> Games = GetRandomWords();
+    static array<string, 3> words = GetRandomWords();
     timer += 1;
     DrawTimer(timer);
 
     if (timer == (15 * FRAMES))
     {
-        chosenWord = Games[0];
+        chosenWord = words[0];
         chosen = true;
         return;
     }
@@ -52,21 +52,21 @@ void Games::SetChosenWord()
     if (!isGuesser)
     {
         painter.SetBrushSize(0.0f);
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, Games[0].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
         {
-            chosenWord = Games[0];
+            chosenWord = words[0];
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, Games[1].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
         {
-            chosenWord = Games[1];
+            chosenWord = words[1];
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, Games[2].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
         {
-            chosenWord = Games[2];
+            chosenWord = words[2];
             chosen = true;
             painter.SetColor(22);
         }
@@ -95,7 +95,9 @@ void Games::DrawChosenWord()
     {
         if (filtered[i] == chosenWord)
         {
-            DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +80}, {0, 0}, 0, 20, 4, BLACK);
+            DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +300}, {0, 0}, 0, 20, 4, BLACK);
+            client->points += 100;
+            guessed = true;
         }
     }
     

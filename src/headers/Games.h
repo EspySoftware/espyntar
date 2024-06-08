@@ -17,6 +17,7 @@ private:
     string chosenWord;
     bool chosen = false;
     bool isGuesser = false; // False means player is the drawer
+    bool guessed = false;  // True means player has guessed the word
     Painter &painter;
     Canvas &canvas;
     ColorPalette &palette;
