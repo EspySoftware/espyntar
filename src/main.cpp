@@ -40,7 +40,7 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
             case GAME: // ventana de juego
                 drawGame(&screen, client, &espy);
                 break;
-            case CONFIG:
+            case CONFIG: // ventana configuracion
                 configScene.drawConfig(&screen);
                 break;
             case EXIT: // cerrar juego
