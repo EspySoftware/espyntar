@@ -6,6 +6,7 @@
 #include <sstream>
 #include <algorithm>
 
+// Function collision with raylib
 #define Rectangle WIN_Rectangle
 #define CloseWindow WIN_CloseWindow
 #define ShowCursor WIN_ShowCursor
@@ -28,7 +29,7 @@ using std::string;
 using std::stringstream;
 using std::vector;
 
-class ChatClient
+class Client
 {
 public:
     int id = -1;
@@ -38,10 +39,10 @@ public:
     vector<string> messages;
     vector<string> connectedClients;
 
-    ChatClient() = default;                                                                                           // Constructor por defecto
-    ChatClient(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
-    ChatClient(string address, int port = 12345, string name = "Fulanito");                                           // Constructor para el cliente
-    ~ChatClient();
+    Client() = default;                                                                                           // Constructor por defecto
+    Client(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
+    Client(string address, int port = 12345, string name = "Fulanito");                                           // Constructor para el cliente
+    ~Client();
     void Send();
     void Send(string message);
     void Receive();

@@ -5,7 +5,7 @@
 #include <WS2tcpip.h>
 #include <tchar.h>
 #include <thread>
-#include "./headers/ChatClient.h"
+#include "./headers/Client.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -23,7 +23,7 @@ public:
     int port;
     SOCKET listenSocket;
     sockaddr_in serverAddress;
-    map<int, ChatClient> clients;
+    map<int, Client> clients;
 
     ChatServer(int port = 12345)
     {
@@ -111,7 +111,7 @@ public:
         WSACleanup();
     }
 
-    void Broadcast(ChatClient &sender, string message)
+    void Broadcast(Client &sender, string message)
     {
         for (auto const &otherClient : clients)
         {
@@ -125,11 +125,11 @@ public:
         }
     }
 
-    ChatClient AddClient(SOCKET clientSocket, string name)
+    Client AddClient(SOCKET clientSocket, string name)
     {
         clientCount++;
 
-        ChatClient client(clientCount, name, clientSocket);
+        Client client(clientCount, name, clientSocket);
 
         clients[clientCount] = client;
 
@@ -166,7 +166,7 @@ public:
         return client;
     }
 
-    void RemoveClient(ChatClient client)
+    void RemoveClient(Client client)
     {
         clients.erase(client.id);
         cout << "Client disconnected: " << "[" << client.id << "] " << client.name << endl;
@@ -188,7 +188,7 @@ public:
         }
         string name(buffer, bytesReceived);
 
-        ChatClient client = AddClient(csocket, name);
+        Client client = AddClient(csocket, name);
 
         while (true)
         {

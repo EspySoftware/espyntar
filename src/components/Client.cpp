@@ -1,6 +1,6 @@
-#include "../headers/ChatClient.h"
+#include "../headers/Client.h"
 
-ChatClient::ChatClient(string address, int port, string name)
+Client::Client(string address, int port, string name)
 {
     this->name = name;
 
@@ -82,12 +82,12 @@ ChatClient::ChatClient(string address, int port, string name)
     }
 }
 
-ChatClient::~ChatClient()
+Client::~Client()
 {
     closesocket(clientSocket);
 }
 
-void ChatClient::Send()
+void Client::Send()
 {
     string message;
 
@@ -124,7 +124,7 @@ void ChatClient::Send()
     Disconnect();
 }
 
-void ChatClient::Send(string message)
+void Client::Send(string message)
 {
     string msg = "[" + name + "]: " + message;
 
@@ -147,7 +147,7 @@ void ChatClient::Send(string message)
     // cout << endl;
 }
 
-void ChatClient::Receive()
+void Client::Receive()
 {
     char buffer[4096];
     int bytesReceived;
@@ -187,12 +187,12 @@ void ChatClient::Receive()
     Disconnect();
 }
 
-vector<string> ChatClient::getMessages()
+vector<string> Client::getMessages()
 {
     return messages;
 }
 
-void ChatClient::Disconnect()
+void Client::Disconnect()
 {
     closesocket(clientSocket);
 }
