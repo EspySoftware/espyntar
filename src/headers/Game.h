@@ -100,7 +100,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         palette = new ColorPalette();
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
-        word = new Words(*painter, *canvas, *palette);
+        word = new Words(*painter, *canvas, *palette, client);
         initialized = true;
     }
 

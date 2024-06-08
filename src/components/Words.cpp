@@ -7,7 +7,8 @@
 using std::endl;
 using std::getline;
 using std::ifstream;
-Words::Words(Painter &painter, Canvas &canvas, ColorPalette &palette) : painter(painter), canvas(canvas), palette(palette)
+
+Words::Words(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr<Client> client) : painter(painter), canvas(canvas), palette(palette), client(client)
 {
     string line;
     ifstream file("../assets/words.txt");
@@ -16,6 +17,13 @@ Words::Words(Painter &painter, Canvas &canvas, ColorPalette &palette) : painter(
         words.push_back(line);
     }
     file.close();
+    for (int i = 0; i < words.size(); i++)
+    {
+        for (int j = 0; j < words[i].size(); j++)
+        {
+            words[i][j] = toupper(words[i][j]);
+        }
+    }
 }
 array<string, 3> Words::GetRandomWords() const
 {
@@ -69,14 +77,28 @@ void Words::SetChosenWord()
         DrawTextPro(GetFontDefault(), "Esperando a NOMBRE-DE-JUGADOR", {(GetScreenWidth() / 2.0f) - (MeasureText("Esperando a NOMBRE-DE-JUGADOR", 20) / 2), GetScreenHeight() - 500.0f}, {0, 0}, 0, 20, 4, BLACK);
     }
 }
+
 void Words::DrawChosenWord()
 {
 
     static bool censored = false;
-    static double timer = 0;
     static string censoredString = CensorWord(chosenWord);
+    static vector<string> filtered;
+
+    static double timer = 0;
     timer += 1;
     DrawTimer(timer);
+
+    vector<string> messages = client->getMessages();
+    filtered = FilterChat(messages);
+    for (int i = 0; i < filtered.size(); i++)
+    {
+        if (filtered[i] == chosenWord)
+        {
+            DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +80}, {0, 0}, 0, 20, 4, BLACK);
+        }
+    }
+    
     // Draw the word
     if (!isGuesser)
     {
@@ -84,6 +106,7 @@ void Words::DrawChosenWord()
     }
     else
     {
+
         painter.SetBrushSize(0.0f);
         if (timer >= (80 * FRAMES))
         {
@@ -121,4 +144,20 @@ void Words::DrawTimer(double timer)
 {
     DrawTextPro(GetFontDefault(), "Tiempo:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
     DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
+}
+
+vector<string> Words::FilterChat(vector<string> messages)
+{
+    vector<string> filteredMessages;
+    for (int i = 0; i < messages.size(); i++)
+    {
+        for (int j = 0; j < messages[i].size(); j++)
+        {
+            messages[i][j] = toupper(messages[i][j]);
+        }
+        messages[i] = messages[i].substr(messages[i].find(":") + 1);
+        messages[i].erase(0, 1);
+        filteredMessages.push_back(messages[i]);
+    }
+    return filteredMessages;
 }
