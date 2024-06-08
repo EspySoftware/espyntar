@@ -12,18 +12,8 @@ enum Tool
     BUCKET,
     ERASER
 };
-void buttons(float x, float y, float widght, float height, char text[])
-{
-    Rectangle buttonRect = {x, y, widght, height};
-    Rectangle buttonRect2 = {x - 2.0f, y - 2.0f, widght + 5.0f, height + 5.0f};
 
-    DrawRectangleRounded(buttonRect2, 0.3f, 6, {215, 182, 15, 255});
-    // Dibuja el texto del botón
-    if (GuiButton(buttonRect, text))
-    {
-        // Acción del botón
-    }
-}
+
 void drawConnectedClients(shared_ptr<ChatClient> &client)
 {
     Font font = GetFontDefault();
@@ -74,7 +64,7 @@ void drawChat(shared_ptr<ChatClient> &client)
     char text[5] = "CHAT";
     DrawRectangle((float)GetScreenWidth() - 215, (float)GetScreenHeight() - 590, 205, 35, color_chat);
     DrawTextPro(GetFontDefault(), text, {(float)GetScreenWidth() - 130, (float)GetScreenHeight() - 580},
-                {0.0f, 0.0f}, 0.0f, 15.0f, 0.0f, BLACK);
+                {0.0f, 0.0f}, 0.0f, 15.0f, 2.0f, BLACK);
     // Send the message when the user presses Enter
     if (IsKeyPressed(KEY_ENTER) && strlen(message) > 0)
     {
@@ -196,17 +186,19 @@ void drawGame(Screen *screen, shared_ptr<ChatClient> &client, Texture2D *espy)
     // Boton palabras
     if (!chosen)
     {
+        buttons((GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f, words[0].c_str());
         if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[0].c_str()))
         {
             word.SetChosenWord(words[0]);
             chosen = true;
         }
+        buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f, words[1].c_str());
         if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[1].c_str()))
         {
-
             word.SetChosenWord(words[1]);
             chosen = true;
         }
+        buttons(GetScreenWidth() / 2.0f + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f, words[2].c_str());
         if (GuiButton({(GetScreenWidth() / 2.0f) + 100, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, words[2].c_str()))
         {
             word.SetChosenWord(words[2]);
