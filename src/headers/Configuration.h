@@ -1,5 +1,6 @@
 #pragma once
 #include "../headers/Inicio.h"
+#include "../headers/Games.h"
 
 class Configuration
 {
@@ -8,7 +9,10 @@ public:
     bool effects;
     Texture2D background;
     Texture2D title;
-
+    ColorPalette *palette;
+    Canvas *canvas;
+    Painter *painter;
+    Games *game;
     void drawConfig(Screen *scene);
     Configuration();
     ~Configuration();
@@ -16,6 +20,10 @@ public:
 
 Configuration::Configuration()
 {
+    palette = new ColorPalette();
+    canvas = new Canvas(700, 560, *palette);
+    painter = new Painter(*palette, *canvas);
+    game = new Games(*painter, *canvas, *palette);
     this->musicOn = true;
     this->effects = true;
     this->background = LoadTexture("../assets/background.png");
@@ -42,7 +50,9 @@ inline void Configuration::drawConfig(Screen *scene)
         350.0f,
         400.0f};
     DrawRectangleRounded(rec, 0.5f, 0.5, color1);
-
+    Configuration timer;
+    timer.game->DrawTimer(timer.game->drawTimer);
+    
     // Posición central del rectángulo
     float rectCenterX = rec.x + (rec.width / 2.0f);
     float rectCenterY = rec.y + (rec.height / 2.0f);
