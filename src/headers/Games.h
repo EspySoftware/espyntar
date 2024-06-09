@@ -6,6 +6,8 @@
 #include <vector>
 #include <array>
 #include <string>
+#define FRAMES 144
+
 using std::array;
 using std::string;
 using std::vector;
@@ -14,10 +16,14 @@ class Games
 {
 private:
     vector<string> words;
+    array<string, 3> optionWords;
     string chosenWord;
     bool chosen = false;
     bool isGuesser = true; // False means player is the drawer
     bool guessed = false;  // True means player has guessed the word
+    bool finished = false;
+    double setTimer = 10 * FRAMES;
+    double drawTimer = 10 * FRAMES;
     Painter &painter;
     Canvas &canvas;
     ColorPalette &palette;
@@ -35,4 +41,6 @@ public:
     void DrawTimer(double &timer);
     void DrawTimer(int number);
     vector<string> FilterChat(vector<string> messages);
+    bool GetFinished() { return finished; }
+    void SetDefault();
 };

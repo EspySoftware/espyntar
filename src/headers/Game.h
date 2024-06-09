@@ -129,6 +129,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     static bool initialized = false;
     static Tool currentTool = BRUSH;
     static int colorIndex;
+    static int CUTE = 1;
 
     if (!initialized)
     {
@@ -140,80 +141,80 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         initialized = true;
     }
 
-    Vector2 position = GetMousePosition();
-
-    float mouseWheelMove = GetMouseWheelMove();
-    painter->SetBrushSize(mouseWheelMove);
-
-    // Paint
-    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+    if (CUTE)
     {
-        colorIndex = canvas->CheckPaletteClick(*palette);
-        if (colorIndex >= 0)
+        Vector2 position = GetMousePosition();
+
+        float mouseWheelMove = GetMouseWheelMove();
+        painter->SetBrushSize(mouseWheelMove);
+
+        // Paint
+        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
         {
-            painter->SetColor(colorIndex);
+            colorIndex = canvas->CheckPaletteClick(*palette);
+            if (colorIndex >= 0)
+            {
+                painter->SetColor(colorIndex);
+            }
+            else
+            {
+                if (currentTool == ERASER)
+                {
+                    painter->Erase(position);
+                }
+                else if (currentTool == BRUSH)
+                {
+                    painter->Paint(position, client);
+                }
+            }
+        }
+        else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
+        {
+            painter->SetColor(0); // Set color to white for erasing
+            painter->Paint(position, client);
+            painter->SetColor(colorIndex); // Restore the original color
         }
         else
         {
-            if (currentTool == ERASER)
-            {
-                painter->Erase(position);
-            }
-            else if (currentTool == BRUSH)
-            {
-                painter->Paint(position, client);
-            }
+            painter->ResetLastPosition();
         }
-    }
-    else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
-    {
-        painter->SetColor(0); // Set color to white for erasing
-        painter->Paint(position, client);
-        painter->SetColor(colorIndex); // Restore the original color
-    }
-    else
-    {
-        painter->ResetLastPosition();
-    }
 
-    // Draw
-    Color color_bg = {0, 156, 35, 255};
-    BeginDrawing();
-    ClearBackground(color_bg);
+        // Draw
+        Color color_bg = {0, 156, 35, 255};
+        BeginDrawing();
+        ClearBackground(color_bg);
 
-    // Header
-    DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
-    DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
+        // Header
+        DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
+        DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
 
-    buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
-    if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
-    {
-        screen->scene = CONFIG;
-    }
-
-    // Canvas
-    Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
-    Vector2 canvasPosition;
-    canvasPosition.x = GetScreenWidth() / 2.0f - canvas->GetTarget().texture.width / 2.0f;
-    canvasPosition.y = GetScreenHeight() / 2.0f - canvas->GetTarget().texture.height / 2.0f + 70.0f;
-
-    DrawTextureRec(canvas->GetTarget().texture, rec, canvasPosition, WHITE);
-
-    // Brush outline
-    if (!game->GetIsGuesser())
-    {
-        if (currentTool == BRUSH)
+        buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
+        if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
         {
-            DrawCircleLines(GetMouseX(), GetMouseY(), painter->GetBrushSize(), painter->GetColor());
+            screen->scene = CONFIG;
         }
-        else if (currentTool == ERASER)
+
+        // Canvas
+        Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
+        Vector2 canvasPosition;
+        canvasPosition.x = GetScreenWidth() / 2.0f - canvas->GetTarget().texture.width / 2.0f;
+        canvasPosition.y = GetScreenHeight() / 2.0f - canvas->GetTarget().texture.height / 2.0f + 70.0f;
+
+        DrawTextureRec(canvas->GetTarget().texture, rec, canvasPosition, WHITE);
+
+        // Brush outline
+        if (!game->GetIsGuesser())
         {
-            DrawCircleLines(GetMouseX(), GetMouseY(), 10, painter->GetColor()); // Small circle for bucket tool indicator
+            if (currentTool == BRUSH)
+            {
+                DrawCircleLines(GetMouseX(), GetMouseY(), painter->GetBrushSize(), painter->GetColor());
+            }
+            else if (currentTool == ERASER)
+            {
+                DrawCircleLines(GetMouseX(), GetMouseY(), 10, painter->GetColor()); // Small circle for bucket tool indicator
+            }
         }
     }
-
-    // // Palette
-    // canvas->DrawPalette(*palette);
 
     // Draw chat
     drawChat(client);
@@ -222,8 +223,10 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     drawPaintMessages(client, painter);
 
     // Draw game
+    static bool ronda1 = false;
     partida->Ronda(client);
-    
+    partida->Ronda(client);
+
     // Draw connected clients
     drawConnectedClients(client);
 

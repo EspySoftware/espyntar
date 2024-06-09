@@ -24,7 +24,9 @@ Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette) : painter(
             words[i][j] = toupper(words[i][j]);
         }
     }
+    optionWords = GetRandomWords();
 }
+
 array<string, 3> Games::GetRandomWords() const
 {
     array<string, 3> three_word;
@@ -37,13 +39,11 @@ array<string, 3> Games::GetRandomWords() const
 
 void Games::SetChosenWord()
 {
-    static double timer = 10 * FRAMES;
-    static array<string, 3> words = GetRandomWords();
-    DrawTimer(timer);
-
-    if (timer <= 0 && !chosen)
+    cout << optionWords[0] << endl;
+    DrawTimer(setTimer);
+    if (setTimer <= 0 && !chosen)
     {
-        chosenWord = words[0];
+        chosenWord = optionWords[0];
         chosen = true;
     }
     painter.SetCanPaint(false);
@@ -51,21 +51,21 @@ void Games::SetChosenWord()
     {
         DrawTextPro(GetFontDefault(), "Selecciona:", {(GetScreenWidth() / 2.0f) - (MeasureText("Selecciona:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 320, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, words[0].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 320, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[0].c_str()))
         {
-            chosenWord = words[0];
+            chosenWord = optionWords[0];
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 80, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, words[1].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 80, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[1].c_str()))
         {
-            chosenWord = words[1];
+            chosenWord = optionWords[1];
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) + 160, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, words[2].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) + 160, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[2].c_str()))
         {
-            chosenWord = words[2];
+            chosenWord = optionWords[2];
             chosen = true;
             painter.SetColor(22);
         }
@@ -80,25 +80,25 @@ void Games::SetChosenWord()
 void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
     static bool censored = false;
-    static string censoredString = CensorWord(chosenWord);
-    static bool guessed = false;
     static vector<string> filtered;
+    static string censoredString = CensorWord(chosenWord);
 
-    static double timer = 80 * FRAMES;
-    if (timer < 144)
+    if (drawTimer < 144)
     {
         censoredString = chosenWord;
         DrawTimer(0);
-        if (timer < -(5 * FRAMES))
+        drawTimer--;
+        if (drawTimer < -(5 * FRAMES))
         {
-            cout << timer << endl;
+            finished = true; // Ends round
             return;
         }
     }
     else
     {
-        DrawTimer(timer);
+        DrawTimer(drawTimer);
     }
+
     // Draw the number of letters in the word
     int i = censoredString.size();
     std::string str = std::to_string(i);
@@ -111,7 +111,6 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
         canvas.DrawPalette(palette);
-        // agregar paleta solo al que dibuja
     }
     else
     {
@@ -120,7 +119,6 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
             painter.SetCanPaint(false);
             vector<string> messages = client->getMessages();
             filtered = FilterChat(messages);
-            cout << chosenWord << endl;
             for (int i = 0; i < filtered.size(); i++)
             {
                 if (filtered[i] == chosenWord) // modificar para sumar puntos (no hay cliente para sumar puntos aun)
@@ -133,12 +131,12 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
             DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
 
             DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            if (timer <= (35 * FRAMES))
+            if (drawTimer <= (35 * FRAMES))
             {
                 static int rand1 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand1) = chosenWord.at(rand1);
             }
-            if (timer <= (50 * FRAMES))
+            if (drawTimer <= (50 * FRAMES))
             {
                 static int rand2 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand2) = chosenWord.at(rand2);
@@ -192,4 +190,15 @@ vector<string> Games::FilterChat(vector<string> messages)
         filteredMessages.push_back(messages[i]);
     }
     return filteredMessages;
+}
+
+void Games::SetDefault()
+{
+    chosen = false;
+    isGuesser = true;
+    guessed = false;
+    finished = false;
+    drawTimer = 80 * FRAMES;
+    setTimer = 10 * FRAMES;
+    optionWords = GetRandomWords();
 }
