@@ -127,7 +127,7 @@ void drawChat(shared_ptr<Client> &client)
     }
 
     // Draw the chat input box
-    if (!client->guessed || !client->painterID == client->id)
+    if (!client->guessed || client->painterID != client->id)
         GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
 
     // Usando GuiTextBox no editable    
