@@ -272,6 +272,39 @@ public:
                 continue;
             }
 
+            // Check if round is over
+            // Format: "ROUND_OVER"
+            if (message.find("ROUND_OVER") == 0)
+            {
+                // // broadcast round over message
+                // Broadcast(client, message);
+
+                // Set painter to the next client after the current painter
+                bool found = false;
+                for (auto &otherClient : clients)
+                {
+                    if (found)
+                    {
+                        painterID = otherClient.first;
+                        break;
+                    }
+
+                    if (otherClient.first == painterID)
+                    {
+                        found = true;
+                    }
+                }
+
+                // Send the new painter to all clients
+                // Format: "PAINTER: id"
+                stringstream ss;
+                ss << "PAINTER: " << painterID;
+                string painter = ss.str();
+                Broadcast(client, painter);
+
+                continue;
+            }
+
             // Regular message
             // Format: "(ID)[name]: message"
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;

@@ -2,7 +2,6 @@
 
 Partida::Partida(Games &game) : game(game)
 {
-
 }
 
 void Partida::Ronda(shared_ptr<Client> &client)
@@ -23,7 +22,41 @@ void Partida::Ronda(shared_ptr<Client> &client)
 
     if (game.GetFinished())
     {
+        // If admin, send FINISHED
+        if (client->id == client->adminID)
+        {
+            string msg = "ROUND_OVER";
+            client->Send(msg);
+        }
+
         game.SetDefault();
+
+        // Set painter to the next client in the list
+        bool found = false;
+        for (int i = 0; i < client->connectedClients.size(); i++)
+        {
+            if (found)
+            {
+                client->painterID = client->connectedClients[i].id;
+                break;
+            }
+
+            if (client->connectedClients[i].id == client->painterID)
+            {
+                found = true;
+            }
+        }
+
+        // Update if client is painter
+        if (client->painterID == client->id)
+        {
+            game.SetIsGuesser(false);
+        }
+        else
+        {
+            game.SetIsGuesser(true);
+        }
+
         currentRound++;
     }
 }
