@@ -60,9 +60,9 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
     canvas.Clear();
     if (!isGuesser)
     {
-        DrawTextPro(GetFontDefault(), "Selecciona:", {(GetScreenWidth() / 2.0f) - (MeasureText("Selecciona:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 320, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[0].c_str()))
+        DrawTextPro(GetFontDefault(), "Selecciona:", {(GetScreenWidth() / 2.0f) - (MeasureText("Selecciona:", 35) / 2), (GetScreenWidth() / 2.0f) - 350}, {0, 0}, 0.0f, 35, 3.0f, BLACK);
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 320, 400, 160.0f, 70.0f}, optionWords[0].c_str()))
         {
             chosenWord = optionWords[0];
             censoredString = CensorWord(chosenWord);
@@ -74,7 +74,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 80, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[1].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 80, 400, 160.0f, 70.0f}, optionWords[1].c_str()))
         {
             chosenWord = optionWords[1];
             censoredString = CensorWord(chosenWord);
@@ -87,7 +87,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
             chosen = true;
             painter.SetColor(22);
         }
-        if (GuiButton({(GetScreenWidth() / 2.0f) + 160, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[2].c_str()))
+        if (GuiButton({(GetScreenWidth() / 2.0f) + 160, 400, 160.0f, 70.0f}, optionWords[2].c_str()))
         {
             chosenWord = optionWords[2];
             censoredString = CensorWord(chosenWord);
@@ -126,7 +126,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
     {
         painter.SetCanPaint(false);
         censoredString = chosenWord;
-        DrawTextPro(GetFontDefault(), "0", {120, 110}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
         drawTimer--;
         if (drawTimer < -(5 * FRAMES))
         {

@@ -24,7 +24,7 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
     SetWindowIcon(icon2);
     Texture2D espy = LoadTexture("../assets/espy_peke.png");
     Texture2D clock = LoadTexture("../assets/reloj.png");
-
+    Texture2D bgGame=LoadTexture("../assets/backgroundGame.png");
     SetTargetFPS(144);
     Screen screen;
 
@@ -38,7 +38,7 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
                 drawStart(&screen, client, senderThread, receiverThread);
                 break;
             case GAME: // ventana de juego
-                drawGame(&screen, client, &espy,&clock);
+                drawGame(&screen, client, &espy,&clock,&bgGame);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();
@@ -48,6 +48,8 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
     }
     UnloadTexture(espy);
     UnloadImage(icon2);
+    UnloadTexture(clock);
+    UnloadTexture(bgGame);
     CloseWindow();
 }
 

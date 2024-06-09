@@ -39,7 +39,7 @@ void drawConnectedClients(shared_ptr<Client> &client)
             DrawRectangleRec(recPlayer, {122, 236, 104, 255});
         }
 
-        DrawRectangleLinesEx(recPlayer, 1, {122, 236, 104, 255});
+        DrawRectangleLinesEx(recPlayer, 1, {87, 179, 72, 255});
 
         // Draw the client name (centered in the box)
         Vector2 textSize = MeasureTextEx(font, connectedClients[i].name.c_str(), 15, 2);
@@ -134,7 +134,7 @@ void drawPaintMessages(shared_ptr<Client> &client, Painter *painter)
     client->paintMessages.clear();
 }
 
-void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Texture2D *clock)
+void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Texture2D *clock, Texture2D *bgGame)
 {
     // Tools
     enum Tool
@@ -142,6 +142,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
         BRUSH,
         ERASER
     };
+    DrawTexture(*bgGame, 0, 0, WHITE);
 
     // Objects
     ColorPalette *palette;
@@ -220,7 +221,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
         // Draw
         Color color_bg = {0, 156, 35, 255};
         BeginDrawing();
-        ClearBackground(color_bg);
+        // ClearBackground(color_bg);
 
         // Header
 

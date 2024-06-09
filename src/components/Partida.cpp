@@ -104,6 +104,6 @@ void Partida::DrawRounds()
     }
     else
     {
-        DrawTextPro(GetFontDefault(), "Partida finalizada", {58, 80}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), "Partida finalizada", {120, 95}, {0, 0}, 0, 20, 4, BLACK);
     }
 }
