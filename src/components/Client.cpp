@@ -219,6 +219,7 @@ void Client::Receive()
         {
             string word = message.substr(8);
             cout << "The word is: " << word << endl;
+            chosenWord = word;
 
             continue;
         }

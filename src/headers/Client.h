@@ -38,8 +38,8 @@ using std::smatch;
 using std::stoi;
 using std::string;
 using std::stringstream;
-using std::vector;
 using std::to_string;
+using std::vector;
 
 class OtherClient
 {
@@ -72,6 +72,8 @@ public:
     vector<string> messages;
     vector<PaintMessage> paintMessages;
     vector<OtherClient> connectedClients;
+    string chosenWord;
+
     bool isAdmin = false;
 
     Client() = default;                                                                                           // Constructor por defecto
