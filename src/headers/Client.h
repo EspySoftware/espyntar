@@ -39,6 +39,7 @@ using std::stoi;
 using std::string;
 using std::stringstream;
 using std::vector;
+using std::to_string;
 
 class OtherClient
 {

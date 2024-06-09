@@ -26,6 +26,8 @@ public:
     SOCKET listenSocket;
     sockaddr_in serverAddress;
     map<int, Client> clients;
+    int painterID = -1;
+    string chosenWord;
 
     Server(int port = 12345)
     {
@@ -235,9 +237,24 @@ public:
                 continue;
             }
 
+            // Check if message is ANSWER: word
+            if (message.find("ANSWER:") == 0)
+            {
+                // Set chosen word to the received word
+                chosenWord = message.substr(7);
+
+                // broadcast answer message
+                // Format "ANSWER: word"
+                Broadcast(client, message);
+
+                continue;
+            }
+
+            // Regular message
+            // Format: "(ID)[name]: message"
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;
 
-            string msg = "[" + client.name + "]: " + message;
+            string msg = "(" + to_string(client.id) + ") [" + client.name + "]: " + message;
             Broadcast(client, msg);
         }
 

@@ -37,14 +37,22 @@ array<string, 3> Games::GetRandomWords() const
     return three_word;
 }
 
-void Games::SetChosenWord()
+void Games::SetChosenWord(shared_ptr<Client> &client)
 {
+    stringstream msg;
+
     DrawTimer(setTimer);
     if (setTimer <= 0 && !chosen)
     {
         chosenWord = optionWords[0];
         censoredString = CensorWord(chosenWord);
         cout << chosenWord << censoredString << endl;
+
+        // Broadcast chosen word
+        cout << chosenWord << endl;
+        msg << "ANSWER: " << chosenWord;
+        client->Send(msg.str());
+
         chosen = true;
     }
     painter.SetCanPaint(false);
@@ -55,22 +63,36 @@ void Games::SetChosenWord()
         if (GuiButton({(GetScreenWidth() / 2.0f) - 320, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[0].c_str()))
         {
             chosenWord = optionWords[0];
-            censoredString = CensorWord(chosenWord);
-            cout << chosenWord << censoredString << endl;
+
+            // Broadcast chosen word
+            cout << chosenWord << endl;
+            msg << "ANSWER: " << chosenWord;
+            client->Send(msg.str());
+
             chosen = true;
             painter.SetColor(22);
         }
         if (GuiButton({(GetScreenWidth() / 2.0f) - 80, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[1].c_str()))
         {
             chosenWord = optionWords[1];
-            censoredString = CensorWord(chosenWord);
+
+            // Broadcast chosen word
+            cout << chosenWord << endl;
+            msg << "ANSWER: " << chosenWord;
+            client->Send(msg.str());
+
             chosen = true;
             painter.SetColor(22);
         }
         if (GuiButton({(GetScreenWidth() / 2.0f) + 160, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[2].c_str()))
         {
             chosenWord = optionWords[2];
-            censoredString = CensorWord(chosenWord);
+
+            // Broadcast chosen word
+            cout << chosenWord << endl;
+            msg << "ANSWER: " << chosenWord;
+            client->Send(msg.str());
+
             chosen = true;
             painter.SetColor(22);
         }

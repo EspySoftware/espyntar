@@ -147,10 +147,12 @@ void Client::Send()
 
 void Client::Send(string message)
 {
-    // PAINT command
-    if (message.find("PAINT:") != 0 && message.find("POINTS:") != 0)
+    // Not a PAINT or POINTS or ANSWER command
+    if (message.find("PAINT:") != 0 && message.find("POINTS:") != 0 && message.find("ANSWER:") != 0)
     {
-        string msg = "[" + name + "]: " + message;
+        // Regular message
+        // Format: "(ID) [name]: message"
+        string msg = "(" + to_string(id) + ") [" + name + "]: " + message;
         messages.push_back(msg);
     }
 
@@ -190,11 +192,6 @@ void Client::Receive()
         buffer[bytesReceived] = '\0';
         string message = buffer;
 
-        // points regex
-        // Format: "(id) points: 1."
-        regex r("(\\d+)\\)\\s+points:\\s+(\\d+).");
-        smatch match;
-
         // PAINT COMMAND
         // Format: "PAINT:100,200,1,10" (x, y, color, brushSize)
         if (message[0] == 'P' && message.find("PAINT:") == 0)
@@ -212,10 +209,25 @@ void Client::Receive()
                 // Add the paint message to the vector
                 paintMessages.push_back((PaintMessage){x, y, color, (float)brushSize});
             }
+
+            continue;
         }
+
+        // ANSWER command
+        // Format: "ANSWER: WORD"
+        if (message[0] == 'A' && message.find("ANSWER:") == 0)
+        {
+            string word = message.substr(8);
+            cout << "The word is: " << word << endl;
+
+            continue;
+        }
+
         // POINTS command
         // Format: "(id) points: 1."
-        else if (regex_search(message, match, r) && match.size() > 2)
+        regex r("(\\d+)\\)\\s+points:\\s+(\\d+).");
+        smatch match;
+        if (regex_search(message, match, r) && match.size() > 2)
         {
             int id = stoi(match.str(1));
             int points = stoi(match.str(2));
@@ -230,41 +242,54 @@ void Client::Receive()
                     break;
                 }
             }
+
+            continue;
         }
-        else
+
+        // Add and remove clients from the vector
+        // Format: (1) Client1 disconnected. or (22) Client22 connected. (add id and name to the vector)
+        regex r2("(\\d+)\\)\\s+(\\w+)");
+        smatch match2;
+        if (regex_search(message, match2, r2) && match2.size() > 2)
         {
-            // Add and remove clients from the vector
-            // Format: (1) Client1 disconnected. or (22) Client22 connected. (add id and name to the vector)
-            regex r("(\\d+)\\)\\s+(\\w+)");
-            smatch match;
+            int id = stoi(match2.str(1));
+            string name = match2.str(2);
 
-            if (regex_search(message, match, r) && match.size() > 2)
+            // Client disconnected
+            if (message.find("disconnected") != string::npos)
             {
-                int id = stoi(match.str(1));
-                string name = match.str(2);
-
-                // Client disconnected
-                if (message.find("disconnected") != string::npos)
+                for (int i = 0; i < connectedClients.size(); i++)
                 {
-                    for (int i = 0; i < connectedClients.size(); i++)
+                    if (connectedClients[i].id == id)
                     {
-                        if (connectedClients[i].id == id)
-                        {
-                            connectedClients.erase(connectedClients.begin() + i);
-                            break;
-                        }
+                        connectedClients.erase(connectedClients.begin() + i);
+                        break;
                     }
                 }
-                // Client connected
-                else if (message.find("connected") != string::npos)
-                {
-                    connectedClients.push_back({id, name, 0});
-                }
             }
-
-            cout << buffer << endl;
-            messages.push_back(buffer);
+            // Client connected
+            else if (message.find("connected") != string::npos)
+            {
+                connectedClients.push_back({id, name, 0});
+            }
         }
+
+        // Regular message
+        // Format: "(ID) [name]: message"
+        regex r3("\\((\\d+)\\)\\s+\\[(\\w+)\\]:\\s+(.*)");
+        smatch match3;
+
+        if (regex_search(message, match3, r3) && match3.size() > 3)
+        {
+            int id = stoi(match3.str(1));
+            string name = match3.str(2);
+            string msg = match3.str(3);
+
+            cout << "REGULAR MESSAGE" << endl;
+        }
+
+        cout << buffer << endl;
+        messages.push_back(buffer);
     }
 
     Disconnect();

@@ -2,6 +2,7 @@
 
 Partida::Partida(Games &game) : game(game)
 {
+
 }
 
 void Partida::Ronda(shared_ptr<Client> &client)
@@ -10,7 +11,7 @@ void Partida::Ronda(shared_ptr<Client> &client)
     {
         if (!game.GetChosen())
         {
-            game.SetChosenWord();
+            game.SetChosenWord(client);
         }
         if (game.GetChosen())
         {
@@ -38,3 +39,4 @@ void Partida::DrawRounds()
         DrawTextPro(GetFontDefault(), "Partida finalizada", {58, 80}, {0, 0}, 0, 20, 4, BLACK);
     }
 }
+

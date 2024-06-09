@@ -6,10 +6,12 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <sstream>
 #define FRAMES 144
 
 using std::array;
 using std::string;
+using std::stringstream;
 using std::vector;
 
 class Games
@@ -35,7 +37,8 @@ public:
     Games(Painter &painter, Canvas &canvas, ColorPalette &palette);
     array<string, 3> GetRandomWords() const;
     string GetChosenWord() const { return chosenWord; }
-    void SetChosenWord();
+    void SetChosenWord(shared_ptr<Client> &client);
+
     bool GetChosen() const { return chosen; }
     void DrawChosenWord(shared_ptr<Client> &client);
     void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }

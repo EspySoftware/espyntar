@@ -69,13 +69,28 @@ void drawChat(shared_ptr<Client> &client)
 
     // Draw messages in reverse order at the bottom of the chat box
     int maxMessages = 25 < messages.size() ? 25 : messages.size();
+    // Format: "(id) [name]: message"
+    regex r("\\((\\d+)\\)\\s+\\[(\\w+)\\]:\\s+(.*)");
+    smatch match;
+
     for (int i = 0; i < maxMessages; i++)
     {
-        string name = messages[messages.size() - i - 1].substr(0, messages[messages.size() - i - 1].find(":") + 1);
-        string msg = messages[messages.size() - i - 1].substr(messages[messages.size() - i - 1].find(":") + 1);
+        if (regex_search(messages[messages.size() - i - 1], match, r) && match.size() > 3)
+        {
+            int id = stoi(match.str(1));
+            string name = match.str(2);
+            string msg = match.str(3);
 
-        DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
-        DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
+            // Draw the message
+            name = "[" + name + "]: ";
+            DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
+            DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
+        }
+        else
+        {
+            // Draw the message
+            DrawTextPro(font, messages[messages.size() - i - 1].c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, GRAY);
+        }
     }
 
     // Draw the chat input box
@@ -187,13 +202,12 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         // Header
         DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
         DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
-  
 
-        buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
-        if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
-        {
-            screen->scene = CONFIG;
-        }
+        // buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
+        // if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
+        // {
+        //     partida->DrawConfig();
+        // }
 
         // Canvas
         Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
@@ -229,6 +243,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 
     // Draw connected clients
     drawConnectedClients(client);
-    
+
     EndDrawing();
 }
