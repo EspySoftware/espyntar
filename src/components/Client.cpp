@@ -1,5 +1,5 @@
 #include "../headers/Client.h"
-#include "../headers/Painter.h"
+// #include "../headers/Painter.h"
 
 Client::Client(string address, int port, string name)
 {
