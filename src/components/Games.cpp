@@ -80,8 +80,10 @@ void Games::SetChosenWord()
 void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
     static bool censored = false;
-    static vector<string> filtered;
+    static bool guessed = false;
+    /*                          FALTA MODIFICAR                         */
     static string censoredString = CensorWord(chosenWord);
+    static vector<string> filtered;
 
     if (drawTimer < 144)
     {
