@@ -102,8 +102,21 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
     }
     else
     {
+        // Look for painter name
+        string adminName;
+        for (int i = 0; i < client->connectedClients.size(); i++)
+        {
+            if (client->connectedClients[i].id == client->painterID)
+            {
+                adminName = client->connectedClients[i].name;
+                break;
+            }
+        }
+
+        string esperando = "Esperando a " + adminName;
+
         DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
-        DrawTextPro(GetFontDefault(), "Esperando a NOMBRE-DE-JUGADOR", {(GetScreenWidth() / 2.0f) - (MeasureText("Esperando a NOMBRE-DE-JUGADOR", 20) / 2), GetScreenHeight() - 500.0f}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), esperando.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(esperando.c_str(), 20) / 2), GetScreenHeight() - 500.0f}, {0, 0}, 0, 20, 4, BLACK);
     }
 }
 
