@@ -26,6 +26,8 @@ public:
     SOCKET listenSocket;
     sockaddr_in serverAddress;
     map<int, Client> clients;
+    int painterID = -1;
+    string chosenWord;
 
     Server(int port = 12345)
     {
@@ -231,6 +233,19 @@ public:
                 // Format: "(id) points: points."
                 string msg = "(" + to_string(client.id) + ") " + " points: " + to_string(client.points) + ".";
                 Broadcast(client, msg);
+
+                continue;
+            }
+
+            // Check if message is ANSWER: word
+            if (message.find("ANSWER:") == 0)
+            {
+                // Set chosen word to the received word
+                chosenWord = message.substr(7);
+
+                // broadcast answer message
+                // Format "ANSWER: word"
+                Broadcast(client, message);
 
                 continue;
             }

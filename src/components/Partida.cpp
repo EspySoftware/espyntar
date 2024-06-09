@@ -11,7 +11,7 @@ void Partida::Ronda(shared_ptr<Client> &client)
 
         if (!game.GetChosen())
         {
-            game.SetChosenWord();
+            game.SetChosenWord(client);
         }
         if (game.GetChosen())
         {
