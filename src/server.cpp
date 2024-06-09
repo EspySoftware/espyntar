@@ -276,6 +276,7 @@ public:
             // Format: "ROUND_OVER"
             if (message.find("ROUND_OVER") == 0)
             {
+                chosenWord = "";
                 // // broadcast round over message
                 // Broadcast(client, message);
 

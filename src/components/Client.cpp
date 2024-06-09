@@ -302,6 +302,10 @@ void Client::Receive()
         smatch painterMatch;
         if (regex_search(message, painterMatch, painterRegex) && painterMatch.size() > 1)
         {
+            // Reset the chosen word
+            chosenWord = "";
+
+            // Extract the painter ID
             painterID = stoi(painterMatch.str(1));
             cout << "The painter is: " << painterID << endl;
         }
