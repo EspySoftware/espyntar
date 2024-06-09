@@ -101,31 +101,28 @@ void drawChat(shared_ptr<Client> &client)
             if (lowerMsg == lowerChosenWord)
             {
                 msg = name + " guessed!";
-                // Replace the message in the messages vector
-                messages[messages.size() - i - 1] = msg;
-
-                DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, GREEN);
+                client->messages[messages.size() - i - 1] = msg;
             }
             else
             {
-                // Draw past guessed messages
-                if (msg.find("guessed!") != string::npos)
-                {
-                    DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, GREEN);
-                }
-                else
-                {
-                    // Draw the message
-                    name = "[" + name + "]: ";
-                    DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
-                    DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
-                }
+                // Draw the message
+                name = "[" + name + "]: ";
+                DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
+                DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
             }
         }
         else
         {
-            // Draw the message
-            DrawTextPro(font, messages[messages.size() - i - 1].c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, GRAY);
+            // Draw past guessed messages
+            if (messages[messages.size() - i - 1].find("guessed!") != string::npos)
+            {
+                DrawTextPro(font, messages[messages.size() - i - 1].c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGREEN);
+            }
+            else
+            {
+                // Draw the message
+                DrawTextPro(font, messages[messages.size() - i - 1].c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, GRAY);
+            }
         }
     }
 
