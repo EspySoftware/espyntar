@@ -25,7 +25,7 @@ private:
     bool chosen = false;
     bool isFiltered = false;
     bool isGuesser = true; // False means player is the drawer
-    bool guessed = false;   // True means player has guessed the word
+    bool guessed = false;  // True means player has guessed the word
     bool finished = false;
     Painter &painter;
     Canvas &canvas;

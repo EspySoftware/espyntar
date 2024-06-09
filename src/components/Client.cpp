@@ -240,6 +240,8 @@ void Client::Receive()
             cout << "The word is: " << word << endl;
             chosenWord = word;
 
+            messages.push_back("Word has been chosen.");
+
             continue;
         }
 
