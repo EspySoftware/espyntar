@@ -148,7 +148,7 @@ void Client::Send()
 void Client::Send(string message)
 {
     // PAINT command
-    if (message.find("PAINT:") != 0)
+    if (message.find("PAINT:") != 0 && message.find("POINTS:") != 0)
     {
         string msg = "[" + name + "]: " + message;
         messages.push_back(msg);
@@ -190,9 +190,14 @@ void Client::Receive()
         buffer[bytesReceived] = '\0';
         string message = buffer;
 
+        // points regex
+        // Format: "(id) points: 1."
+        regex r("(\\d+)\\)\\s+points:\\s+(\\d+).");
+        smatch match;
+
         // PAINT COMMAND
         // Format: "PAINT:100,200,1,10" (x, y, color, brushSize)
-        if (message.find("PAINT:") == 0)
+        if (message[0] == 'P' && message.find("PAINT:") == 0)
         {
             // Extract the paint data
             regex r("PAINT:(\\d+),(\\d+),(\\d+),(\\d+)");
@@ -206,6 +211,24 @@ void Client::Receive()
 
                 // Add the paint message to the vector
                 paintMessages.push_back((PaintMessage){x, y, color, (float)brushSize});
+            }
+        }
+        // POINTS command
+        // Format: "(id) points: 1."
+        else if (regex_search(message, match, r) && match.size() > 2)
+        {
+            int id = stoi(match.str(1));
+            int points = stoi(match.str(2));
+            cout << "Server: Giving client ( " << id << " ) " << name << " " << points << " points." << endl;
+
+            // Update the points of the client
+            for (int i = 0; i < connectedClients.size(); i++)
+            {
+                if (connectedClients[i].id == id)
+                {
+                    connectedClients[i].points += points;
+                    break;
+                }
             }
         }
         else
@@ -245,6 +268,26 @@ void Client::Receive()
     }
 
     Disconnect();
+}
+
+void Client::AddPoints(int points)
+{
+    cout << "Correct answer, receiving " << points << " points." << endl;
+
+    // Update the points of the client
+    for (int i = 0; i < connectedClients.size(); i++)
+    {
+        if (connectedClients[i].id == id)
+        {
+            connectedClients[i].points += points;
+            break;
+        }
+    }
+
+    // Send the points to the server
+    stringstream ss;
+    ss << "POINTS:" << points;
+    Send(ss.str());
 }
 
 void Client::Disconnect()

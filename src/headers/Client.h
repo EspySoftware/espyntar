@@ -71,6 +71,7 @@ public:
     vector<string> messages;
     vector<PaintMessage> paintMessages;
     vector<OtherClient> connectedClients;
+    bool isAdmin = false;
 
     Client() = default;                                                                                           // Constructor por defecto
     Client(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
@@ -83,9 +84,9 @@ public:
 
     vector<string> getMessages() { return messages; }
     vector<PaintMessage> getPaintMessages() { return paintMessages; }
-    
-    void AddPoints(int points) { connectedClients.at(0).points += points; }
-    
+
+    void AddPoints(int points);
+
     void Disconnect();
 };
 
