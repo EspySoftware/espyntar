@@ -142,6 +142,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
 
     // Variables
     static bool initialized = false;
+    bool config = false;
     static Tool currentTool = BRUSH;
     static int colorIndex;
     static int CUTE = 1;
@@ -203,11 +204,15 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
         DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
 
-        // buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
-        // if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
-        // {
-        //     partida->DrawConfig();
-        // }
+        buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
+        if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
+        {
+            if (!config)
+            {
+                /* code */
+                partida->DrawConfig();
+            }
+        }
 
         // Canvas
         Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
