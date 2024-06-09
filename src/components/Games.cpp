@@ -79,9 +79,7 @@ void Games::SetChosenWord()
 
 void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
-    static vector<string> filtered;
     static string censoredString;
-
     if (!censored)
     {
         censoredString = CensorWord(chosenWord);
@@ -124,12 +122,8 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
         if (!guessed)
         {
             painter.SetCanPaint(false);
-            if (!isFiltered)
-            {
-                vector<string> messages = client->getMessages();
-                filtered = FilterChat(messages);
-                isFiltered = true;
-            }
+            vector<string> messages = client->getMessages();
+            vector<string> filtered = FilterChat(messages);
             for (int i = 0; i < filtered.size(); i++)
             {
                 if (filtered[i] == chosenWord) // modificar para sumar puntos (no hay cliente para sumar puntos aun)
@@ -202,6 +196,7 @@ void Games::SetDefault()
     isGuesser = true;
     guessed = false;
     finished = false;
+    isFiltered = false;
     censored = false;
     drawTimer = 10 * FRAMES;
     setTimer = 10 * FRAMES;
