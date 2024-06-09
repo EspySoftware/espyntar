@@ -233,9 +233,11 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     {
         partida->Ronda(client);
     }
+    // Draw rounds
+    partida->DrawRounds();
 
     // Draw connected clients
     drawConnectedClients(client);
-
+    
     EndDrawing();
 }

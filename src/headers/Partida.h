@@ -11,4 +11,5 @@ public:
     Partida(Games &game);
     void Ronda(shared_ptr<Client> &client);
     Games &GetGame() { return game; }
+    void DrawRounds();
 };

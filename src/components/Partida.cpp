@@ -8,6 +8,7 @@ void Partida::Ronda(shared_ptr<Client> &client)
 {
     if (!game.GetFinished())
     {
+
         if (!game.GetChosen())
         {
             game.SetChosenWord();
@@ -23,4 +24,11 @@ void Partida::Ronda(shared_ptr<Client> &client)
         game.SetDefault();
         currentRound++;
     }
+}
+
+void Partida::DrawRounds()
+{
+    std::string roundText = "Ronda " + std::to_string(currentRound) + " de 3";
+    const char *textToDraw = roundText.c_str();
+    DrawTextPro(GetFontDefault(), textToDraw, {30, 80}, {0, 0}, 0, 20, 4, BLACK);
 }

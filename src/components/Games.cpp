@@ -173,7 +173,6 @@ string Games::CensorWord(string word)
 
 void Games::DrawTimer(int &timer)
 {
-    DrawTextPro(GetFontDefault(), "TIEMPO:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
     if (timer > 0)
     {
         timer--;
