@@ -5,6 +5,7 @@
 #include <WS2tcpip.h>
 #include <tchar.h>
 #include <thread>
+#include <sstream>
 #include "./headers/Client.h"
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -13,6 +14,7 @@ using std::cout;
 using std::endl;
 using std::map;
 using std::string;
+using std::stringstream;
 using std::thread;
 using std::to_string;
 
@@ -208,6 +210,28 @@ public:
             if (message.find("PAINT:") == 0)
             {
                 Broadcast(client, message);
+                continue;
+            }
+
+            // Check if message is POINTS: points
+            if (message.find("POINTS:") == 0)
+            {
+                int points = stoi(message.substr(7));
+
+                cout << "Giving client ( " << client.id << " ) " << client.name << " " << points << " points." << endl;
+                for (auto &otherClient : clients)
+                {
+                    if (otherClient.first == client.id)
+                    {
+                        otherClient.second.points += points;
+                    }
+                }
+
+                // broadcast points message
+                // Format: "(id) points: points."
+                string msg = "(" + to_string(client.id) + ") " + " points: " + to_string(client.points) + ".";
+                Broadcast(client, msg);
+
                 continue;
             }
 
