@@ -18,9 +18,10 @@ private:
     vector<string> words;
     array<string, 3> optionWords;
     string chosenWord;
+    string censoredString;
+    bool censored = false;
     bool chosen = false;
     bool isFiltered = false;
-    bool censored = false;
     bool isGuesser = true; // False means player is the drawer
     bool guessed = false;  // True means player has guessed the word
     bool finished = false;
@@ -30,7 +31,7 @@ private:
 
 public:
     int setTimer = 10 * FRAMES;
-    int drawTimer = 80 * FRAMES;
+    int drawTimer = 10 * FRAMES;
     Games(Painter &painter, Canvas &canvas, ColorPalette &palette);
     array<string, 3> GetRandomWords() const;
     string GetChosenWord() const { return chosenWord; }

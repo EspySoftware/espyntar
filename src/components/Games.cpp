@@ -39,11 +39,12 @@ array<string, 3> Games::GetRandomWords() const
 
 void Games::SetChosenWord()
 {
-    cout << optionWords[0] << endl;
     DrawTimer(setTimer);
     if (setTimer <= 0 && !chosen)
     {
         chosenWord = optionWords[0];
+        censoredString = CensorWord(chosenWord);
+        cout << chosenWord << censoredString << endl;
         chosen = true;
     }
     painter.SetCanPaint(false);
@@ -54,18 +55,22 @@ void Games::SetChosenWord()
         if (GuiButton({(GetScreenWidth() / 2.0f) - 320, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[0].c_str()))
         {
             chosenWord = optionWords[0];
+            censoredString = CensorWord(chosenWord);
+            cout << chosenWord << censoredString << endl;
             chosen = true;
             painter.SetColor(22);
         }
         if (GuiButton({(GetScreenWidth() / 2.0f) - 80, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[1].c_str()))
         {
             chosenWord = optionWords[1];
+            censoredString = CensorWord(chosenWord);
             chosen = true;
             painter.SetColor(22);
         }
         if (GuiButton({(GetScreenWidth() / 2.0f) + 160, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[2].c_str()))
         {
             chosenWord = optionWords[2];
+            censoredString = CensorWord(chosenWord);
             chosen = true;
             painter.SetColor(22);
         }
@@ -79,14 +84,6 @@ void Games::SetChosenWord()
 
 void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
-    static string censoredString;
-    if (!censored)
-    {
-        censoredString = CensorWord(chosenWord);
-        cout << censoredString << endl;
-        censored = true;
-    }
-
     if (drawTimer < 144)
     {
         censoredString = chosenWord;
@@ -131,17 +128,16 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
                     guessed = true;
                 }
             }
-            DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
-
-            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            if (drawTimer <= (35 * FRAMES))
+            DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
+            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(censoredString.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+            if (drawTimer == (35 * FRAMES))
             {
-                static int rand1 = rand() % static_cast<int>(chosenWord.size());
+                int rand1 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand1) = chosenWord.at(rand1);
             }
-            if (drawTimer <= (50 * FRAMES))
+            if (drawTimer == (50 * FRAMES))
             {
-                static int rand2 = rand() % static_cast<int>(chosenWord.size());
+                int rand2 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand2) = chosenWord.at(rand2);
             }
         }
@@ -156,12 +152,15 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
 
 string Games::CensorWord(string word)
 {
-    static string censoredString = chosenWord;
-    for (int i = 0; i < censoredString.size(); i++)
+    if (!censored)
     {
-        censoredString.at(i) = '_';
+        string toCensorString = chosenWord;
+        for (int i = 0; i < toCensorString.size(); i++)
+        {
+            toCensorString.at(i) = '_';
+        }
+        return toCensorString;
     }
-    return censoredString;
 }
 
 void Games::DrawTimer(int &timer)
@@ -194,9 +193,9 @@ void Games::SetDefault()
     chosen = false;
     isGuesser = true;
     guessed = false;
+    censored = false;
     finished = false;
     isFiltered = false;
-    censored = false;
     drawTimer = 10 * FRAMES;
     setTimer = 10 * FRAMES;
     optionWords = GetRandomWords();
