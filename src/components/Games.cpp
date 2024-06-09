@@ -56,6 +56,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
         chosen = true;
     }
     painter.SetCanPaint(false);
+    canvas.Clear();
     if (!isGuesser)
     {
         DrawTextPro(GetFontDefault(), "Selecciona:", {(GetScreenWidth() / 2.0f) - (MeasureText("Selecciona:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
@@ -63,6 +64,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
         if (GuiButton({(GetScreenWidth() / 2.0f) - 320, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[0].c_str()))
         {
             chosenWord = optionWords[0];
+            censoredString = CensorWord(chosenWord);
 
             // Broadcast chosen word
             cout << chosenWord << endl;
@@ -75,6 +77,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
         if (GuiButton({(GetScreenWidth() / 2.0f) - 80, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[1].c_str()))
         {
             chosenWord = optionWords[1];
+            censoredString = CensorWord(chosenWord);
 
             // Broadcast chosen word
             cout << chosenWord << endl;
@@ -87,12 +90,12 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
         if (GuiButton({(GetScreenWidth() / 2.0f) + 160, (GetScreenHeight() / 2.0f) - 80.0f, 160.0f, 70.0f}, optionWords[2].c_str()))
         {
             chosenWord = optionWords[2];
+            censoredString = CensorWord(chosenWord);
 
             // Broadcast chosen word
             cout << chosenWord << endl;
             msg << "ANSWER: " << chosenWord;
             client->Send(msg.str());
-
             chosen = true;
             painter.SetColor(22);
         }
@@ -108,6 +111,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
     if (drawTimer < 144)
     {
+        painter.SetCanPaint(false);
         censoredString = chosenWord;
         DrawTextPro(GetFontDefault(), "0", {120, 110}, {0, 0}, 0, 20, 4, BLACK);
         drawTimer--;
@@ -130,7 +134,8 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
     // Draw the word
     if (!isGuesser)
     {
-        painter.SetCanPaint(true);
+        if (drawTimer > 144)
+            painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
         canvas.DrawPalette(palette);
@@ -213,7 +218,6 @@ vector<string> Games::FilterChat(vector<string> messages)
 void Games::SetDefault()
 {
     chosen = false;
-    isGuesser = true;
     guessed = false;
     censored = false;
     finished = false;

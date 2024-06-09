@@ -28,6 +28,7 @@ public:
     void DrawPalette(ColorPalette &palette);
     int CheckPaletteClick(ColorPalette &palette);
     void BucketFill(Vector2 position, Color newColor);
+    void Clear();
 
     RenderTexture2D GetTarget() { return target; }
 };

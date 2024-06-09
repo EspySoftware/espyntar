@@ -3,7 +3,7 @@
 
 Painter::Painter(ColorPalette &palette, Canvas &canvas) : palette(palette), canvas(canvas)
 {
-    brushSize = 1.0f;
+    brushSize = 10.0f;
     currentColor = 22;
     lastPosition = {-1.0f, -1.0f};
     SetColor(22);

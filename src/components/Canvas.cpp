@@ -135,3 +135,10 @@ void Canvas::BucketFill(Vector2 position, Color newColor)
     }
     EndTextureMode(); // Finalizar modo de dibujo en la textura
 }
+
+void Canvas::Clear()
+{
+    BeginTextureMode(target);
+    ClearBackground(WHITE);
+    EndTextureMode();
+}
