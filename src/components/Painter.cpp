@@ -3,7 +3,7 @@
 
 Painter::Painter(ColorPalette &palette, Canvas &canvas) : palette(palette), canvas(canvas)
 {
-    brushSize = 10.0f;
+    brushSize = 1.0f;
     currentColor = 22;
     lastPosition = {-1.0f, -1.0f};
     SetColor(22);
@@ -12,6 +12,8 @@ Painter::Painter(ColorPalette &palette, Canvas &canvas) : palette(palette), canv
 // Paint on the local canvas
 void Painter::Paint(Vector2 position)
 {
+    if (!canPaint)
+        return;
     position.x -= GetScreenWidth() / 2.0f - canvas.GetTarget().texture.width / 2.0f;
     position.y -= GetScreenHeight() / 2.0f - canvas.GetTarget().texture.height / 2.0f + 70.0f;
 
@@ -62,6 +64,8 @@ void Painter::Paint(Vector2 position, int color, float size)
 // Paint from the local client and send the message to the server
 void Painter::Paint(Vector2 position, shared_ptr<Client> client)
 {
+    if (!canPaint)
+        return;
     Paint(position);
 
     // Create a message containing the paint action data
@@ -74,6 +78,8 @@ void Painter::Paint(Vector2 position, shared_ptr<Client> client)
 
 void Painter::Erase(Vector2 position)
 {
+    if (!canPaint)
+        return;
     position.x -= GetScreenWidth() / 2.0f - canvas.GetTarget().texture.width / 2.0f;
     position.y -= GetScreenHeight() / 2.0f - canvas.GetTarget().texture.height / 2.0f + 70.0f;
 
@@ -98,7 +104,6 @@ void Painter::Erase(Vector2 position)
 void Painter::SetBrushSize(float delta)
 {
     delta *= 2.0f;
-
     brushSize += delta;
     if (brushSize < 1.0f)
         brushSize = 1.0f;

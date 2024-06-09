@@ -19,6 +19,7 @@ private:
     float brushSize;
     Vector2 lastPosition;
     int currentColor = 2;
+    bool canPaint = true;
 
 public:
     Painter(ColorPalette &palette, Canvas &canvas);
@@ -33,4 +34,5 @@ public:
     void SetColor(int colorIndex) { currentColor = colorIndex; }
     float GetBrushSize() { return brushSize; }
     Color GetColor() { return palette.GetColor(currentColor); }
+    void SetCanPaint(bool canPaint) { this->canPaint = canPaint; }
 };

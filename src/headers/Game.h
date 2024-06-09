@@ -141,15 +141,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     float mouseWheelMove = GetMouseWheelMove();
     painter->SetBrushSize(mouseWheelMove);
 
-    // Switch tool with SPACE key
-    // if (GuiButton({(GetScreenWidth() / 2.0f) - 220, GetScreenHeight() - 500.0f, 120.0f, 50.0f}, currentTool == BRUSH ? "Eraser" : "Brush"))
-    // {
-    //     currentTool = (currentTool == BRUSH) ? BRUSH : ERASER;
-    // }
-    // {
-    //     currentTool = (currentTool == BRUSH) ? BRUSH : ERASER;
-    // }
-
     // Paint
     if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
     {
