@@ -2,7 +2,9 @@
 #include <iostream>
 #include "../headers/Games.h"
 #include "../headers/raygui.h"
+
 #define FRAMES 144
+#define BASE_POINTS 100
 
 using std::endl;
 using std::getline;
@@ -181,6 +183,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
     {
         if (!guessed)
         {
+            cout << chosenWord << endl;
             painter.SetCanPaint(false);
             vector<string> messages = client->getMessages();
             vector<string> filtered = FilterChat(messages);
@@ -188,7 +191,13 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
             {
                 if (filtered[i] == chosenWord) // modificar para sumar puntos (no hay cliente para sumar puntos aun)
                 {
-                    client->AddPoints(1);
+                    if (guesses == 0)
+                    {
+                        client->AddPoints(BASE_POINTS);
+                        guesses++;
+                    }
+                    else if (guesses != 0)
+                        client->AddPoints(BASE_POINTS - (drawTimer / 144) - (guesses * 10));
                     guessed = true;
                 }
             }
@@ -259,6 +268,7 @@ void Games::SetDefault()
     censored = false;
     finished = false;
     isFiltered = false;
+    guesses = 0;
     drawTimer = 10 * FRAMES;
     setTimer = 10 * FRAMES;
     optionWords = GetRandomWords();
