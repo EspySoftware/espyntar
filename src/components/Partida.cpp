@@ -32,7 +32,7 @@ void Partida::Ronda(shared_ptr<Client> &client)
         }
         else
         {
-            DrawTextPro(GetFontDefault(), "Esperando jugadores...", {58, 80}, {0, 0}, 0, 20, 4, BLACK);
+            DrawTextPro(GetFontDefault(), "Esperando jugadores...", {float(GetScreenWidth()) / 2 - MeasureText("Esperando jugadores...", 20) / 2, 80}, {0, 0}, 0, 20, 4, BLACK);
             if (GuiButton({(GetScreenWidth() / 2.0f) - 160, (GetScreenHeight() / 2.0f) - 80.0f, 320.0f, 70.0f}, "Iniciar partida"))
                 started = true;
         }
