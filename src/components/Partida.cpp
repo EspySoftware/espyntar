@@ -97,7 +97,7 @@ void Partida::Ronda(shared_ptr<Client> &client)
 
 void Partida::DrawRounds()
 {
-    if (currentRound != 3)
+    if (currentRound < maxRounds)
     {
         std::string roundText = "Ronda " + std::to_string(currentRound + 1) + " de " + std::to_string(maxRounds);
         const char *textToDraw = roundText.c_str();

@@ -133,7 +133,10 @@ void drawChat(shared_ptr<Client> &client)
         {
             GuiButton({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, "Shhh!");
         }
-        GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+        else
+        {
+            GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+        }
     }
     else
     {
