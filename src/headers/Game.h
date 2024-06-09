@@ -176,7 +176,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
         game = new Games(*painter, *canvas, *palette, isGuesser);
-        partida = new Partida(*game);
+        partida = new Partida(*game, client);
         initialized = true;
     }
 

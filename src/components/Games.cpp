@@ -183,7 +183,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
     {
         if (!guessed)
         {
-            cout << chosenWord << endl;
+            // cout << chosenWord << endl;
             painter.SetCanPaint(false);
             vector<string> messages = client->getMessages();
             vector<string> filtered = FilterChat(messages);

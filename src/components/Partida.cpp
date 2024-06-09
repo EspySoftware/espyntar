@@ -1,7 +1,7 @@
 #include "../headers/Partida.h"
 #include "../headers/raygui.h"
 
-Partida::Partida(Games &game) : game(game)
+Partida::Partida(Games &game, shared_ptr<Client> &client) : game(game)
 {
 }
 
