@@ -246,7 +246,7 @@ void Client::Receive()
         }
 
         // POINTS command
-        // Format: "(id) points: 1."
+        // Format: "(id) points: 100."
         regex pointsRegex("(\\d+)\\)\\s+points:\\s+(\\d+).");
         smatch pointsMatch;
         if (regex_search(message, pointsMatch, pointsRegex) && pointsMatch.size() > 2)
@@ -351,7 +351,7 @@ void Client::AddPoints(int points)
 
     // Send the points to the server
     stringstream ss;
-    ss << "POINTS:" << points;
+    ss << "POINTS: " << points;
     Send(ss.str());
 }
 

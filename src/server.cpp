@@ -239,9 +239,9 @@ public:
             // Check if message is POINTS: points
             if (message.find("POINTS:") == 0)
             {
-                int points = stoi(message.substr(7));
+                int points = stoi(message.substr(8));
 
-                cout << "Giving client ( " << client.id << " ) " << client.name << " " << points << " points." << endl;
+                cout << "Giving client (" << client.id << ") " << client.name << " " << points << " points." << endl;
                 for (auto &otherClient : clients)
                 {
                     if (otherClient.first == client.id)
