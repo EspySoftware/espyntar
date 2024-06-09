@@ -1,7 +1,7 @@
 #pragma once
 #include "./Games.h"
 #include "./Inicio.h"
-#include "../headers/Inicio.h"
+#include "./Partida.h"
 using std::array;
 using std::vector;
 #define FRAMES 144
@@ -118,11 +118,15 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         ERASER
     };
 
-    static bool initialized = false;
+    // Objects
     static ColorPalette *palette;
     static Canvas *canvas;
     static Painter *painter;
     static Games *game;
+    static Partida *partida;
+
+    // Variables
+    static bool initialized = false;
     static Tool currentTool = BRUSH;
     static int colorIndex;
 
@@ -132,6 +136,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
         game = new Games(*painter, *canvas, *palette);
+        partida = new Partida(*game);
         initialized = true;
     }
 
@@ -207,8 +212,8 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         }
     }
 
-    // Palette
-    canvas->DrawPalette(*palette);
+    // // Palette
+    // canvas->DrawPalette(*palette);
 
     // Draw chat
     drawChat(client);
@@ -216,16 +221,9 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Draw paint messages
     drawPaintMessages(client, painter);
 
-    // Draw option games
-    if (!game->GetChosen())
-    {
-        game->SetChosenWord();
-    }
-    if (game->GetChosen())
-    {
-        game->DrawChosenWord(client);
-    }
-
+    // Draw game
+    partida->Ronda(client);
+    
     // Draw connected clients
     drawConnectedClients(client);
 

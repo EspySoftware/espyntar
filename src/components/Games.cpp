@@ -37,7 +37,7 @@ array<string, 3> Games::GetRandomWords() const
 
 void Games::SetChosenWord()
 {
-    static int timer = 10 * FRAMES;
+    static double timer = 10 * FRAMES;
     static array<string, 3> words = GetRandomWords();
     DrawTimer(timer);
 
@@ -84,9 +84,21 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
     static bool guessed = false;
     static vector<string> filtered;
 
-    static int timer = 80 * FRAMES;
-    DrawTimer(timer);
-
+    static double timer = 80 * FRAMES;
+    if (timer < 144)
+    {
+        censoredString = chosenWord;
+        DrawTimer(0);
+        if (timer < -(5 * FRAMES))
+        {
+            cout << timer << endl;
+            return;
+        }
+    }
+    else
+    {
+        DrawTimer(timer);
+    }
     // Draw the number of letters in the word
     int i = censoredString.size();
     std::string str = std::to_string(i);
@@ -98,6 +110,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
         painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+        canvas.DrawPalette(palette);
         // agregar paleta solo al que dibuja
     }
     else
@@ -118,24 +131,17 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
                 }
             }
             DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
-            if (timer >= (80 * FRAMES))
+
+            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+            if (timer <= (35 * FRAMES))
             {
-                censoredString = chosenWord;
-                DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+                static int rand1 = rand() % static_cast<int>(chosenWord.size());
+                censoredString.at(rand1) = chosenWord.at(rand1);
             }
-            else
+            if (timer <= (50 * FRAMES))
             {
-                DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-                if (timer <= (35 * FRAMES))
-                {
-                    static int rand1 = rand() % static_cast<int>(chosenWord.size());
-                    censoredString.at(rand1) = chosenWord.at(rand1);
-                }
-                if (timer <= (50 * FRAMES))
-                {
-                    static int rand2 = rand() % static_cast<int>(chosenWord.size());
-                    censoredString.at(rand2) = chosenWord.at(rand2);
-                }
+                static int rand2 = rand() % static_cast<int>(chosenWord.size());
+                censoredString.at(rand2) = chosenWord.at(rand2);
             }
         }
         else
@@ -156,7 +162,7 @@ string Games::CensorWord(string word)
     return censoredString;
 }
 
-void Games::DrawTimer(int &timer)
+void Games::DrawTimer(double &timer)
 {
     DrawTextPro(GetFontDefault(), "TIEMPO:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
     if (timer > 0)
@@ -164,6 +170,12 @@ void Games::DrawTimer(int &timer)
         timer--;
     }
     DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
+}
+
+void Games::DrawTimer(int number)
+{
+    DrawTextPro(GetFontDefault(), "TIEMPO:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
+    DrawTextPro(GetFontDefault(), std::to_string(number).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
 }
 
 vector<string> Games::FilterChat(vector<string> messages)
