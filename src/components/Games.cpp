@@ -90,8 +90,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
     if (drawTimer < 144)
     {
         censoredString = chosenWord;
-        DrawTextPro(GetFontDefault(), "TIEMPO:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
-        DrawTextPro(GetFontDefault(), "0", {50, 100}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), "0", {120, 110}, {0, 0}, 0, 20, 4, BLACK);
         drawTimer--;
         if (drawTimer < -(5 * FRAMES))
         {

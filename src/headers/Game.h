@@ -223,16 +223,15 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     drawPaintMessages(client, painter);
 
     // Draw game
-    static bool ronda1 = false;
-    if (!ronda1)
-    {
+    // static bool ronda1 = false;
+    // if (!ronda1)
+    // {
         partida->Ronda(client);
-        ronda1 = true;
-    }
-    else
-    {
+    // }
+    // else
+    // {
         partida->Ronda(client);
-    }
+    // }/
     // Draw rounds
     partida->DrawRounds();
 
