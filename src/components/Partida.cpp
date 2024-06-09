@@ -3,6 +3,7 @@
 
 Partida::Partida(Games &game, shared_ptr<Client> &client) : game(game)
 {
+    maxRounds = client->connectedClients.size() * 2;
 }
 
 void Partida::Ronda(shared_ptr<Client> &client)
@@ -98,7 +99,7 @@ void Partida::DrawRounds()
 {
     if (currentRound != 3)
     {
-        std::string roundText = "Ronda " + std::to_string(currentRound + 1) + " de 3";
+        std::string roundText = "Ronda " + std::to_string(currentRound + 1) + " de " + std::to_string(maxRounds);
         const char *textToDraw = roundText.c_str();
         DrawTextPro(GetFontDefault(), textToDraw, {120, 95}, {0, 0}, 0, 20, 4, BLACK);
     }

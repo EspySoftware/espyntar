@@ -27,7 +27,6 @@ private:
     bool isGuesser = true; // False means player is the drawer
     bool guessed = false;  // True means player has guessed the word
     bool finished = false;
-    int guesses;
     Painter &painter;
     Canvas &canvas;
     ColorPalette &palette;
@@ -49,7 +48,6 @@ public:
     bool GetIsGuesser() { return isGuesser; }
     string CensorWord(string word);
     void DrawTimer(int &timer);
-    // void DrawTimer(int number);
     vector<string> FilterChat(vector<string> messages);
     bool GetFinished() { return finished; }
     void SetDefault();

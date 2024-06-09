@@ -92,7 +92,7 @@ public:
     vector<PaintMessage> getPaintMessages() { return paintMessages; }
 
     void AddPoints(int points);
-
+    
     void Disconnect();
 };
 
