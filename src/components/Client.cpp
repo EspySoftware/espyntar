@@ -61,13 +61,32 @@ Client::Client(string address, int port, string name)
         return;
     }
 
+    /*--------------*/
+    // Receive ADMIN and PAINTER ids
     buffer[bytesReceived] = '\0';
-    string connectedClients(buffer);
+    string adminPainter(buffer);
+    cout << "Received: " << adminPainter << endl;
 
+    // Extract the ADMIN and PAINTER ids
+    // Format "ADMIN: 1, PAINTER: 2"
+    regex adminRegex("ADMIN:\\s+(\\d+),\\s+PAINTER:\\s+(\\d+)");
+    smatch adminMatch;
+
+    if (regex_search(adminPainter, adminMatch, adminRegex) && adminMatch.size() > 2)
+    {
+        adminID = stoi(adminMatch[1].str());
+        painterID = stoi(adminMatch[2].str());
+
+        cout << "ADMIN ID: " << adminID << endl;
+        cout << "PAINTER ID: " << painterID << endl;
+    }
+
+    /*--------------*/
     // Add connected clients to the vector
     // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
-
     // Remove the "Connected clients: " prefix
+    buffer[bytesReceived] = '\0';
+    string connectedClients = buffer;
     string clientsString = connectedClients.substr(19);
 
     // Split the string by commas

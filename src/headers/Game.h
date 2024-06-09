@@ -28,7 +28,17 @@ void drawConnectedClients(shared_ptr<Client> &client)
         Rectangle recPlayer = {15, yOffset, 190, 70};
 
         // Draw box for each client
-        DrawRectangleRec(recPlayer, {122, 236, 104, 255});
+        if (connectedClients[i].id == client->painterID)
+        {
+            // Draw a different color for the painter
+            DrawRectangleRec(recPlayer, {215, 182, 15, 255});
+        }
+        else
+        {
+            // Draw a different color for the current client
+            DrawRectangleRec(recPlayer, {122, 236, 104, 255});
+        }
+
         DrawRectangleLinesEx(recPlayer, 1, {122, 236, 104, 255});
 
         // Draw the client name (centered in the box)
@@ -201,7 +211,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
         ClearBackground(color_bg);
 
         // Header
-        
+
         buttons(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, "muchotexto", {122, 236, 104, 255});
         DrawRectangle(10.0f, 60.0f, GetScreenWidth() - 20.0f, 80.0f, {122, 236, 104, 255});
         DrawTexture(*clock, 20, 60, WHITE);

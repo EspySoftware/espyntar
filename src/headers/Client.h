@@ -33,6 +33,8 @@ using std::endl;
 using std::getline;
 using std::make_shared;
 using std::regex;
+using std::regex_match;
+using std::regex_search;
 using std::shared_ptr;
 using std::smatch;
 using std::stoi;
@@ -74,7 +76,8 @@ public:
     vector<OtherClient> connectedClients;
     string chosenWord;
 
-    bool isAdmin = false;
+    int adminID = -1;
+    int painterID = -1;
 
     Client() = default;                                                                                           // Constructor por defecto
     Client(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor
