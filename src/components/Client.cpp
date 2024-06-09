@@ -147,10 +147,12 @@ void Client::Send()
 
 void Client::Send(string message)
 {
-    // PAINT command
+    // Not a PAINT or POINTS command
     if (message.find("PAINT:") != 0 && message.find("POINTS:") != 0)
     {
-        string msg = "[" + name + "]: " + message;
+        // Regular message
+        // Format: "(ID) [name]: message"
+        string msg = "(" + to_string(id) + ") [" + name + "]: " + message;
         messages.push_back(msg);
     }
 
@@ -260,6 +262,20 @@ void Client::Receive()
                 {
                     connectedClients.push_back({id, name, 0});
                 }
+            }
+
+            // Regular message
+            // Format: "(ID) [name]: message"
+            regex r2("\\((\\d+)\\)\\s+\\[(\\w+)\\]:\\s+(.*)");
+            smatch match2;
+
+            if (regex_search(message, match2, r2) && match2.size() > 3)
+            {
+                int id = stoi(match2.str(1));
+                string name = match2.str(2);
+                string msg = match2.str(3);
+
+                cout << "REGULAR MESSAGE" << endl;
             }
 
             cout << buffer << endl;

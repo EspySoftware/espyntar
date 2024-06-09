@@ -235,9 +235,11 @@ public:
                 continue;
             }
 
+            // Regular message
+            // Format: "(ID)[name]: message"
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;
 
-            string msg = "[" + client.name + "]: " + message;
+            string msg = "(" + to_string(client.id) + ") [" + client.name + "]: " + message;
             Broadcast(client, msg);
         }
 
