@@ -119,11 +119,11 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     };
 
     // Objects
-    static ColorPalette *palette;
-    static Canvas *canvas;
-    static Painter *painter;
-    static Games *game;
-    static Partida *partida;
+    ColorPalette *palette;
+    Canvas *canvas;
+    Painter *painter;
+    Games *game;
+    Partida *partida;
 
     // Variables
     static bool initialized = false;
@@ -187,6 +187,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         // Header
         DrawRectangle(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, {122, 236, 104, 255});
         DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
+  
 
         buttons(1050.0f, 100.0f - 25.0f, 50.0f, 50.0f, "#142#");
         if (GuiButton({1050.0f, 100.0f - 25.0f, 50.0f, 50.0f}, "#142#"))
