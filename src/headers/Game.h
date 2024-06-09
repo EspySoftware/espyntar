@@ -17,18 +17,18 @@ enum Tool
 void drawConnectedClients(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
-    vector<OtherClient> connectedClients = client->connectedClients;
+    vector<OtherClient> drawConnectedClients = client->connectedClients;
     // Draw connected clients box (left)
     DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
     DrawTextPro(font, "JUGADORES", {50, 175}, {0, 0}, 0, 20, 2, BLACK);
 
-    for (int i = 0; i < connectedClients.size(); i++)
+    for (int i = 0; i < drawConnectedClients.size(); i++)
     {
         float yOffset = 200.0f + 60 * i;
         Rectangle recPlayer = {15, yOffset, 190, 70};
 
         // Draw box for each client
-        if (connectedClients[i].id == client->painterID)
+        if (drawConnectedClients[i].id == client->painterID)
         {
             // Draw a different color for the painter
             DrawRectangleRec(recPlayer, {215, 182, 15, 255});
@@ -42,14 +42,14 @@ void drawConnectedClients(shared_ptr<Client> &client)
         DrawRectangleLinesEx(recPlayer, 1, {87, 179, 72, 255});
 
         // Draw the client name (centered in the box)
-        Vector2 textSize = MeasureTextEx(font, connectedClients[i].name.c_str(), 15, 2);
+        Vector2 textSize = MeasureTextEx(font, drawConnectedClients[i].name.c_str(), 15, 2);
         float nameX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
         float nameY = recPlayer.y + (recPlayer.height - textSize.y) / 4;
 
-        DrawTextPro(font, connectedClients[i].name.c_str(), {nameX, nameY}, {0, 0}, 0, 15, 2, DARKGRAY);
+        DrawTextPro(font, drawConnectedClients[i].name.c_str(), {nameX, nameY}, {0, 0}, 0, 15, 2, DARKGRAY);
 
         // Draw the client points (centered below the name)
-        std::string pointsStr = std::to_string(connectedClients[i].points);
+        std::string pointsStr = std::to_string(drawConnectedClients[i].points);
         textSize = MeasureTextEx(font, pointsStr.c_str(), 15, 2);
         float pointsX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
         float pointsY = nameY + textSize.y + 5;
@@ -57,7 +57,7 @@ void drawConnectedClients(shared_ptr<Client> &client)
         DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 15, 2, DARKGRAY);
 
         // Draw the client id (left side of the box)
-        std::string idStr = "#" + std::to_string(connectedClients[i].id);
+        std::string idStr = "#" + std::to_string(drawConnectedClients[i].id);
         textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
         float idX = recPlayer.x + 5;
         float idY = nameY + textSize.y - 5;
@@ -127,9 +127,10 @@ void drawChat(shared_ptr<Client> &client)
     }
 
     // Draw the chat input box
-    GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+    if (!client->guessed || !client->painterID == client->id)
+        GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
 
-    // Usando GuiTextBox no editable
+    // Usando GuiTextBox no editable    
     Color color_chat = {252, 229, 113, 255};
     char text[5] = "CHAT";
     DrawRectangle((float)GetScreenWidth() - 215, (float)GetScreenHeight() - 590, 205, 35, color_chat);

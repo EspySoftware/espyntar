@@ -78,6 +78,7 @@ public:
 
     int adminID = -1;
     int painterID = -1;
+    bool guessed = false;
 
     Client() = default;                                                                                           // Constructor por defecto
     Client(int id, string name, SOCKET socket) { this->id = id, this->name = name, this->clientSocket = socket; } // Constructor para el servidor

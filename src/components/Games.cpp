@@ -43,6 +43,7 @@ array<string, 3> Games::GetRandomWords() const
 void Games::SetChosenWord(shared_ptr<Client> &client)
 {
     stringstream msg;
+    client-> guessed = false;
 
     DrawTimer(setTimer);
 
@@ -197,6 +198,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
                 {
 
                     client->AddPoints(BASE_POINTS - (drawTimer / 144));
+                    client->guessed = true;
                     guessed = true;
                 }
             }
