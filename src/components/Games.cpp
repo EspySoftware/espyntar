@@ -8,7 +8,7 @@ using std::endl;
 using std::getline;
 using std::ifstream;
 
-Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr<Client> client) : painter(painter), canvas(canvas), palette(palette), client(client)
+Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette) : painter(painter), canvas(canvas), palette(palette)
 {
     string line;
     ifstream file("../assets/words.txt");
@@ -77,15 +77,17 @@ void Games::SetChosenWord()
     }
 }
 
-void Games::DrawChosenWord()
+void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
     static bool censored = false;
     static string censoredString = CensorWord(chosenWord);
+    static bool guessed = false;
     static vector<string> filtered;
 
     static int timer = 80 * FRAMES;
     DrawTimer(timer);
 
+    // Draw the number of letters in the word
     int i = censoredString.size();
     std::string str = std::to_string(i);
     DrawTextPro(GetFontDefault(), str.c_str(), {(GetScreenWidth() / 2.0f) + (MeasureText(censoredString.c_str(), 20)), 90}, {0, 0}, 0.0f, 10.0f, 2.0f, BLACK);
@@ -100,37 +102,46 @@ void Games::DrawChosenWord()
     }
     else
     {
-        painter.SetCanPaint(false);
-        vector<string> messages = client->getMessages();
-        filtered = FilterChat(messages);
-        for (int i = 0; i < filtered.size(); i++)
+        if (!guessed)
         {
-            if (filtered[i] == chosenWord) // modificar para sumar puntos (no hay cliente para sumar puntos aun)
+            painter.SetCanPaint(false);
+            vector<string> messages = client->getMessages();
+            filtered = FilterChat(messages);
+            cout << chosenWord << endl;
+            for (int i = 0; i < filtered.size(); i++)
             {
-                DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +300}, {0, 0}, 0, 20, 4, BLACK);
-                client->points += 100;
-                guessed = true;
+                if (filtered[i] == chosenWord) // modificar para sumar puntos (no hay cliente para sumar puntos aun)
+                {
+                    // connectedClients.at(0).AddPoints(1);
+                    client->AddPoints(1);
+                    guessed = true;
+                }
             }
-        }
-        DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
-        if (timer >= (80 * FRAMES))
-        {
-            censoredString = chosenWord;
-            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+            DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
+            if (timer >= (80 * FRAMES))
+            {
+                censoredString = chosenWord;
+                DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+            }
+            else
+            {
+                DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+                if (timer <= (35 * FRAMES))
+                {
+                    static int rand1 = rand() % static_cast<int>(chosenWord.size());
+                    censoredString.at(rand1) = chosenWord.at(rand1);
+                }
+                if (timer <= (50 * FRAMES))
+                {
+                    static int rand2 = rand() % static_cast<int>(chosenWord.size());
+                    censoredString.at(rand2) = chosenWord.at(rand2);
+                }
+            }
         }
         else
         {
-            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            if (timer <= (35 * FRAMES))
-            {
-                static int rand1 = rand() % static_cast<int>(chosenWord.size());
-                censoredString.at(rand1) = chosenWord.at(rand1);
-            }
-            if (timer <= (50 * FRAMES))
-            {
-                static int rand2 = rand() % static_cast<int>(chosenWord.size());
-                censoredString.at(rand2) = chosenWord.at(rand2);
-            }
+            DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+            DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +300}, {0, 0}, 0, 20, 4, BLACK);
         }
     }
 }

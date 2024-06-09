@@ -83,7 +83,9 @@ public:
 
     vector<string> getMessages() { return messages; }
     vector<PaintMessage> getPaintMessages() { return paintMessages; }
-
+    
+    void AddPoints(int points) { connectedClients.at(0).points += points; }
+    
     void Disconnect();
 };
 

@@ -18,7 +18,6 @@ void drawConnectedClients(shared_ptr<Client> &client)
 {
     Font font = GetFontDefault();
     vector<OtherClient> connectedClients = client->connectedClients;
-
     // Draw connected clients box (left)
     DrawRectangle(10, 170, 200, GetScreenHeight() - 200, WHITE);
     DrawTextPro(font, "JUGADORES", {50, 175}, {0, 0}, 0, 20, 2, BLACK);
@@ -132,7 +131,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
         palette = new ColorPalette();
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
-        game = new Games(*painter, *canvas, *palette, client);
+        game = new Games(*painter, *canvas, *palette);
         initialized = true;
     }
 
@@ -217,8 +216,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     // Draw paint messages
     drawPaintMessages(client, painter);
 
-    // Draw connected clients
-    drawConnectedClients(client);
     // Draw option games
     if (!game->GetChosen())
     {
@@ -226,8 +223,11 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy)
     }
     if (game->GetChosen())
     {
-        game->DrawChosenWord();
+        game->DrawChosenWord(client);
     }
+
+    // Draw connected clients
+    drawConnectedClients(client);
 
     EndDrawing();
 }

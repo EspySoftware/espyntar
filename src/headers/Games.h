@@ -21,15 +21,14 @@ private:
     Painter &painter;
     Canvas &canvas;
     ColorPalette &palette;
-    shared_ptr<Client> client;
 
 public:
-    Games(Painter &painter, Canvas &canvas, ColorPalette &palette, shared_ptr<Client> client);
+    Games(Painter &painter, Canvas &canvas, ColorPalette &palette);
     array<string, 3> GetRandomWords() const;
     string GetChosenWord() const { return chosenWord; }
     void SetChosenWord();
     bool GetChosen() const { return chosen; }
-    void DrawChosenWord();
+    void DrawChosenWord(shared_ptr<Client> &client);
     void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
     bool GetIsGuesser() { return isGuesser; }
     string CensorWord(string word);
