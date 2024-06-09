@@ -30,5 +30,5 @@ void Partida::DrawRounds()
 {
     std::string roundText = "Ronda " + std::to_string(currentRound) + " de 3";
     const char *textToDraw = roundText.c_str();
-    DrawTextPro(GetFontDefault(), textToDraw, {30, 80}, {0, 0}, 0, 20, 4, BLACK);
+    DrawTextPro(GetFontDefault(), textToDraw, {58, 80}, {0, 0}, 0, 20, 4, BLACK);
 }
