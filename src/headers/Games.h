@@ -38,8 +38,10 @@ public:
     array<string, 3> GetRandomWords() const;
     string GetChosenWord() const { return chosenWord; }
     void SetChosenWord(shared_ptr<Client> &client);
+    void UpdateChosenWord(string word) { chosenWord = word; }
 
     bool GetChosen() const { return chosen; }
+
     void DrawChosenWord(shared_ptr<Client> &client);
     void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
     bool GetIsGuesser() { return isGuesser; }
