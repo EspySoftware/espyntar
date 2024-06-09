@@ -127,10 +127,23 @@ void drawChat(shared_ptr<Client> &client)
     }
 
     // Draw the chat input box
-    if (!client->guessed || client->painterID != client->id)
-        GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+    if (client->painterID != client->id)
+    {
+        if (client->guessed == true)
+        {
+            GuiButton({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, "Shhh!");
+        }
+        else
+        {
+            GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+        }
+    }
+    else
+    {
+        GuiButton({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, "Shhh!");
+    }
 
-    // Usando GuiTextBox no editable    
+    // Usando GuiTextBox no editable
     Color color_chat = {252, 229, 113, 255};
     char text[5] = "CHAT";
     DrawRectangle((float)GetScreenWidth() - 215, (float)GetScreenHeight() - 590, 205, 35, color_chat);
