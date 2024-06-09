@@ -305,6 +305,15 @@ public:
                 continue;
             }
 
+            // Check start game
+            // Format: "START_GAME"
+            if (message.find("START_GAME") == 0)
+            {
+                gameStarted = true;
+                Broadcast(client, message);
+                continue;
+            }
+
             // Regular message
             // Format: "(ID)[name]: message"
             cout << "[" << client.id << "] " << client.name << ": " << message << endl;

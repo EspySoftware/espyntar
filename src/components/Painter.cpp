@@ -6,7 +6,7 @@ Painter::Painter(ColorPalette &palette, Canvas &canvas) : palette(palette), canv
     brushSize = 10.0f;
     currentColor = 22;
     lastPosition = {-1.0f, -1.0f};
-    SetColor(22);
+    SetColor(0);
 }
 
 // Paint on the local canvas

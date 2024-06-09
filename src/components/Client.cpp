@@ -166,8 +166,8 @@ void Client::Send()
 
 void Client::Send(string message)
 {
-    // Not a PAINT or POINTS or ANSWER command
-    if (message.find("PAINT:") != 0 && message.find("POINTS:") != 0 && message.find("ANSWER:") != 0)
+    // Not a PAINT or POINTS or ANSWER command or PAINTER command or ADMIN command or START_GAME command or ROUND_OVER command
+    if (message.find("PAINT:") != 0 && message.find("POINTS:") != 0 && message.find("ANSWER:") != 0 && message.find("PAINTER:") != 0 && message.find("ADMIN:") != 0 && message.find("START_GAME") != 0 && message.find("ROUND_OVER") != 0)
     {
         // Regular message
         // Format: "(ID) [name]: message"
@@ -302,6 +302,14 @@ void Client::Receive()
         {
             painterID = stoi(painterMatch.str(1));
             cout << "The painter is: " << painterID << endl;
+        }
+
+        // START_GAME command
+        // Format: "START_GAME"
+        if (message.find("START_GAME") == 0)
+        {
+            cout << "The game has started." << endl;
+            messages.push_back("The game has started.");
         }
 
         // Regular message
