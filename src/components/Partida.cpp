@@ -2,6 +2,7 @@
 
 Partida::Partida(Games &game) : game(game)
 {
+
 }
 
 void Partida::Ronda(shared_ptr<Client> &client)
@@ -32,3 +33,4 @@ void Partida::DrawRounds()
     const char *textToDraw = roundText.c_str();
     DrawTextPro(GetFontDefault(), textToDraw, {58, 80}, {0, 0}, 0, 20, 4, BLACK);
 }
+
