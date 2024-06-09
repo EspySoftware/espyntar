@@ -25,7 +25,7 @@ private:
     bool chosen = false;
     bool isFiltered = false;
     bool isGuesser = false; // False means player is the drawer
-    bool guessed = false;  // True means player has guessed the word
+    bool guessed = false;   // True means player has guessed the word
     bool finished = false;
     Painter &painter;
     Canvas &canvas;
@@ -34,7 +34,8 @@ private:
 public:
     int setTimer = 10 * FRAMES;
     int drawTimer = 10 * FRAMES;
-    Games(Painter &painter, Canvas &canvas, ColorPalette &palette);
+    Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser);
+
     array<string, 3> GetRandomWords() const;
     string GetChosenWord() const { return chosenWord; }
     void SetChosenWord(shared_ptr<Client> &client);

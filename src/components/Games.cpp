@@ -8,8 +8,9 @@ using std::endl;
 using std::getline;
 using std::ifstream;
 
-Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette) : painter(painter), canvas(canvas), palette(palette)
+Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser) : painter(painter), canvas(canvas), palette(palette)
 {
+    this->isGuesser = isGuesser;
     string line;
     ifstream file("../assets/words.txt");
     while (getline(file, line))

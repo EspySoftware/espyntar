@@ -155,14 +155,26 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     bool config = false;
     static Tool currentTool = BRUSH;
     static int colorIndex;
+    static bool isGuesser = false;
+
     static int CUTE = 1;
 
     if (!initialized)
     {
+        // Compare client->painterID with client->id
+        if (client->painterID == client->id)
+        {
+            isGuesser = false;
+        }
+        else
+        {
+            isGuesser = true;
+        }
+
         palette = new ColorPalette();
         canvas = new Canvas(700, 560, *palette);
         painter = new Painter(*palette, *canvas);
-        game = new Games(*painter, *canvas, *palette);
+        game = new Games(*painter, *canvas, *palette, isGuesser);
         partida = new Partida(*game);
         initialized = true;
     }
