@@ -11,12 +11,6 @@ private:
     Games &game;
 
 public:
-    Screen scene;
-    bool musicOn;
-    bool effects;
-    Texture2D background;
-    Texture2D title;
-    void DrawConfig();
     Partida(Games &game);
     void Ronda(shared_ptr<Client> &client);
     void DrawRounds();

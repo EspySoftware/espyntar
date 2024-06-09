@@ -195,9 +195,7 @@ void Games::DrawTimer(int &timer)
     {
         timer--;
     }
-    Rectangle backgroundRect = {120 - 10, 110 - 5, 20 + 20, 20 + 10};
-    DrawRectangleRec(backgroundRect, Fade(GRAY, 0.5f));
-    DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {120, 110}, {0, 0}, 0, 20, 4, BLACK);
+    DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {55, 95}, {0, 0}, 0, 20, 4, BLACK);
 }
 
 vector<string> Games::FilterChat(vector<string> messages)
