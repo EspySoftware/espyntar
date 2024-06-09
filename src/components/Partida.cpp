@@ -8,7 +8,7 @@ void Partida::Ronda(shared_ptr<Client> &client)
 {
     if (currentRound <= maxRounds)
     {
-        game.UpdateChosenWord(client->chosenWord);
+        // game.UpdateChosenWord(client->chosenWord);
 
         if (!game.GetChosen())
         {

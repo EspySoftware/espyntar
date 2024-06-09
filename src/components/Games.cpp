@@ -67,7 +67,6 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
             censoredString = CensorWord(chosenWord);
 
             // Broadcast chosen word
-            cout << chosenWord << endl;
             msg << "ANSWER: " << chosenWord;
             client->Send(msg.str());
 
@@ -196,6 +195,8 @@ void Games::DrawTimer(int &timer)
     {
         timer--;
     }
+    Rectangle backgroundRect = {120 - 10, 110 - 5, 20 + 20, 20 + 10};
+    DrawRectangleRec(backgroundRect, Fade(GRAY, 0.5f));
     DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {120, 110}, {0, 0}, 0, 20, 4, BLACK);
 }
 
