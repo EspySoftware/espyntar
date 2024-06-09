@@ -252,7 +252,7 @@ public:
 
                 // broadcast points message
                 // Format: "(id) points: points."
-                string msg = "(" + to_string(client.id) + ") " + " points: " + to_string(client.points) + ".";
+                string msg = "(" + to_string(client.id) + ") " + " points: " + to_string(points) + ".";
                 Broadcast(client, msg);
 
                 continue;

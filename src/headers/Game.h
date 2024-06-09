@@ -91,10 +91,36 @@ void drawChat(shared_ptr<Client> &client)
             string name = match.str(2);
             string msg = match.str(3);
 
-            // Draw the message
-            name = "[" + name + "]: ";
-            DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
-            DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
+            // Filter chosenWord messages from the chat
+            // Lowercased message to lowercased chosenWord
+            string lowerMsg = msg;
+            std::transform(lowerMsg.begin(), lowerMsg.end(), lowerMsg.begin(), ::tolower);
+            string lowerChosenWord = client->chosenWord;
+            std::transform(lowerChosenWord.begin(), lowerChosenWord.end(), lowerChosenWord.begin(), ::tolower);
+
+            if (lowerMsg == lowerChosenWord)
+            {
+                msg = name + " guessed!";
+                // Replace the message in the messages vector
+                messages[messages.size() - i - 1] = msg;
+
+                DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, GREEN);
+            }
+            else
+            {
+                // Draw past guessed messages
+                if (msg.find("guessed!") != string::npos)
+                {
+                    DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, GREEN);
+                }
+                else
+                {
+                    // Draw the message
+                    name = "[" + name + "]: ";
+                    DrawTextPro(font, name.c_str(), {(float)GetScreenWidth() - 210, (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, BLACK);
+                    DrawTextPro(font, msg.c_str(), {(float)GetScreenWidth() - 210 + MeasureText(name.c_str(), 14), (float)GetScreenHeight() - 20 * (i + 1) - 75}, {0, 0}, 0, 12, 2, DARKGRAY);
+                }
+            }
         }
         else
         {

@@ -76,6 +76,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
         if (setTimer <= 0 && !chosen)
         {
             chosenWord = optionWords[0];
+            client->chosenWord = chosenWord;
             censoredString = CensorWord(chosenWord);
 
             // Broadcast chosen word
@@ -91,6 +92,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
         if (GuiButton({(GetScreenWidth() / 2.0f) - 320, 400, 160.0f, 70.0f}, optionWords[0].c_str()))
         {
             chosenWord = optionWords[0];
+            client->chosenWord = chosenWord;
             censoredString = CensorWord(chosenWord);
 
             // Broadcast chosen word
@@ -103,6 +105,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
         if (GuiButton({(GetScreenWidth() / 2.0f) - 80, 400, 160.0f, 70.0f}, optionWords[1].c_str()))
         {
             chosenWord = optionWords[1];
+            client->chosenWord = chosenWord;
             censoredString = CensorWord(chosenWord);
 
             // Broadcast chosen word
@@ -116,6 +119,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
         if (GuiButton({(GetScreenWidth() / 2.0f) + 160, 400, 160.0f, 70.0f}, optionWords[2].c_str()))
         {
             chosenWord = optionWords[2];
+            client->chosenWord = chosenWord;
             censoredString = CensorWord(chosenWord);
 
             // Broadcast chosen word
