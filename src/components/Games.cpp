@@ -88,7 +88,8 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
     if (drawTimer < 144)
     {
         censoredString = chosenWord;
-        DrawTimer(0);
+        DrawTextPro(GetFontDefault(), "TIEMPO:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), "0", {50, 100}, {0, 0}, 0, 20, 4, BLACK);
         drawTimer--;
         if (drawTimer < -(5 * FRAMES))
         {
@@ -146,6 +147,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
         }
         else
         {
+            DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
             DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
             DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +300}, {0, 0}, 0, 20, 4, BLACK);
         }
@@ -162,7 +164,7 @@ string Games::CensorWord(string word)
     return censoredString;
 }
 
-void Games::DrawTimer(double &timer)
+void Games::DrawTimer(int &timer)
 {
     DrawTextPro(GetFontDefault(), "TIEMPO:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
     if (timer > 0)
@@ -170,12 +172,6 @@ void Games::DrawTimer(double &timer)
         timer--;
     }
     DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
-}
-
-void Games::DrawTimer(int number)
-{
-    DrawTextPro(GetFontDefault(), "TIEMPO:", {50, 80}, {0, 0}, 0, 20, 4, BLACK);
-    DrawTextPro(GetFontDefault(), std::to_string(number).c_str(), {50, 100}, {0, 0}, 0, 20, 4, BLACK);
 }
 
 vector<string> Games::FilterChat(vector<string> messages)

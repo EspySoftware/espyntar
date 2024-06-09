@@ -22,8 +22,8 @@ private:
     bool isGuesser = true; // False means player is the drawer
     bool guessed = false;  // True means player has guessed the word
     bool finished = false;
-    double setTimer = 10 * FRAMES;
-    double drawTimer = 10 * FRAMES;
+    int setTimer = 10 * FRAMES;
+    int drawTimer = 80 * FRAMES;
     Painter &painter;
     Canvas &canvas;
     ColorPalette &palette;
@@ -38,8 +38,8 @@ public:
     void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
     bool GetIsGuesser() { return isGuesser; }
     string CensorWord(string word);
-    void DrawTimer(double &timer);
-    void DrawTimer(int number);
+    void DrawTimer(int &timer);
+    // void DrawTimer(int number);
     vector<string> FilterChat(vector<string> messages);
     bool GetFinished() { return finished; }
     void SetDefault();
