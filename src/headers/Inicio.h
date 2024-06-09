@@ -1,12 +1,13 @@
 #pragma once
 #define RAYGUI_IMPLEMENTATION
+#include "./raygui.h"
 #include <iostream>
 #include <thread>
-#include "./raygui.h"
 #include "./ColorPalette.h"
 #include "./Canvas.h"
 #include "./Painter.h"
 #include "./Client.h"
+#include "./Screen.h"
 
 using std::cin;
 using std::cout;
@@ -35,34 +36,6 @@ bool connectToServer(shared_ptr<Client> &client, string ip, string name, int por
 
     return true;
 }
-
-typedef enum // estructura logica del juego
-{
-    START,
-    GAME,
-    EXIT
-} GameScene;
-
-class Screen // clase para manejar las pantallas del juego
-{
-public:
-    GameScene scene;
-    Texture2D background;
-    Texture2D title;
-
-    Screen()
-    {
-        this->scene = START;
-        this->background = LoadTexture("../assets/background.png");
-        this->title = LoadTexture("../assets/espy.png");
-    }
-
-    ~Screen()
-    {
-        UnloadTexture(this->background);
-        UnloadTexture(this->title);
-    }
-};
 
 void buttons(float x, float y, float width, float height, const char *text)
 {
