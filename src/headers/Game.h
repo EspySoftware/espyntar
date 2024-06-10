@@ -66,7 +66,7 @@ void drawConnectedClients(shared_ptr<Client> &client)
     }
 }
 
-void drawChat(shared_ptr<Client> &client)
+void drawChat(shared_ptr<Client> &client, Partida *partida)
 {
     Font font = GetFontDefault();
     static char message[20] = {0};
@@ -135,7 +135,14 @@ void drawChat(shared_ptr<Client> &client)
         }
         else
         {
-            GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+            if (partida->GetGame().GetDrawTimer() < 144)
+            {
+                GuiButton({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, "Se acabó!");
+            }
+            else
+            {
+                GuiTextBox({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, message, 13, true);
+            }
         }
     }
     else
@@ -296,14 +303,17 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     }
 
     // Draw chat
-    drawChat(client);
+    drawChat(client, partida);
 
     // Draw paint messages
     drawPaintMessages(client, painter);
 
     // Draw game
     partida->Ronda(client);
-    partida->DrawRounds();
+    if (partida->GetStarted())
+    {
+        partida->DrawRounds();
+    }
 
     // Draw connected clients
     drawConnectedClients(client);

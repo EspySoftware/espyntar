@@ -51,4 +51,5 @@ public:
     vector<string> FilterChat(vector<string> messages);
     bool GetFinished() { return finished; }
     void SetDefault();
+    int &GetDrawTimer() { return drawTimer; }
 };

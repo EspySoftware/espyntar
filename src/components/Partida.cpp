@@ -3,7 +3,6 @@
 
 Partida::Partida(Games &game, shared_ptr<Client> &client) : game(game)
 {
-    maxRounds = client->connectedClients.size() * 2;
 }
 
 void Partida::Ronda(shared_ptr<Client> &client)
@@ -15,6 +14,7 @@ void Partida::Ronda(shared_ptr<Client> &client)
         {
             if (client->messages[i] == "The game has started.")
             {
+                SetMaxRounds(client->connectedClients.size() * 2);
                 started = true;
                 break;
             }
@@ -93,6 +93,7 @@ void Partida::Ronda(shared_ptr<Client> &client)
             }
         }
     }
+    DrawRounds();
 }
 
 void Partida::DrawRounds()
@@ -103,8 +104,8 @@ void Partida::DrawRounds()
         const char *textToDraw = roundText.c_str();
         DrawTextPro(GetFontDefault(), textToDraw, {120, 95}, {0, 0}, 0, 20, 4, BLACK);
     }
-    else
-    {
-        DrawTextPro(GetFontDefault(), "Partida finalizada", {120, 95}, {0, 0}, 0, 20, 4, BLACK);
-    }
+    // else
+    // {
+    //     DrawTextPro(GetFontDefault(), "Partida finalizada", {120, 95}, {0, 0}, 0, 20, 4, BLACK);
+    // }
 }
