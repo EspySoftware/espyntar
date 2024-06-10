@@ -18,11 +18,17 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
 {
     SetTraceLogLevel(LOG_NONE); // Disable raylib logging
     InitWindow(screenWidth, screenHeight, "Espyntar");
+    InitAudioDevice();
     Texture2D icon = LoadTexture("../assets/logo.png");
     Image icon2 = LoadImageFromTexture(icon);
+    bool pause = true;
     UnloadTexture(icon);
     SetWindowIcon(icon2);
     Texture2D espyciales = LoadTexture("../assets/espyciales.png");
+    Music music = LoadMusicStream("../assets/victorySound.mp3"); // Asegúrate de que el archivo de música esté en el directorio correcto
+    Music musicGame = LoadMusicStream("../assets/gameSound.mp3");
+    PlayMusicStream(music);
+    PlayMusicStream(musicGame);
     Texture2D espy = LoadTexture("../assets/espy_peke.png");
     Texture2D clock = LoadTexture("../assets/reloj.png");
     Texture2D bgGame = LoadTexture("../assets/backgroundGame.png");
@@ -31,28 +37,29 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
 
     while (!WindowShouldClose())
     {
+        switch (screen.scene)
         {
-            switch (screen.scene)
-            {
-            case START: // ventana de inicio
-                drawStart(&screen, client, senderThread, receiverThread);
-                break;
-            case GAME: // ventana de juego
-                drawGame(&screen, client, &espy, &clock, &bgGame);
-                break;
-            case WINNER:
-                drawWinner(client,&bgGame, &espyciales);
-                break;
-            case EXIT: // cerrar juego
-                CloseWindow();
-                break;
-            }
+        case START: // ventana de inicio
+            drawStart(&screen, client, senderThread, receiverThread,&musicGame);
+            break;
+        case GAME: // ventana de juego
+            drawGame(&screen, client, &espy, &clock, &bgGame,&musicGame);
+            break;
+        case WINNER:
+            drawWinner(client, &bgGame, &espyciales,&music);
+            break;
+        case EXIT: // cerrar juego
+            CloseWindow();
+            break;
         }
     }
+    UnloadMusicStream(music);
+    UnloadMusicStream(musicGame);
     UnloadTexture(espy);
     UnloadImage(icon2);
     UnloadTexture(clock);
     UnloadTexture(bgGame);
+    CloseAudioDevice();
     CloseWindow();
 }
 
