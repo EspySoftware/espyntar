@@ -318,7 +318,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     drawPaintMessages(client, painter);
 
     // Draw game
-    partida->Ronda(client,screen);
+    partida->Ronda(client, screen);
     if (partida->GetStarted())
     {
         partida->DrawRounds(screen);
@@ -330,9 +330,106 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     EndDrawing();
 }
 
-void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame )
+void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame)
 {
     BeginDrawing();
+    ClearBackground(RAYWHITE); // Limpia la pantalla con un color de fondo agradable
     DrawTexture(*bgGame, 0, 0, WHITE);
+    Font font = GetFontDefault();
+    
+    // Ordenar los clientes por puntos de mayor a menor
+    vector<OtherClient> drawConnectedClients = client->connectedClients;
+    sort(drawConnectedClients.begin(), drawConnectedClients.end(), [](const OtherClient &a, const OtherClient &b) {
+        return a.points > b.points;
+    });
+
+    // Título de la pantalla
+    DrawTextPro(font, "GANADORES", {(GetScreenWidth() - MeasureText("GANADORES", 50)) / 2, 50}, {0, 0}, 0, 50, 2, BLACK);
+
+    // Calcular el espacio necesario para mostrar los clientes principales en el centro de la pantalla
+    int totalClients = drawConnectedClients.size();
+    int clientBoxHeight = 70;
+    int podiumClients = std::min(totalClients, 3);
+    int totalHeight = podiumClients * (clientBoxHeight + 10); // Altura total necesaria para el podio
+
+    // Coordenadas de inicio para centrar el podio verticalmente
+    int startY = (GetScreenHeight() - totalHeight) / 2;
+
+    // Dibujar los primeros tres jugadores en el podio
+    for (int i = 0; i < podiumClients; i++)
+    {
+        float yOffset = startY + (clientBoxHeight + 10) * i;
+        Rectangle recPlayer = { (GetScreenWidth() - 400) / 2, yOffset, 400, clientBoxHeight };
+
+        // Dibujar caja para cada jugador en el podio con colores específicos
+        Color playerColor;
+        switch (i)
+        {
+            case 0: playerColor = {255, 215, 0, 255}; break; // Dorado para el primer lugar
+            case 1: playerColor = {192, 192, 192, 255}; break; // Plateado para el segundo lugar
+            case 2: playerColor = {139, 69, 19, 255}; break; // Café para el tercer lugar
+        }
+        DrawRectangleRec(recPlayer, playerColor);
+        DrawRectangleLinesEx(recPlayer, 2, {87, 179, 72, 255});
+
+        // Dibujar el nombre del cliente (centrado en la caja)
+        Vector2 textSize = MeasureTextEx(font, drawConnectedClients[i].name.c_str(), 20, 2);
+        float nameX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
+        float nameY = recPlayer.y + (recPlayer.height - textSize.y) / 4;
+
+        DrawTextPro(font, drawConnectedClients[i].name.c_str(), {nameX, nameY}, {0, 0}, 0, 20, 2, DARKGRAY);
+
+        // Dibujar los puntos del cliente (centrado debajo del nombre)
+        std::string pointsStr = std::to_string(drawConnectedClients[i].points);
+        textSize = MeasureTextEx(font, pointsStr.c_str(), 20, 2);
+        float pointsX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
+        float pointsY = nameY + textSize.y + 5;
+
+        DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 20, 2, DARKGRAY);
+
+        // Dibujar el ID del cliente (lado izquierdo de la caja)
+        std::string idStr = "#" + std::to_string(drawConnectedClients[i].id);
+        textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
+        float idX = recPlayer.x + 10;
+        float idY = recPlayer.y + 10;
+
+        DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 15, 2, BLACK);
+    }
+
+    // Dibujar los jugadores restantes debajo del podio
+    for (int i = 3; i < totalClients; i++)
+    {
+        float yOffset = startY + totalHeight + 20 + (clientBoxHeight + 10) * (i - 3);
+        Rectangle recPlayer = { (GetScreenWidth() - 400) / 2, yOffset, 400, clientBoxHeight };
+
+        // Dibujar caja para cada cliente
+        DrawRectangleRec(recPlayer, {122, 236, 104, 255});
+        DrawRectangleLinesEx(recPlayer, 2, {87, 179, 72, 255});
+
+        // Dibujar el nombre del cliente (centrado en la caja)
+        Vector2 textSize = MeasureTextEx(font, drawConnectedClients[i].name.c_str(), 20, 2);
+        float nameX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
+        float nameY = recPlayer.y + (recPlayer.height - textSize.y) / 4;
+
+        DrawTextPro(font, drawConnectedClients[i].name.c_str(), {nameX, nameY}, {0, 0}, 0, 20, 2, DARKGRAY);
+
+        // Dibujar los puntos del cliente (centrado debajo del nombre)
+        std::string pointsStr = std::to_string(drawConnectedClients[i].points);
+        textSize = MeasureTextEx(font, pointsStr.c_str(), 20, 2);
+        float pointsX = recPlayer.x + (recPlayer.width - textSize.x) / 2;
+        float pointsY = nameY + textSize.y + 5;
+
+        DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 20, 2, DARKGRAY);
+
+        // Dibujar el ID del cliente (lado izquierdo de la caja)
+        std::string idStr = "#" + std::to_string(drawConnectedClients[i].id);
+        textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
+        float idX = recPlayer.x + 10;
+        float idY = recPlayer.y + 10;
+
+        DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 15, 2, BLACK);
+    }
+    
     EndDrawing();
 }
+
