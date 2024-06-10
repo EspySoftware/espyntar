@@ -22,6 +22,7 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
     Image icon2 = LoadImageFromTexture(icon);
     UnloadTexture(icon);
     SetWindowIcon(icon2);
+    Texture2D espyciales = LoadTexture("../assets/espyciales.png");
     Texture2D espy = LoadTexture("../assets/espy_peke.png");
     Texture2D clock = LoadTexture("../assets/reloj.png");
     Texture2D bgGame = LoadTexture("../assets/backgroundGame.png");
@@ -40,7 +41,7 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
                 drawGame(&screen, client, &espy, &clock, &bgGame);
                 break;
             case WINNER:
-                drawWinner(client,&bgGame);
+                drawWinner(client,&bgGame, &espyciales);
                 break;
             case EXIT: // cerrar juego
                 CloseWindow();
