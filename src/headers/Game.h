@@ -204,8 +204,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     static int colorIndex;
     static bool isGuesser = false;
 
-    static int CUTE = 1;
-
     if (!initialized)
     {
         // Compare client->painterID with client->id
@@ -219,91 +217,88 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
         }
 
         palette = new ColorPalette();
-        canvas = new Canvas(700, 560, *palette);
+        canvas = new Canvas(700, 560);
         painter = new Painter(*palette, *canvas);
         game = new Games(*painter, *canvas, *palette, isGuesser);
         partida = new Partida(*game, client);
         initialized = true;
     }
 
-    if (CUTE)
+    Vector2 position = GetMousePosition();
+
+    float mouseWheelMove = GetMouseWheelMove();
+    painter->SetBrushSize(mouseWheelMove);
+
+    // Paint
+    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
     {
-        Vector2 position = GetMousePosition();
-
-        float mouseWheelMove = GetMouseWheelMove();
-        painter->SetBrushSize(mouseWheelMove);
-
-        // Paint
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+        colorIndex = canvas->CheckPaletteClick(*palette);
+        if (colorIndex >= 0)
         {
-            colorIndex = canvas->CheckPaletteClick(*palette);
-            if (colorIndex >= 0)
-            {
-                painter->SetColor(colorIndex);
-            }
-            else
-            {
-                if (currentTool == ERASER)
-                {
-                    painter->Erase(position);
-                }
-                else if (currentTool == BRUSH)
-                {
-                    painter->Paint(position, client);
-                }
-            }
-        }
-        else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
-        {
-            painter->SetColor(0); // Set color to white for erasing
-            painter->Paint(position, client);
-            painter->SetColor(colorIndex); // Restore the original color
+            painter->SetColor(colorIndex);
         }
         else
         {
-            painter->ResetLastPosition();
-        }
-
-        // Draw
-        Color color_bg = {0, 156, 35, 255};
-        BeginDrawing();
-        // ClearBackground(color_bg);
-
-        // Header
-
-        buttons(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, "muchotexto", {122, 236, 104, 255});
-        DrawRectangle(10.0f, 60.0f, GetScreenWidth() - 20.0f, 80.0f, {122, 236, 104, 255});
-        DrawTexture(*clock, 20, 60, WHITE);
-        DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
-
-        buttons(1045.0f, 100.0f - 25.0f, 70.0f, 50.0f, "SALIR", {215, 182, 15, 255});
-        if (GuiButton({1045.0f, 100.0f - 25.0f, 70.0f, 50.0f}, "SALIR"))
-        {
-            screen->scene = EXIT;
-        }
-
-        // Canvas
-        Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
-        Vector2 canvasPosition;
-        canvasPosition.x = GetScreenWidth() / 2.0f - canvas->GetTarget().texture.width / 2.0f;
-        canvasPosition.y = GetScreenHeight() / 2.0f - canvas->GetTarget().texture.height / 2.0f + 70.0f;
-
-        DrawTextureRec(canvas->GetTarget().texture, rec, canvasPosition, WHITE);
-
-        // Brush outline
-        if (!game->GetIsGuesser())
-        {
-            if (currentTool == BRUSH)
+            if (currentTool == ERASER)
             {
-                DrawCircleLines(GetMouseX(), GetMouseY(), painter->GetBrushSize(), painter->GetColor());
+                painter->Erase(position);
             }
-            else if (currentTool == ERASER)
+            else if (currentTool == BRUSH)
             {
-                DrawCircleLines(GetMouseX(), GetMouseY(), 10, painter->GetColor()); // Small circle for bucket tool indicator
+                painter->Paint(position, client);
             }
         }
     }
+    else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
+    {
+        painter->SetColor(0); // Set color to white for erasing
+        painter->Paint(position, client);
+        painter->SetColor(colorIndex); // Restore the original color
+    }
+    else
+    {
+        painter->ResetLastPosition();
+    }
 
+    // Draw
+    Color color_bg = {0, 156, 35, 255};
+    BeginDrawing();
+    // ClearBackground(color_bg);
+
+    // Header
+
+    buttons(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, "muchotexto", {122, 236, 104, 255});
+    DrawRectangle(10.0f, 60.0f, GetScreenWidth() - 20.0f, 80.0f, {122, 236, 104, 255});
+    DrawTexture(*clock, 20, 60, WHITE);
+    DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
+
+    buttons(1045.0f, 100.0f - 25.0f, 70.0f, 50.0f, "SALIR", {215, 182, 15, 255});
+    if (GuiButton({1045.0f, 100.0f - 25.0f, 70.0f, 50.0f}, "SALIR"))
+    {
+        screen->scene = EXIT;
+    }
+
+    // Canvas
+    Rectangle rec = {0, 0, (float)canvas->GetTarget().texture.width, (float)-canvas->GetTarget().texture.height};
+    Vector2 canvasPosition;
+    canvasPosition.x = GetScreenWidth() / 2.0f - canvas->GetTarget().texture.width / 2.0f;
+    canvasPosition.y = GetScreenHeight() / 2.0f - canvas->GetTarget().texture.height / 2.0f + 70.0f;
+
+    DrawTextureRec(canvas->GetTarget().texture, rec, canvasPosition, WHITE);
+
+    // Brush outline
+    if (!game->GetIsGuesser())
+    {
+        if (currentTool == BRUSH)
+        {
+            DrawCircleLines(GetMouseX(), GetMouseY(), painter->GetBrushSize(), painter->GetColor());
+        }
+        else if (currentTool == ERASER)
+        {
+            DrawCircleLines(GetMouseX(), GetMouseY(), 10, painter->GetColor()); // Small circle for bucket tool indicator
+        }
+    }
+    
     // Draw chat
     drawChat(client, partida);
 
