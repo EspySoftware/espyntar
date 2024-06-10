@@ -21,7 +21,7 @@ private:
     int height;
 
 public:
-    Canvas(int width, int height, ColorPalette &palette);
+    Canvas(int width, int height);
     ~Canvas();
 
     void Draw(Vector2 position, float radius, Color color);

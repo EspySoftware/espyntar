@@ -2,7 +2,7 @@
 #include "../headers/Canvas.h"
 #include <queue>
 
-Canvas::Canvas(int width, int height, ColorPalette &palette)
+Canvas::Canvas(int width, int height)
     : width(width), height(height)
 {
     target = LoadRenderTexture(width, height);
