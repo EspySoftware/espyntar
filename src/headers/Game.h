@@ -55,6 +55,7 @@ void drawConnectedClients(shared_ptr<Client> &client)
         float pointsY = nameY + textSize.y + 5;
 
         DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 15, 2, DARKGRAY);
+
     }
 }
 
@@ -268,6 +269,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
 
     buttons(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, "muchotexto", {122, 236, 104, 255});
     DrawRectangle(10.0f, 60.0f, GetScreenWidth() - 20.0f, 80.0f, {122, 236, 104, 255});
+    DrawTexture(*clock, 20, 60, WHITE);
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
 
     buttons(1045.0f, 100.0f - 25.0f, 70.0f, 50.0f, "SALIR", {215, 182, 15, 255});
@@ -296,7 +298,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
             DrawCircleLines(GetMouseX(), GetMouseY(), 10, painter->GetColor()); // Small circle for bucket tool indicator
         }
     }
-
+    
     // Draw chat
     drawChat(client, partida);
 
@@ -318,7 +320,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     EndDrawing();
 }
 
-void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyciales)
+void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espycial)
 {
     BeginDrawing();
     ClearBackground(RAYWHITE); // Limpia la pantalla con un color de fondo agradable
@@ -333,13 +335,13 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyci
          { return a.points > b.points; });
 
     // Título de la pantalla
-    DrawTexture(*espyciales, GetScreenWidth() / 2 - espyciales->width / 2, 30, WHITE);
+    DrawTexture(*espycial, GetScreenWidth() / 2 - espycial->width / 2, 30, WHITE);
 
     // Definir las alturas de los rectángulos para los tres primeros lugares
     int rectWidth = 200; // Ancho de los rectángulos
-
-    // Coordenadas de inicio para el podio, desplazadas hacia abajo
-    int startY = GetScreenHeight() / 2;
+    int heightFirst = GetScreenHeight() / 2;
+    int heightSecond = heightFirst - 50;
+    int heightThird = heightFirst - 100;
 
     // Dibujar los primeros tres jugadores en el podio
     for (int i = 0; i < 3 && i < drawConnectedClients.size(); i++)
@@ -351,17 +353,17 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyci
         switch (i)
         {
         case 0:
-            currentHeight = GetScreenHeight() - startY;
+            currentHeight = heightFirst;
             playerColor = {255, 215, 0, 255}; // Dorado para el primer lugar
             xOffset = (GetScreenWidth() - rectWidth) / 2;
             break;
         case 1:
-            currentHeight = GetScreenHeight() / 2;
+            currentHeight = heightSecond;
             playerColor = {192, 192, 192, 255}; // Plateado para el segundo lugar
             xOffset = (GetScreenWidth() - rectWidth) / 2 - rectWidth - 20;
             break;
         case 2:
-            currentHeight = GetScreenHeight() / 3;
+            currentHeight = heightThird;
             playerColor = {139, 69, 19, 255}; // Café para el tercer lugar
             xOffset = (GetScreenWidth() - rectWidth) / 2 + rectWidth + 20;
             break;
