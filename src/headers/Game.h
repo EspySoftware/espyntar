@@ -56,13 +56,6 @@ void drawConnectedClients(shared_ptr<Client> &client)
 
         DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 15, 2, DARKGRAY);
 
-        // Draw the client id (left side of the box)
-        std::string idStr = "#" + std::to_string(drawConnectedClients[i].id);
-        textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
-        float idX = recPlayer.x + 5;
-        float idY = nameY + textSize.y - 5;
-
-        DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 15, 2, BLACK);
     }
 }
 
@@ -418,7 +411,3 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame)
     
     EndDrawing();
 }
-
-
-
-
