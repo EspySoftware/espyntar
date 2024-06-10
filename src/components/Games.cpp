@@ -136,17 +136,17 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
     else
     {
         // Look for painter name
-        string adminName;
+        string painterName;
         for (int i = 0; i < client->connectedClients.size(); i++)
         {
             if (client->connectedClients[i].id == client->painterID)
             {
-                adminName = client->connectedClients[i].name;
+                painterName = client->connectedClients[i].name;
                 break;
             }
         }
 
-        string esperando = "Esperando a " + adminName;
+        string esperando = "Esperando a " + painterName;
 
         DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
         DrawTextPro(GetFontDefault(), esperando.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(esperando.c_str(), 20) / 2), GetScreenHeight() - 500.0f}, {0, 0}, 0, 20, 4, BLACK);
@@ -155,25 +155,12 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
 
 void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
-    static bool msgSent = false;
-
     if (drawTimer < 144)
     {
         if (!chosenWord.empty())
         {
             prevChosenWord = chosenWord;
             chosenWord = "";
-        }
-
-        // If admin, send FINISHED
-        if (client->id == client->adminID)
-        {
-            if (!msgSent)
-            {
-                string msg = "ROUND_OVER";
-                client->Send(msg);
-                msgSent = true;
-            }
         }
 
         painter.SetCanPaint(false);
@@ -183,7 +170,6 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
         if (drawTimer < -(5 * FRAMES))
         {
             finished = true; // Ends round
-            msgSent = false;
             return;
         }
     }

@@ -52,39 +52,34 @@ void Partida::Ronda(shared_ptr<Client> &client)
         {
             game.SetDefault();
 
-            // // Set painter to the next client in the list
-            // bool found = false;
-            // for (int i = 0; i < client->connectedClients.size(); i++)
-            // {
-            //     if (found)
-            //     {
-            //         client->painterID = client->connectedClients[i].id;
-            //         break;
-            //     }
-
-            //     if (client->connectedClients[i].id == client->painterID)
-            //     {
-            //         found = true;
-            //     }
-            // }
-
-            // If admin, update painter ID
+            // If admin, update painter ID to the next client (if last client, set painter to the first client)
             if (client->id == client->adminID)
             {
-                // Set painter to the next client in the list
                 for (int i = 0; i < client->connectedClients.size(); i++)
                 {
-                    // If last client, set painter to the first client
+                    // Find the painter ID and update it
                     if (client->connectedClients[i].id == client->painterID)
                     {
+                        // If last client, set painter to the first client
                         if (i == client->connectedClients.size() - 1)
                         {
                             client->painterID = client->connectedClients[0].id;
                         }
+                        // Else, set painter to the next client
                         else
                         {
                             client->painterID = client->connectedClients[i + 1].id;
                         }
+
+                        // Send ROUND_OVER message
+                        string msg = "ROUND_OVER";
+                        client->Send(msg);
+
+                        // Send new painter ID
+                        msg = "PAINTER: " + std::to_string(client->painterID);
+                        cout << "Sending new painter ID: " << msg << endl;
+                        client->Send(msg);
+
                         break;
                     }
                 }

@@ -312,6 +312,19 @@ public:
                 continue;
             }
 
+            // Check if message is PAINTER: id
+            if (message.find("PAINTER:") == 0)
+            {
+                painterID = stoi(message.substr(8));
+
+                stringstream ss;
+                ss << "PAINTER: " << painterID;
+                string painter = ss.str();
+                Broadcast(client, painter);
+
+                continue;
+            }
+
             // Check start game
             // Format: "START_GAME"
             if (message.find("START_GAME") == 0)

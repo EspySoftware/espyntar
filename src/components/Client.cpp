@@ -309,6 +309,16 @@ void Client::Receive()
             painterID = stoi(painterMatch.str(1));
             cout << "The painter is: " << painterID << endl;
 
+            // Update the painter ID in the connected clients vector
+            for (int i = 0; i < connectedClients.size(); i++)
+            {
+                if (connectedClients[i].id == painterID)
+                {
+                    cout << "The painter is: " << connectedClients[i].name << endl;
+                    break;
+                }
+            }
+
             continue;
         }
 
