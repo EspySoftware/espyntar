@@ -270,7 +270,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
                     {
                         if (id == client->id)
                         {
-                            client->AddPoints(BASE_POINTS - (drawTimer / 144));
+                            client->AddPoints(BASE_POINTS + (drawTimer / 144));
                             client->guessed = true;
                             guessed = true;
                         }
