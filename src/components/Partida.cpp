@@ -50,13 +50,6 @@ void Partida::Ronda(shared_ptr<Client> &client)
 
         if (game.GetFinished())
         {
-            // If admin, send FINISHED
-            if (client->id == client->adminID)
-            {
-                string msg = "ROUND_OVER";
-                client->Send(msg);
-            }
-
             game.SetDefault();
 
             // Set painter to the next client in the list

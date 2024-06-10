@@ -20,6 +20,8 @@ private:
     vector<string> words;
     array<string, 3> optionWords;
     string chosenWord;
+    string prevChosenWord;
+
     string censoredString;
     bool censored = false;
     bool chosen = false;

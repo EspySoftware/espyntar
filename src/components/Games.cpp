@@ -43,7 +43,7 @@ array<string, 3> Games::GetRandomWords() const
 void Games::SetChosenWord(shared_ptr<Client> &client)
 {
     stringstream msg;
-    client-> guessed = false;
+    client->guessed = false;
 
     DrawTimer(setTimer);
 
@@ -130,6 +130,8 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
             chosen = true;
             painter.SetColor(22);
         }
+
+        prevChosenWord = chosenWord;
     }
     else
     {
@@ -153,15 +155,35 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
 
 void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
+    static bool msgSent = false;
+
     if (drawTimer < 144)
     {
+        if (!chosenWord.empty())
+        {
+            prevChosenWord = chosenWord;
+            chosenWord = "";
+        }
+
+        // If admin, send FINISHED
+        if (client->id == client->adminID)
+        {
+            if (!msgSent)
+            {
+                string msg = "ROUND_OVER";
+                client->Send(msg);
+                msgSent = true;
+            }
+        }
+
         painter.SetCanPaint(false);
-        censoredString = chosenWord;
+        censoredString = prevChosenWord;
         DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
         drawTimer--;
         if (drawTimer < -(5 * FRAMES))
         {
             finished = true; // Ends round
+            msgSent = false;
             return;
         }
     }
@@ -181,7 +203,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
         if (drawTimer > 144)
             painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
-        DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), prevChosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(prevChosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
         canvas.DrawPalette(palette);
     }
     else
