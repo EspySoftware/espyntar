@@ -308,6 +308,8 @@ void Client::Receive()
             // Extract the painter ID
             painterID = stoi(painterMatch.str(1));
             cout << "The painter is: " << painterID << endl;
+
+            continue;
         }
 
         // START_GAME command
@@ -316,6 +318,8 @@ void Client::Receive()
         {
             cout << "The game has started." << endl;
             messages.push_back("The game has started.");
+
+            continue;
         }
 
         // Regular message
