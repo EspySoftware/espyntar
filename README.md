@@ -1,4 +1,8 @@
-# Espyntar
+<div align="center">
+  <img src="./assets/espy.png" align="center">
+</div>
+
+---
 
 Espyntar es un juego multijugador por rondas. En cada ronda, un jugador elige una palabra entre tres opciones y la dibuja para que los demás jugadores intenten adivinarla. Los jugadores ganan puntos al adivinar correctamente. Al final del juego, el jugador con más puntos gana. El juego está desarrollado en C++ utilizando Raylib y Raygui para gráficos y la librería de sockets de Windows para la comunicación en red.
 
@@ -26,7 +30,7 @@ Espyntar es un juego multijugador por rondas. En cada ronda, un jugador elige un
 - **OtherClient**: Representa a otros clientes en el juego, almacenando información básica como su ID, nombre y puntos.
 - **PaintMessage**: Encapsula la información necesaria para representar un mensaje de pintura en el juego.
 
-## Uso de Bibliotecas Adicionales
+## Uso de Bibliotecas
 
 ### Raylib
 Raylib es una librería de gráficos que permite crear interfaces visuales de manera sencilla y eficiente. En Espyntar, Raylib se utiliza para renderizar la interfaz gráfica del juego.
@@ -56,3 +60,10 @@ Ejecutar el comando `make` en la raíz del proyecto (`/espyntar/EspyntarServer.e
 3. El ejecutable resultante se encontrará en el directorio `build` del proyecto (`/espyntar/build/Espyntar.exe`).
 
 Para tener más clientes de manera local, podemos simplemente ejecutar múltiples veces el archivo `Espyntar.exe` desde el explorador de archivos.
+
+## Pantallas del Juego
+
+<img src="./assets/readme/inicio.png" align="center">
+<img src="./assets/readme/word_select.png" align="center">
+<img src="./assets/readme/guessing.png" align="center">
+<img src="./assets/readme/guess.png" align="center">
