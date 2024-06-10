@@ -98,7 +98,7 @@ void startGUI(Screen *screen, shared_ptr<Client> &client, thread *senderThread, 
         ipFocus = true;
         nameFocus = false;
     }
-    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f, "JUGAR",{215, 182, 15, 255});
+    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f, "JUGAR", {215, 182, 15, 255});
     if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f}, "JUGAR"))
     {
         if (connectToServer(client, ip, name, 12345, senderThread, receiverThread))
@@ -106,19 +106,20 @@ void startGUI(Screen *screen, shared_ptr<Client> &client, thread *senderThread, 
             screen->scene = GAME;
         }
     }
-    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 160.0f, 120.0f, 50.0f, "SALIR",{215, 182, 15, 255});
+    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 160.0f, 120.0f, 50.0f, "SALIR", {215, 182, 15, 255});
     if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 160.0f, 120.0f, 50.0f}, "SALIR"))
     {
         screen->scene = EXIT;
     }
 }
 
-void drawStart(Screen *screen, shared_ptr<Client> &client, thread *senderThread, thread *receiverThread)
+void drawStart(Screen *screen, shared_ptr<Client> &client, thread *senderThread, thread *receiverThread, Music *musicGame)
 {
     BeginDrawing();
     ClearBackground(BLACK);
     DrawTexture(screen->background, 0, 0, WHITE);
     DrawTexture(screen->title, (GetScreenWidth() / 2.0f) - (screen->title.width / 2.0f), 50, WHITE);
+    UpdateMusicStream(*musicGame);
 
     Color color1 = {102, 149, 89, 200};
     DrawRectangleRounded({

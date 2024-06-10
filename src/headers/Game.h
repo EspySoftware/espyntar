@@ -180,7 +180,7 @@ void drawPaintMessages(shared_ptr<Client> &client, Painter *painter)
     }
 }
 
-void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Texture2D *clock, Texture2D *bgGame)
+void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Texture2D *clock, Texture2D *bgGame, Music *musicGame)
 {
     // Tools
     enum Tool
@@ -196,6 +196,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     Painter *painter;
     Games *game;
     Partida *partida;
+    UpdateMusicStream(*musicGame);
 
     // Variables
     static bool initialized = false;
@@ -320,13 +321,13 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     EndDrawing();
 }
 
-void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espycial)
+void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyciales, Music *music)
 {
     BeginDrawing();
     ClearBackground(RAYWHITE); // Limpia la pantalla con un color de fondo agradable
     DrawTexture(*bgGame, 0, 0, WHITE);
     Font font = GetFontDefault();
-
+    UpdateMusicStream(*music);
     // Crear una copia del vector de clientes
     vector<OtherClient> drawConnectedClients = client->connectedClients;
 
@@ -335,7 +336,7 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyci
          { return a.points > b.points; });
 
     // Título de la pantalla
-    DrawTexture(*espycial, GetScreenWidth() / 2 - espycial->width / 2, 30, WHITE);
+    DrawTexture(*espyciales, GetScreenWidth() / 2 - espyciales->width / 2, 30, WHITE);
 
     // Definir las alturas de los rectángulos para los tres primeros lugares
     int rectWidth = 200; // Ancho de los rectángulos
