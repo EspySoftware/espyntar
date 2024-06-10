@@ -280,7 +280,7 @@ public:
                 // // broadcast round over message
                 // Broadcast(client, message);
 
-                // Set painter to the next client after the current painter
+                // Cycle through clients to set the next painter
                 bool found = false;
                 for (auto &otherClient : clients)
                 {
@@ -294,6 +294,12 @@ public:
                     {
                         found = true;
                     }
+                }
+
+                // If the current painter is the last client, set the painter to the first client
+                if (!found && !clients.empty())
+                {
+                    painterID = clients.begin()->first;
                 }
 
                 // Send the new painter to all clients
