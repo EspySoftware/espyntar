@@ -3,7 +3,7 @@
 #include "../headers/Games.h"
 #include "../headers/raygui.h"
 
-#define FRAMES 144
+#define FRAMES 30
 #define BASE_POINTS 200
 
 using std::endl;
@@ -157,7 +157,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
     static bool messagesSent = false;
 
-    if (drawTimer < 144)
+    if (drawTimer < FRAMES)
     {
         if (!chosenWord.empty())
         {

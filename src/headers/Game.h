@@ -4,7 +4,7 @@
 #include "./Partida.h"
 using std::array;
 using std::vector;
-#define FRAMES 144
+#define FRAMES 30
 
 // Tools
 enum Tool
@@ -326,6 +326,8 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
 
     // Draw connected clients
     drawConnectedClients(client);
+
+    DrawFPS(10, 10);
 
     EndDrawing();
 }
