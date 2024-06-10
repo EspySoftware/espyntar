@@ -53,8 +53,9 @@ public:
     OtherClient(int id, string name, int points) { this->id = id, this->name = name, this->points = points; }
 };
 
-struct PaintMessage
+class PaintMessage
 {
+public:
     int x;
     int y;
     int color;
