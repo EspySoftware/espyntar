@@ -170,14 +170,21 @@ void drawPaintMessages(shared_ptr<Client> &client, Painter *painter)
 {
     vector<PaintMessage> paintMessages = client->getPaintMessages();
 
-    for (int i = 0; i < paintMessages.size(); i++)
+    if (paintMessages.size() > 0)
     {
-        Vector2 position = {(float)paintMessages[i].x, (float)paintMessages[i].y};
-        painter->Paint(position, paintMessages[i].color, paintMessages[i].size);
-    }
+        for (int i = 0; i < paintMessages.size(); i++)
+        {
+            Vector2 position = {(float)paintMessages[i].x, (float)paintMessages[i].y};
+            painter->Paint(position, paintMessages[i].color, paintMessages[i].size);
+        }
 
-    // Clear the paint messages
-    client->paintMessages.clear();
+        // Clear the paint messages
+        client->paintMessages.clear();
+    }
+    else
+    {
+        painter->ResetServerLastPosition();
+    }
 }
 
 void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Texture2D *clock, Texture2D *bgGame)

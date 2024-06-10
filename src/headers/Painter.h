@@ -18,6 +18,8 @@ private:
     Canvas &canvas;
     float brushSize;
     Vector2 lastPosition;
+    Vector2 serverLastPosition;
+
     int currentColor = 2;
     bool canPaint = true;
 
@@ -30,6 +32,8 @@ public:
     void Fill(Vector2 position);
 
     void ResetLastPosition() { lastPosition = {-1.0f, -1.0f}; }
+    void ResetServerLastPosition() { serverLastPosition = {-1.0f, -1.0f}; }
+
     void SetBrushSize(float delta);
     void SetColor(int colorIndex) { currentColor = colorIndex; }
     float GetBrushSize() { return brushSize; }
