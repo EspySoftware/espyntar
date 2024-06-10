@@ -270,7 +270,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
                     {
                         if (id == client->id)
                         {
-                            client->AddPoints(BASE_POINTS + (drawTimer / 144));
+                            client->AddPoints(BASE_POINTS * (drawTimer / (80 * FRAMES)));
                             client->guessed = true;
                             guessed = true;
                         }
@@ -345,7 +345,7 @@ void Games::SetDefault()
     censored = false;
     finished = false;
     isFiltered = false;
-    drawTimer = 10 * FRAMES;
+    drawTimer = 80 * FRAMES;
     setTimer = 10 * FRAMES;
     optionWords = GetRandomWords();
 }
