@@ -329,7 +329,7 @@ void Games::DrawTimer(int &timer, Texture2D &clock)
     float textPosY = clockPosY + (clock.height / 2) - (textSize.y / 2);
 
     // Draw the timer text on the screen centered in the clock
-    DrawTextPro(GetFontDefault(), timerText.c_str(), {textPosX, textPosY - 4}, {0, 0}, 0, 20, 4, BLACK);
+    DrawTextPro(GetFontDefault(), timerText.c_str(), {textPosX, textPosY + 4}, {0, 0}, 0, 20, 4, BLACK);
 }
 
 // Filter chat messages to only show the guesses
