@@ -268,7 +268,6 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
 
     buttons(10.0f, 50.0f, GetScreenWidth() - 20.0f, 100.0f, "muchotexto", {122, 236, 104, 255});
     DrawRectangle(10.0f, 60.0f, GetScreenWidth() - 20.0f, 80.0f, {122, 236, 104, 255});
-    DrawTexture(*clock, 20, 60, WHITE);
     DrawTexture(*(espy), GetScreenWidth() / 2.0f - ((espy->width) / 2.0f), 5, WHITE);
 
     buttons(1045.0f, 100.0f - 25.0f, 70.0f, 50.0f, "SALIR", {215, 182, 15, 255});
@@ -305,7 +304,7 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     drawPaintMessages(client, painter);
 
     // Draw game
-    partida->Ronda(client, screen);
+    partida->Ronda(client, screen, *clock);
     if (partida->GetStarted())
     {
         partida->DrawRounds(screen);

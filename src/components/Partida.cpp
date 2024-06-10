@@ -5,7 +5,7 @@ Partida::Partida(Games &game, shared_ptr<Client> &client) : game(game)
 {
 }
 
-void Partida::Ronda(shared_ptr<Client> &client, Screen *scene)
+void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock)
 {
     if (!started)
     {
@@ -42,11 +42,11 @@ void Partida::Ronda(shared_ptr<Client> &client, Screen *scene)
             // game.UpdateChosenWord(client->chosenWord);
             if (!game.GetChosen())
             {
-                game.SetChosenWord(client);
+                game.SetChosenWord(client, clock);
             }
             if (game.GetChosen())
             {
-                game.DrawChosenWord(client);
+                game.DrawChosenWord(client, clock);
             }
         }
 

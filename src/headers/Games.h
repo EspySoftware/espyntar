@@ -40,16 +40,16 @@ public:
 
     array<string, 3> GetRandomWords() const;
     string GetChosenWord() const { return chosenWord; }
-    void SetChosenWord(shared_ptr<Client> &client);
+    void SetChosenWord(shared_ptr<Client> &client, Texture2D &clock);
     void UpdateChosenWord(string word) { chosenWord = word; }
 
     bool GetChosen() const { return chosen; }
 
-    void DrawChosenWord(shared_ptr<Client> &client);
+    void DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock);
     void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
     bool GetIsGuesser() { return isGuesser; }
     string CensorWord(string word);
-    void DrawTimer(int &timer);
+    void DrawTimer(int &timer, Texture2D &clock);
     vector<string> FilterChat(vector<string> messages);
     bool GetFinished() { return finished; }
     void SetDefault();

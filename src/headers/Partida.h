@@ -12,7 +12,7 @@ private:
 
 public:
     Partida(Games &game, shared_ptr<Client> &client);
-    void Ronda(shared_ptr<Client> &client, Screen *scene);
+    void Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock);
     void DrawRounds(Screen *scene);
     bool GetStarted() { return started; }
     Games &GetGame() { return game; }

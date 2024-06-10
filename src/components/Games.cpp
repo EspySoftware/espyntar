@@ -39,12 +39,12 @@ array<string, 3> Games::GetRandomWords() const
     return three_word;
 }
 
-void Games::SetChosenWord(shared_ptr<Client> &client)
+void Games::SetChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 {
     stringstream msg;
     client->guessed = false;
 
-    DrawTimer(setTimer);
+    DrawTimer(setTimer, clock);
 
     // Parse messages for "Word has been chosen." message
     vector<string> messages = client->getMessages();
@@ -152,10 +152,9 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
     }
 }
 
-void Games::DrawChosenWord(shared_ptr<Client> &client)
+void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 {
     static bool messagesSent = false;
-   
     if (drawTimer < FRAMES)
     {
         if (!chosenWord.empty())
@@ -221,7 +220,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
     }
     else
     {
-        DrawTimer(drawTimer);
+        DrawTimer(drawTimer, clock);
     }
 
     // Draw the number of letters in the word
@@ -311,13 +310,26 @@ string Games::CensorWord(string word)
     }
 }
 
-void Games::DrawTimer(int &timer)
+void Games::DrawTimer(int &timer, Texture2D &clock)
 {
     if (timer > 0)
     {
         timer--;
     }
-    DrawTextPro(GetFontDefault(), std::to_string(timer / FRAMES).c_str(), {55, 95}, {0, 0}, 0, 20, 4, BLACK);
+    int clockPosX = 20;
+    int clockPosY = 60;
+    DrawTexture(clock, clockPosX, clockPosY, WHITE);
+
+    // Convert the timer to a string, dividing by FRAMES to convert to seconds
+    std::string timerText = std::to_string(timer / FRAMES);
+
+    // Calculate the position to draw the text in the center of the clock
+    Vector2 textSize = MeasureTextEx(GetFontDefault(), timerText.c_str(), 20, 4);
+    float textPosX = clockPosX + (clock.width / 2) - (textSize.x / 2);
+    float textPosY = clockPosY + (clock.height / 2) - (textSize.y / 2);
+
+    // Draw the timer text on the screen centered in the clock
+    DrawTextPro(GetFontDefault(), timerText.c_str(), {textPosX, textPosY - 4}, {0, 0}, 0, 20, 4, BLACK);
 }
 
 // Filter chat messages to only show the guesses
