@@ -14,5 +14,7 @@ public:
     Partida(Games &game, shared_ptr<Client> &client);
     void Ronda(shared_ptr<Client> &client);
     void DrawRounds();
+    bool GetStarted() { return started; }
     Games &GetGame() { return game; }
+    void SetMaxRounds(int maxRounds) { this->maxRounds = maxRounds; }
 };
