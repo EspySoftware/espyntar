@@ -4,8 +4,7 @@
 #include "../headers/raygui.h"
 
 #define FRAMES 30
-#define BASE_POINTS 300
-#define DRAWTIME 80 * 30
+#define BASE_POINTS 200
 using std::endl;
 using std::getline;
 using std::ifstream;
@@ -156,7 +155,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
 void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
     static bool messagesSent = false;
-
+   
     if (drawTimer < FRAMES)
     {
         if (!chosenWord.empty())
@@ -270,7 +269,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
                     {
                         if (id == client->id)
                         {
-                            client->AddPoints(BASE_POINTS + (drawTimer / FRAMES) * 5);
+                            client->AddPoints(BASE_POINTS + (drawTimer / FRAMES) * 10);
                             client->guessed = true;
                             guessed = true;
                         }
