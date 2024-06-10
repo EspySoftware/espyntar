@@ -155,12 +155,58 @@ void Games::SetChosenWord(shared_ptr<Client> &client)
 
 void Games::DrawChosenWord(shared_ptr<Client> &client)
 {
+    static bool messagesSent = false;
+
     if (drawTimer < 144)
     {
         if (!chosenWord.empty())
         {
             prevChosenWord = chosenWord;
             chosenWord = "";
+        }
+
+        // If admin, update painter ID to the next client (if last client, set painter to the first client)
+        if (client->id == client->adminID && !messagesSent)
+        {
+            for (int i = 0; i < client->connectedClients.size(); i++)
+            {
+                // Find the painter ID and update it
+                if (client->connectedClients[i].id == client->painterID)
+                {
+                    // If last client, set painter to the first client
+                    if (i == client->connectedClients.size() - 1)
+                    {
+                        client->painterID = client->connectedClients[0].id;
+                    }
+                    // Else, set painter to the next client
+                    else
+                    {
+                        client->painterID = client->connectedClients[i + 1].id;
+                    }
+
+                    // Send ROUND_OVER message
+                    string msg = "ROUND_OVER";
+                    client->Send(msg);
+
+                    // Send new painter ID
+                    msg = "PAINTER: " + std::to_string(client->painterID);
+                    cout << "Sending new painter ID: " << msg << endl;
+                    client->Send(msg);
+
+                    messagesSent = true;
+                    break;
+                }
+            }
+        }
+
+        // Update if client is painter
+        if (client->painterID == client->id)
+        {
+            SetIsGuesser(false);
+        }
+        else
+        {
+            SetIsGuesser(true);
         }
 
         painter.SetCanPaint(false);
@@ -170,6 +216,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
         if (drawTimer < -(5 * FRAMES))
         {
             finished = true; // Ends round
+            messagesSent = false;
             return;
         }
     }

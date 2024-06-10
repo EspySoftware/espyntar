@@ -52,49 +52,6 @@ void Partida::Ronda(shared_ptr<Client> &client)
         {
             game.SetDefault();
 
-            // If admin, update painter ID to the next client (if last client, set painter to the first client)
-            if (client->id == client->adminID)
-            {
-                for (int i = 0; i < client->connectedClients.size(); i++)
-                {
-                    // Find the painter ID and update it
-                    if (client->connectedClients[i].id == client->painterID)
-                    {
-                        // If last client, set painter to the first client
-                        if (i == client->connectedClients.size() - 1)
-                        {
-                            client->painterID = client->connectedClients[0].id;
-                        }
-                        // Else, set painter to the next client
-                        else
-                        {
-                            client->painterID = client->connectedClients[i + 1].id;
-                        }
-
-                        // Send ROUND_OVER message
-                        string msg = "ROUND_OVER";
-                        client->Send(msg);
-
-                        // Send new painter ID
-                        msg = "PAINTER: " + std::to_string(client->painterID);
-                        cout << "Sending new painter ID: " << msg << endl;
-                        client->Send(msg);
-
-                        break;
-                    }
-                }
-            }
-
-            // Update if client is painter
-            if (client->painterID == client->id)
-            {
-                game.SetIsGuesser(false);
-            }
-            else
-            {
-                game.SetIsGuesser(true);
-            }
-
             currentRound++;
             if (game.GetFinished())
             {
