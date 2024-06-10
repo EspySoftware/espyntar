@@ -55,7 +55,6 @@ void drawConnectedClients(shared_ptr<Client> &client)
         float pointsY = nameY + textSize.y + 5;
 
         DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 15, 2, DARKGRAY);
-
     }
 }
 
@@ -396,8 +395,7 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyci
         DrawTextPro(font, pointsStr.c_str(), {pointsX, pointsY}, {0, 0}, 0, 20, 2, DARKGRAY);
 
         // Dibujar el ID del cliente (lado izquierdo de la caja)
-        std::string idStr = "#" + std::to_string(drawConnectedClients[i].id);
-        textSize = MeasureTextEx(font, idStr.c_str(), 15, 2);
+        std::string idStr = "#" + std::to_string(i + 1);
         float idX = recPlayer.x + 10;
         float idY = recPlayer.y + 10;
 
