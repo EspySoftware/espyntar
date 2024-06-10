@@ -4,7 +4,7 @@
 #include "./Partida.h"
 using std::array;
 using std::vector;
-#define FRAMES 144
+#define FRAMES 30
 
 // Tools
 enum Tool
@@ -327,6 +327,8 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     // Draw connected clients
     drawConnectedClients(client);
 
+    DrawFPS(10, 10);
+
     EndDrawing();
 }
 
@@ -344,7 +346,7 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyci
          { return a.points > b.points; });
 
     // Título de la pantalla
-    DrawTextPro(font, "GANADORES", {(GetScreenWidth() - MeasureText("GANADORES", 50)) / 2, 50}, {0, 0}, 0, 50, 2, BLACK);
+    DrawTextPro(font, "GANADORES", {(GetScreenWidth() - MeasureText("GANADORES", 50)) / 2.0f, 50}, {0, 0}, 0, 50, 2, BLACK);
 
     // Definir las alturas de los rectángulos para los tres primeros lugares
     int rectWidth = 200; // Ancho de los rectángulos

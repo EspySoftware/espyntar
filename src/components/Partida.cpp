@@ -5,7 +5,7 @@ Partida::Partida(Games &game, shared_ptr<Client> &client) : game(game)
 {
 }
 
-void Partida::Ronda(shared_ptr<Client> &client,Screen *scene)
+void Partida::Ronda(shared_ptr<Client> &client, Screen *scene)
 {
     if (!started)
     {
@@ -23,7 +23,9 @@ void Partida::Ronda(shared_ptr<Client> &client,Screen *scene)
         if (client->adminID == client->id)
         {
             DrawTextPro(GetFontDefault(), "Esperando jugadores...", {float(GetScreenWidth()) / 2 - MeasureText("Esperando jugadores...", 20) / 2, 80}, {0, 0}, 0, 20, 4, BLACK);
-            if (GuiButton({(GetScreenWidth() / 2.0f) - 160, (GetScreenHeight() / 2.0f) - 80.0f, 320.0f, 70.0f}, "Iniciar partida"))
+            DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
+
+            if (GuiButton({(GetScreenWidth() / 2.0f) - 160, 400, 320.0f, 70.0f}, "Iniciar partida"))
             {
                 client->messages.push_back("The game has started.");
 
