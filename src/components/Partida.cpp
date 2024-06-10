@@ -71,7 +71,12 @@ void Partida::DrawRounds()
     }
     else
     {
-        if (currentRound < maxRounds)
+
+        if (currentRound == maxRounds)
+        {
+            DrawTextPro(GetFontDefault(), "Ronda extra!", {120, 80}, {0, 0}, 0, 20, 4, BLACK);
+        }
+        else
         {
             std::string roundText = "Ronda " + std::to_string(currentRound + 1) + " de " + std::to_string(maxRounds);
             const char *textToDraw = roundText.c_str();
