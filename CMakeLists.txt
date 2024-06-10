@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 project(Espyntar)
-
+# YA LO CAMBIE DANNA
 set(CMAKE_C_STANDARD 99)
 
 # Dependencies
