@@ -4,6 +4,7 @@ typedef enum // estructura logica del juego
 {
     START,
     GAME,
+    WINNER,
     EXIT
 } GameScene;
 

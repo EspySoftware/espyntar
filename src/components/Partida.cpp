@@ -5,7 +5,7 @@ Partida::Partida(Games &game, shared_ptr<Client> &client) : game(game)
 {
 }
 
-void Partida::Ronda(shared_ptr<Client> &client)
+void Partida::Ronda(shared_ptr<Client> &client,Screen *scene)
 {
     if (!started)
     {
@@ -60,10 +60,10 @@ void Partida::Ronda(shared_ptr<Client> &client)
             }
         }
     }
-    DrawRounds();
+    DrawRounds(scene);
 }
 
-void Partida::DrawRounds()
+void Partida::DrawRounds(Screen *scene)
 {
     if (!started)
     {
@@ -75,6 +75,7 @@ void Partida::DrawRounds()
         if (currentRound == maxRounds)
         {
             DrawTextPro(GetFontDefault(), "Ronda extra!", {120, 80}, {0, 0}, 0, 20, 4, BLACK);
+            scene->scene = WINNER;
         }
         else
         {

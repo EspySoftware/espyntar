@@ -318,14 +318,21 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
     drawPaintMessages(client, painter);
 
     // Draw game
-    partida->Ronda(client);
+    partida->Ronda(client,screen);
     if (partida->GetStarted())
     {
-        partida->DrawRounds();
+        partida->DrawRounds(screen);
     }
 
     // Draw connected clients
     drawConnectedClients(client);
 
+    EndDrawing();
+}
+
+void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame )
+{
+    BeginDrawing();
+    DrawTexture(*bgGame, 0, 0, WHITE);
     EndDrawing();
 }
