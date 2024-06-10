@@ -325,16 +325,18 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyci
     ClearBackground(RAYWHITE); // Limpia la pantalla con un color de fondo agradable
     DrawTexture(*bgGame, 0, 0, WHITE);
     Font font = GetFontDefault();
-
+    
     // Crear una copia del vector de clientes
     vector<OtherClient> drawConnectedClients = client->connectedClients;
-
+    
     // Ordenar los clientes por puntos de mayor a menor
-    sort(drawConnectedClients.begin(), drawConnectedClients.end(), [](const OtherClient &a, const OtherClient &b)
-         { return a.points > b.points; });
+    sort(drawConnectedClients.begin(), drawConnectedClients.end(), [](const OtherClient &a, const OtherClient &b) {
+        return a.points > b.points;
+    });
 
     // Título de la pantalla
-    DrawTexture(*espyciales, GetScreenWidth() / 2 - espyciales->width / 2, 30, WHITE);
+        DrawTexture(*espyciales, GetScreenWidth() / 2 - espyciales->width / 2, 30, WHITE);
+
 
     // Definir las alturas de los rectángulos para los tres primeros lugares
     int rectWidth = 200; // Ancho de los rectángulos
@@ -351,29 +353,29 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyci
 
         switch (i)
         {
-        case 0:
-            currentHeight = GetScreenHeight() - startY;
-            playerColor = {255, 215, 0, 255}; // Dorado para el primer lugar
-            xOffset = (GetScreenWidth() - rectWidth) / 2;
-            break;
-        case 1:
-            currentHeight = GetScreenHeight() - startY - 50;
-            playerColor = {192, 192, 192, 255}; // Plateado para el segundo lugar
-            xOffset = (GetScreenWidth() - rectWidth) / 2 - rectWidth - 20;
-            break;
-        case 2:
-            currentHeight = GetScreenHeight() - startY - 100;
-            playerColor = {139, 69, 19, 255}; // Café para el tercer lugar
-            xOffset = (GetScreenWidth() - rectWidth) / 2 + rectWidth + 20;
-            break;
+            case 0:
+                currentHeight = GetScreenHeight() - startY;
+                playerColor = {255, 215, 0, 255}; // Dorado para el primer lugar
+                xOffset = (GetScreenWidth() - rectWidth) / 2;
+                break;
+            case 1:
+                currentHeight = GetScreenHeight() / 2;
+                playerColor = {192, 192, 192, 255}; // Plateado para el segundo lugar
+                xOffset = (GetScreenWidth() - rectWidth) / 2 - rectWidth - 20;
+                break;
+            case 2:
+                currentHeight = GetScreenHeight() / 3;
+                playerColor = {139, 69, 19, 255}; // Café para el tercer lugar
+                xOffset = (GetScreenWidth() - rectWidth) / 2 + rectWidth + 20;
+                break;
         }
 
-        float yOffset = startY;
+        float yOffset = GetScreenHeight() - currentHeight;
 
         // Dibujar rectángulo de fondo para cada jugador
         DrawRectangle(xOffset - 20, yOffset - 20, rectWidth + 40, currentHeight + 40, LIGHTGRAY);
 
-        Rectangle recPlayer = {xOffset, yOffset, rectWidth, currentHeight};
+        Rectangle recPlayer = { xOffset, yOffset, rectWidth, currentHeight };
 
         // Dibujar caja para cada jugador en el podio con colores específicos
         DrawRectangleRec(recPlayer, playerColor);
@@ -401,6 +403,6 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame, Texture2D *espyci
 
         DrawTextPro(font, idStr.c_str(), {idX, idY}, {0, 0}, 0, 15, 2, BLACK);
     }
-
+    
     EndDrawing();
 }
