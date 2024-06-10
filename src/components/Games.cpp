@@ -209,8 +209,8 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 
         painter.SetCanPaint(false);
         censoredString = prevChosenWord;
-        DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
         drawTimer--;
+        DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
         if (drawTimer < -(5 * FRAMES))
         {
             finished = true; // Ends round
