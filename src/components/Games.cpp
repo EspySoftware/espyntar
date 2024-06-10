@@ -213,15 +213,35 @@ void Games::DrawChosenWord(shared_ptr<Client> &client)
             // cout << chosenWord << endl;
             painter.SetCanPaint(false);
             vector<string> messages = client->getMessages();
-            vector<string> filtered = FilterChat(messages);
-            for (int i = 0; i < filtered.size(); i++)
-            {
-                if (filtered[i] == chosenWord) // modificar para sumar puntos (no hay cliente para sumar puntos aun)
-                {
+            // vector<string> filtered = FilterChat(messages);
 
-                    client->AddPoints(BASE_POINTS - (drawTimer / 144));
-                    client->guessed = true;
-                    guessed = true;
+            for (int i = 0; i < messages.size(); i++)
+            {
+                string message = messages[i];
+                regex msgRegex("\\((\\d+)\\)\\s+\\[(\\w+)\\]:\\s+(.*)");
+                smatch msgMatch;
+
+                if (regex_search(message, msgMatch, msgRegex) && msgMatch.size() > 3)
+                {
+                    int id = stoi(msgMatch.str(1));
+                    string name = msgMatch.str(2);
+                    string msg = msgMatch.str(3);
+
+                    // Lowercased message to lowercased chosenWord
+                    string lowerMsg = msg;
+                    std::transform(lowerMsg.begin(), lowerMsg.end(), lowerMsg.begin(), ::tolower);
+                    string lowerChosenWord = client->chosenWord;
+                    std::transform(lowerChosenWord.begin(), lowerChosenWord.end(), lowerChosenWord.begin(), ::tolower);
+
+                    if (lowerMsg == lowerChosenWord)
+                    {
+                        if (id == client->id)
+                        {
+                            client->AddPoints(BASE_POINTS - (drawTimer / 144));
+                            client->guessed = true;
+                            guessed = true;
+                        }
+                    }
                 }
             }
             DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
@@ -268,6 +288,7 @@ void Games::DrawTimer(int &timer)
     DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {55, 95}, {0, 0}, 0, 20, 4, BLACK);
 }
 
+// Filter chat messages to only show the guesses
 vector<string> Games::FilterChat(vector<string> messages)
 {
     vector<string> filteredMessages;
