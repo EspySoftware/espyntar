@@ -346,7 +346,7 @@ void drawWinner(shared_ptr<Client> &client, Texture2D *bgGame)
     });
 
     // Título de la pantalla
-    DrawTextPro(font, "GANADORES", {(GetScreenWidth() - MeasureText("GANADORES", 50)) / 2, 50}, {0, 0}, 0, 50, 2, BLACK);
+    DrawTextPro(font, "GANADORES", {(GetScreenWidth() - MeasureText("GANADORES", 50)) / 2.0f, 50}, {0, 0}, 0, 50, 2, BLACK);
 
     // Definir las alturas de los rectángulos para los tres primeros lugares
     int rectWidth = 200; // Ancho de los rectángulos
