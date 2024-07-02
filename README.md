@@ -43,7 +43,7 @@ WinSock2 es una librería de sockets para Windows que facilita la comunicación 
 
 ## Instrucciones de Compilación
 
-El código fuente del proyecto se puede encontrar en el siguiente enlace: [https://github.com/Scalaptia/espyntar](https://github.com/Scalaptia/espyntar). Para compilarlo, necesitamos:
+El código fuente del proyecto se puede encontrar en el siguiente enlace: [https://github.com/EspySoftare/espyntar](https://github.com/EspySoftare/espyntar). Para compilarlo, necesitamos:
 
 - Un compilador de C++ (MinGW-w64)
 - CMake
