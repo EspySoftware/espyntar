@@ -2,7 +2,7 @@
 #include <iostream>
 #include "../headers/Round.h"
 #include "../headers/raygui.h"
-#define FRAMES 144
+#define FRAMES 60
 
 using std::endl;
 using std::getline;

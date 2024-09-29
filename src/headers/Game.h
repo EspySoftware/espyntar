@@ -4,7 +4,7 @@
 #include "./Partida.h"
 using std::array;
 using std::vector;
-#define FRAMES 30
+#define FRAMES 60
 
 // Tools
 enum Tool

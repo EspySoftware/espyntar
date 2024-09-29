@@ -7,7 +7,7 @@
 #include <array>
 #include <string>
 #include <sstream>
-#define FRAMES 30
+#define FRAMES 60
 
 using std::array;
 using std::string;

@@ -3,7 +3,7 @@
 #include "../headers/Games.h"
 #include "../headers/raygui.h"
 
-#define FRAMES 30
+#define FRAMES 60
 #define BASE_POINTS 200
 using std::endl;
 using std::getline;
