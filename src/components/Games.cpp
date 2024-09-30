@@ -155,7 +155,19 @@ void Games::SetChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 {
     static bool messagesSent = false;
-    if (drawTimer < FRAMES)
+
+    // Count correct guesses
+    client->round_over = true;
+    for (auto &c : client->connectedClients)
+    {
+        if (c.id != client->painterID && !c.guessedCorrectly)
+        {
+            client->round_over = false;
+            break;
+        }
+    }
+
+    if (drawTimer < FRAMES || client->round_over)
     {
         if (!chosenWord.empty())
         {
@@ -211,12 +223,14 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         censoredString = prevChosenWord;
         drawTimer--;
         DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
-        if (drawTimer < -(5 * FRAMES))
+        if (drawTimer < -(5 * FRAMES) || client->round_over)
         {
             finished = true; // Ends round
             messagesSent = false;
             return;
         }
+
+        client->round_over = false;
     }
     else
     {
@@ -231,7 +245,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
     // Draw the word
     if (!isGuesser)
     {
-        if (drawTimer > 144)
+        if (drawTimer > 60)
             painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), prevChosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(prevChosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);

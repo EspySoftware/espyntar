@@ -226,7 +226,7 @@ void Client::Receive()
                 int brushSize = stoi(match.str(4));
 
                 // Add the paint message to the vector
-                paintMessages.push_back((PaintMessage){x, y, color, (float)brushSize});
+                paintMessages.push_back(PaintMessage{x, y, color, static_cast<float>(brushSize)});
             }
 
             continue;
@@ -261,6 +261,7 @@ void Client::Receive()
                 if (connectedClients[i].id == id)
                 {
                     connectedClients[i].points += points;
+                    connectedClients[i].guessedCorrectly = true;
                     break;
                 }
             }
@@ -302,6 +303,8 @@ void Client::Receive()
         smatch painterMatch;
         if (regex_search(message, painterMatch, painterRegex) && painterMatch.size() > 1)
         {
+            round_over = true;
+
             // Reset the chosen word
             chosenWord = "";
 

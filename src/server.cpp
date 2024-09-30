@@ -309,6 +309,9 @@ public:
                 string painter = ss.str();
                 Broadcast(client, painter);
 
+                cout << "New painter: " << painterID << endl;
+                cout << "Broadcasting new painter to all clients." << endl;
+
                 continue;
             }
 

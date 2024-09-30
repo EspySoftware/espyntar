@@ -128,7 +128,7 @@ void drawChat(shared_ptr<Client> &client, Partida *partida)
         }
         else
         {
-            if (partida->GetGame().GetDrawTimer() < 144)
+            if (partida->GetGame().GetDrawTimer() < 60)
             {
                 GuiButton({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, "Se acabó!");
             }
