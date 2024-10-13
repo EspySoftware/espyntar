@@ -164,7 +164,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         // Check if other clients have guessed the word
         for (auto &c : client->connectedClients)
         {
-            if (c.id != client->painterID && !c.guessedCorrectly)
+            if ((c.id != client->painterID && !c.guessedCorrectly) && c.id != client->adminID)
             {
                 client->round_over = false;
                 break;
@@ -172,10 +172,14 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         }
 
         // Check if admin has guessed the word
-        if (client->guessed)
-        {
-            client->round_over = false;
+        if (client->id == client->adminID && !client->guessed) {
+            // If the client isnt PAINTER and hasnt guessed the word, set round_over to false
+            if (client->painterID != client->id)
+            {
+                client->round_over = false;
+            }
         }
+        
     }
 
     // If the timer is up or all clients have guessed the word, end the round
@@ -240,10 +244,11 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         {
             finished = true; // Ends round
             messagesSent = false;
+            client->round_over = false; 
+
             return;
         }
 
-        client->round_over = false;
     }
     else
     {
@@ -297,7 +302,9 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
                         {
                             client->AddPoints(BASE_POINTS + (drawTimer / FRAMES) * 10);
                             client->guessed = true;
-                            guessed = true;
+
+                            cout << "Client " << client->id << " guessed the word!" << endl;
+                            client->connectedClients[client->id].guessedCorrectly = true;
                         }
                     }
                 }

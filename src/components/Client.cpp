@@ -61,14 +61,13 @@ Client::Client(string address, int port, string name)
         return;
     }
 
-    /*--------------*/
-    // Receive ADMIN and PAINTER ids
+    // Ensure the buffer is null-terminated
     buffer[bytesReceived] = '\0';
+
+    // Extract the ADMIN and PAINTER ids
     string adminPainter(buffer);
     cout << "Received: " << adminPainter << endl;
 
-    // Extract the ADMIN and PAINTER ids
-    // Format "ADMIN: 1, PAINTER: 2"
     regex adminRegex("ADMIN:\\s+(\\d+),\\s+PAINTER:\\s+(\\d+)");
     smatch adminMatch;
 
@@ -81,29 +80,22 @@ Client::Client(string address, int port, string name)
         cout << "PAINTER ID: " << painterID << endl;
     }
 
-    /*--------------*/
     // Add connected clients to the vector
     // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
-    // Remove the "Connected clients: " prefix
-    buffer[bytesReceived] = '\0';
-    string connectedClients = buffer;
-    string clientsString = connectedClients.substr(19);
+    string connectedClients = adminPainter.substr(adminPainter.find("Connected clients: ") + 19); // the + 19 is to skip the "Connected clients: " part
 
     // Split the string by commas
-    stringstream ss(clientsString);
+    stringstream ss(connectedClients);
     string client;
     vector<string> clients;
     while (getline(ss, client, ','))
     {
-        clients.push_back(client);
-    }
+        // Trim leading and trailing spaces
+        client.erase(0, client.find_first_not_of(" \t\n\r\f\v"));
+        client.erase(client.find_last_not_of(" \t\n\r\f\v") + 1);
 
-    // Regular expression to match the client format
-    regex clientRegex("\\[(\\d+)\\](\\w+)\\((\\d+)\\)");
-
-    cout << "Connected clients:" << endl;
-    for (const string &client : clients)
-    {
+        // Regular expression to match the client format
+        regex clientRegex("\\[(\\d+)\\](\\w+)\\((\\d+)\\)");
         smatch matches;
         if (regex_search(client, matches, clientRegex))
         {
@@ -342,8 +334,9 @@ void Client::Receive()
             // Reset the guessedCorrectly flag for all clients
             for (int i = 0; i < connectedClients.size(); i++)
             {
-                connectedClients[i].guessedCorrectly = false;
+                this->connectedClients[i].guessedCorrectly = false;
             }
+            this->guessed = false;
             
             continue;
         }

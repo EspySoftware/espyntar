@@ -149,12 +149,13 @@ void drawChat(shared_ptr<Client> &client, Partida *partida)
     DrawRectangle((float)GetScreenWidth() - 215, (float)GetScreenHeight() - 590, 205, 35, color_chat);
     DrawTextPro(GetFontDefault(), text, {(float)GetScreenWidth() - 130, (float)GetScreenHeight() - 580},
                 {0.0f, 0.0f}, 0.0f, 15.0f, 2.0f, BLACK);
+
     // Send the message when the user presses Enter and message is not empty
     string msg = message;
     if (IsKeyPressed(KEY_ENTER) && msg.length() > 0 && !std::all_of(msg.begin(), msg.end(), isspace))
     {
-        // Send the message to the server
         client->Send(msg);
+
         strcpy(message, "");
     }
 }
