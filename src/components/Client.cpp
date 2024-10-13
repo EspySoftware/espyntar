@@ -303,11 +303,6 @@ void Client::Receive()
         smatch painterMatch;
         if (regex_search(message, painterMatch, painterRegex) && painterMatch.size() > 1)
         {
-            round_over = true;
-
-            // Reset the chosen word
-            chosenWord = "";
-
             // Extract the painter ID
             painterID = stoi(painterMatch.str(1));
             cout << "The painter is: " << painterID << endl;
@@ -332,6 +327,24 @@ void Client::Receive()
             cout << "The game has started." << endl;
             messages.push_back("The game has started.");
 
+            continue;
+        }
+
+        // ROUND_OVER command
+        // Format: "ROUND_OVER"
+        if (message.find("ROUND_OVER") == 0)
+        {
+            cout << "The round is over." << endl;
+
+            this->round_over = true;
+            this->chosenWord = "";
+
+            // Reset the guessedCorrectly flag for all clients
+            for (int i = 0; i < connectedClients.size(); i++)
+            {
+                connectedClients[i].guessedCorrectly = false;
+            }
+            
             continue;
         }
 

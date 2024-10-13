@@ -276,41 +276,8 @@ public:
             // Format: "ROUND_OVER"
             if (message.find("ROUND_OVER") == 0)
             {
-                chosenWord = "";
-                // // broadcast round over message
-                // Broadcast(client, message);
-
-                // Cycle through clients to set the next painter
-                bool found = false;
-                for (auto &otherClient : clients)
-                {
-                    if (found)
-                    {
-                        painterID = otherClient.first;
-                        break;
-                    }
-
-                    if (otherClient.first == painterID)
-                    {
-                        found = true;
-                    }
-                }
-
-                // If the current painter is the last client, set the painter to the first client
-                if (!found && !clients.empty())
-                {
-                    painterID = clients.begin()->first;
-                }
-
-                // Send the new painter to all clients
-                // Format: "PAINTER: id"
-                stringstream ss;
-                ss << "PAINTER: " << painterID;
-                string painter = ss.str();
-                Broadcast(client, painter);
-
-                cout << "New painter: " << painterID << endl;
-                cout << "Broadcasting new painter to all clients." << endl;
+                // Send round over message to all clients except the sender
+                Broadcast(client, message);
 
                 continue;
             }
