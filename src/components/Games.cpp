@@ -311,15 +311,20 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             }
             DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
             DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(censoredString.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            if (drawTimer == (35 * FRAMES))
+            if (drawTimer == (15 * FRAMES))
             {
                 int rand1 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand1) = chosenWord.at(rand1);
             }
-            if (drawTimer == (50 * FRAMES))
+            if (drawTimer == (30 * FRAMES))
             {
                 int rand2 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand2) = chosenWord.at(rand2);
+            }
+            if (drawTimer == (45 * FRAMES))
+            {
+                int rand3 = rand() % static_cast<int>(chosenWord.size());
+                censoredString.at(rand3) = chosenWord.at(rand3);
             }
         }
         else

@@ -64,30 +64,15 @@ Client::Client(string address, int port, string name)
     // Ensure the buffer is null-terminated
     buffer[bytesReceived] = '\0';
 
-    // Extract the ADMIN and PAINTER ids
-    string adminPainter(buffer);
-    cout << "Received: " << adminPainter << endl;
-
-    regex adminRegex("ADMIN:\\s+(\\d+),\\s+PAINTER:\\s+(\\d+)");
-    smatch adminMatch;
-
-    if (regex_search(adminPainter, adminMatch, adminRegex) && adminMatch.size() > 2)
-    {
-        adminID = stoi(adminMatch[1].str());
-        painterID = stoi(adminMatch[2].str());
-
-        cout << "ADMIN ID: " << adminID << endl;
-        cout << "PAINTER ID: " << painterID << endl;
-    }
-
     // Add connected clients to the vector
     // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
-    string connectedClients = adminPainter.substr(adminPainter.find("Connected clients: ") + 19); // the + 19 is to skip the "Connected clients: " part
+    string clients(buffer);
+    cout << "Received: " << clients << endl;
+    string connectedClients = clients.substr(clients.find("Connected clients: ") + 19); // the + 19 is to skip the "Connected clients: " part
 
     // Split the string by commas
     stringstream ss(connectedClients);
     string client;
-    vector<string> clients;
     while (getline(ss, client, ','))
     {
         // Trim leading and trailing spaces
@@ -111,6 +96,22 @@ Client::Client(string address, int port, string name)
         {
             cout << "Failed to parse client: " << client << endl;
         }
+    }
+
+    // Extract the ADMIN and PAINTER ids
+    string adminPainter(buffer);
+    cout << "Received: " << adminPainter << endl;
+
+    regex adminRegex("ADMIN:\\s+(\\d+),\\s+PAINTER:\\s+(\\d+)");
+    smatch adminMatch;
+
+    if (regex_search(adminPainter, adminMatch, adminRegex) && adminMatch.size() > 2)
+    {
+        adminID = stoi(adminMatch[1].str());
+        painterID = stoi(adminMatch[2].str());
+
+        cout << "ADMIN ID: " << adminID << endl;
+        cout << "PAINTER ID: " << painterID << endl;
     }
 }
 

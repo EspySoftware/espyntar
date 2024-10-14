@@ -180,15 +180,15 @@ public:
             connectedClients = connectedClients.substr(0, connectedClients.length() - 2);
         }
 
+        // Send the list of connected clients to the new client
+        send(clientSocket, connectedClients.c_str(), connectedClients.length(), 0);
+
         // Send current admin and painter
         // Formar: "ADMIN: 1, PAINTER: 2"
         stringstream ss;
         ss << "ADMIN: " << adminID << ", PAINTER: " << painterID;
         string adminPainter = ss.str();
         send(clientSocket, adminPainter.c_str(), adminPainter.length(), 0);
-
-        // Send the list of connected clients to the new client
-        send(clientSocket, connectedClients.c_str(), connectedClients.length(), 0);
 
         return client;
     }
