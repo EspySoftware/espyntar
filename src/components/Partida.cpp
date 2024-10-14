@@ -14,7 +14,7 @@ void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock)
         {
             if (client->messages[i] == "The game has started.")
             {
-                SetMaxRounds(client->connectedClients.size()); // One round per player
+                SetMaxRounds(client->connectedClients.size() * 2); // One round per player
                 started = true;
                 break;
             }

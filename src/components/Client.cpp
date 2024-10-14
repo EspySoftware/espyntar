@@ -64,54 +64,36 @@ Client::Client(string address, int port, string name)
     // Ensure the buffer is null-terminated
     buffer[bytesReceived] = '\0';
 
-    // Add connected clients to the vector
-    // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
+    // Add connected clients to the vector and set ADMIN and PAINTER IDs
+    // Format: "Connected clients: [1]Client1(100) [ADMIN], [2]Client2(0), [3]Client3(200)"
     string clients(buffer);
     cout << "Received: " << clients << endl;
-    string connectedClients = clients.substr(clients.find("Connected clients: ") + 19); // the + 19 is to skip the "Connected clients: " part
+    string connectedClientsStr = clients.substr(clients.find("Connected clients: ") + 19); // the + 19 is to skip the "Connected clients: " part
 
     // Split the string by commas
-    stringstream ss(connectedClients);
+    stringstream ss(connectedClientsStr);
     string client;
     while (getline(ss, client, ','))
     {
-        // Trim leading and trailing spaces
-        client.erase(0, client.find_first_not_of(" \t\n\r\f\v"));
-        client.erase(client.find_last_not_of(" \t\n\r\f\v") + 1);
-
-        // Regular expression to match the client format
-        regex clientRegex("\\[(\\d+)\\](\\w+)\\((\\d+)\\)");
-        smatch matches;
-        if (regex_search(client, matches, clientRegex))
+        // Extract the client ID, name, and points
+        regex r("\\[(\\d+)\\](\\w+)\\((\\d+)\\)");
+        smatch match;
+        if (regex_search(client, match, r) && match.size() > 3)
         {
-            int id = stoi(matches[1].str());
-            string name = matches[2].str();
-            int points = stoi(matches[3].str());
+            int id = stoi(match.str(1));
+            string name = match.str(2);
+            int points = stoi(match.str(3));
 
             // Add the client to the vector
-            this->connectedClients.push_back({id, name, points});
-            cout << "Client: [" << id << "] " << name << " (" << points << ")" << endl;
+            connectedClients.push_back(OtherClient{id, name, points});
+
+            // Check if the client is the ADMIN
+            if (client.find("[ADMIN]") != string::npos)
+            {
+                adminID = id;
+                painterID = id;
+            }
         }
-        else
-        {
-            cout << "Failed to parse client: " << client << endl;
-        }
-    }
-
-    // Extract the ADMIN and PAINTER ids
-    string adminPainter(buffer);
-    cout << "Received: " << adminPainter << endl;
-
-    regex adminRegex("ADMIN:\\s+(\\d+),\\s+PAINTER:\\s+(\\d+)");
-    smatch adminMatch;
-
-    if (regex_search(adminPainter, adminMatch, adminRegex) && adminMatch.size() > 2)
-    {
-        adminID = stoi(adminMatch[1].str());
-        painterID = stoi(adminMatch[2].str());
-
-        cout << "ADMIN ID: " << adminID << endl;
-        cout << "PAINTER ID: " << painterID << endl;
     }
 }
 

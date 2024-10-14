@@ -235,7 +235,7 @@ void Round::SetDefault()
     censored = false;
     finished = false;
     isFiltered = false;
-    drawTimer = 10 * FRAMES;
-    setTimer = 10 * FRAMES;
+    drawTimer = 80 * FRAMES; // 80 seconds to draw
+    setTimer = 30 * FRAMES; // 30 seconds to choose a word
     optionWords = GetRandomWords();
 }

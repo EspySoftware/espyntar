@@ -242,6 +242,13 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
         if (drawTimer < -(5 * FRAMES) || client->round_over)
         {
+            // Reset the guessedCorrectly flag for all clients
+            for (int i = 0; i < client->connectedClients.size(); i++)
+            {
+                client->connectedClients[i].guessedCorrectly = false;
+            }
+            client->guessed = false;
+
             finished = true; // Ends round
             messagesSent = false;
             client->round_over = false; 
@@ -395,7 +402,7 @@ void Games::SetDefault()
     censored = false;
     finished = false;
     isFiltered = false;
-    drawTimer = 80 * FRAMES;
-    setTimer = 10 * FRAMES;
+    drawTimer = 80 * FRAMES; // 80 seconds per round
+    setTimer = 30 * FRAMES; // 30 seconds to choose a word
     optionWords = GetRandomWords();
 }

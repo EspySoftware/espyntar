@@ -34,7 +34,7 @@ private:
     ColorPalette &palette;
 
 public:
-    int setTimer = 10 * FRAMES;
+    int setTimer = 30 * FRAMES;
     int drawTimer = 80 * FRAMES;
     Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser);
 
