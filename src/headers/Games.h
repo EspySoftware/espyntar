@@ -34,8 +34,8 @@ private:
     ColorPalette &palette;
 
 public:
-    int setTimer = 30 * FRAMES;
-    int drawTimer = 80 * FRAMES;
+    int drawTimer = 80 * FRAMES; // TIME TO DRAW
+    int setTimer = 30 * FRAMES; // TIME TO CHOOSE A WORD
     Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser);
 
     array<string, 3> GetRandomWords() const;

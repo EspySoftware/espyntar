@@ -182,8 +182,13 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         
     }
 
+    // If the timer is up, end the round
+    if (drawTimer <= FRAMES) {
+        client->round_over = true;
+    }
+
     // If the timer is up or all clients have guessed the word, end the round
-    if (drawTimer < FRAMES || client->round_over)
+    if (client->round_over)
     {
         // Reset the chosen word
         if (!chosenWord.empty())
@@ -240,7 +245,9 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         censoredString = prevChosenWord;
         drawTimer--;
         DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
-        if (drawTimer < -(5 * FRAMES) || client->round_over)
+
+        // If the timer is up, end the round
+        if (client->round_over)
         {
             // Reset the guessedCorrectly flag for all clients
             for (int i = 0; i < client->connectedClients.size(); i++)
@@ -249,13 +256,13 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             }
             client->guessed = false;
 
+            setTimer = 30 * FRAMES; // RESET TIME TO CHOOSE A WORD
             finished = true; // Ends round
             messagesSent = false;
             client->round_over = false; 
 
             return;
         }
-
     }
     else
     {
@@ -402,7 +409,7 @@ void Games::SetDefault()
     censored = false;
     finished = false;
     isFiltered = false;
-    drawTimer = 80 * FRAMES; // 80 seconds per round
-    setTimer = 30 * FRAMES; // 30 seconds to choose a word
+    drawTimer = 80 * FRAMES; // TIME TO DRAW
+    setTimer = 30 * FRAMES; // TIME TO CHOOSE A WORD
     optionWords = GetRandomWords();
 }
