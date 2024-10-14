@@ -32,7 +32,7 @@ void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverT
     Texture2D espy = LoadTexture("../assets/espy_peke.png");
     Texture2D clock = LoadTexture("../assets/reloj.png");
     Texture2D bgGame = LoadTexture("../assets/backgroundGame.png");
-    SetTargetFPS(30);
+    SetTargetFPS(60);
     Screen screen;
 
     while (!WindowShouldClose())

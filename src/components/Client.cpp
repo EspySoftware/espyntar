@@ -61,63 +61,38 @@ Client::Client(string address, int port, string name)
         return;
     }
 
-    /*--------------*/
-    // Receive ADMIN and PAINTER ids
+    // Ensure the buffer is null-terminated
     buffer[bytesReceived] = '\0';
-    string adminPainter(buffer);
-    cout << "Received: " << adminPainter << endl;
 
-    // Extract the ADMIN and PAINTER ids
-    // Format "ADMIN: 1, PAINTER: 2"
-    regex adminRegex("ADMIN:\\s+(\\d+),\\s+PAINTER:\\s+(\\d+)");
-    smatch adminMatch;
-
-    if (regex_search(adminPainter, adminMatch, adminRegex) && adminMatch.size() > 2)
-    {
-        adminID = stoi(adminMatch[1].str());
-        painterID = stoi(adminMatch[2].str());
-
-        cout << "ADMIN ID: " << adminID << endl;
-        cout << "PAINTER ID: " << painterID << endl;
-    }
-
-    /*--------------*/
-    // Add connected clients to the vector
-    // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
-    // Remove the "Connected clients: " prefix
-    buffer[bytesReceived] = '\0';
-    string connectedClients = buffer;
-    string clientsString = connectedClients.substr(19);
+    // Add connected clients to the vector and set ADMIN and PAINTER IDs
+    // Format: "Connected clients: [1]Client1(100) [ADMIN], [2]Client2(0), [3]Client3(200)"
+    string clients(buffer);
+    cout << "Received: " << clients << endl;
+    string connectedClientsStr = clients.substr(clients.find("Connected clients: ") + 19); // the + 19 is to skip the "Connected clients: " part
 
     // Split the string by commas
-    stringstream ss(clientsString);
+    stringstream ss(connectedClientsStr);
     string client;
-    vector<string> clients;
     while (getline(ss, client, ','))
     {
-        clients.push_back(client);
-    }
-
-    // Regular expression to match the client format
-    regex clientRegex("\\[(\\d+)\\](\\w+)\\((\\d+)\\)");
-
-    cout << "Connected clients:" << endl;
-    for (const string &client : clients)
-    {
-        smatch matches;
-        if (regex_search(client, matches, clientRegex))
+        // Extract the client ID, name, and points
+        regex r("\\[(\\d+)\\](\\w+)\\((\\d+)\\)");
+        smatch match;
+        if (regex_search(client, match, r) && match.size() > 3)
         {
-            int id = stoi(matches[1].str());
-            string name = matches[2].str();
-            int points = stoi(matches[3].str());
+            int id = stoi(match.str(1));
+            string name = match.str(2);
+            int points = stoi(match.str(3));
 
             // Add the client to the vector
-            this->connectedClients.push_back({id, name, points});
-            cout << "Client: [" << id << "] " << name << " (" << points << ")" << endl;
-        }
-        else
-        {
-            cout << "Failed to parse client: " << client << endl;
+            connectedClients.push_back(OtherClient{id, name, points});
+
+            // Check if the client is the ADMIN
+            if (client.find("[ADMIN]") != string::npos)
+            {
+                adminID = id;
+                painterID = id;
+            }
         }
     }
 }
@@ -226,7 +201,7 @@ void Client::Receive()
                 int brushSize = stoi(match.str(4));
 
                 // Add the paint message to the vector
-                paintMessages.push_back((PaintMessage){x, y, color, (float)brushSize});
+                paintMessages.push_back(PaintMessage{x, y, color, static_cast<float>(brushSize)});
             }
 
             continue;
@@ -261,6 +236,7 @@ void Client::Receive()
                 if (connectedClients[i].id == id)
                 {
                     connectedClients[i].points += points;
+                    connectedClients[i].guessedCorrectly = true;
                     break;
                 }
             }
@@ -302,9 +278,6 @@ void Client::Receive()
         smatch painterMatch;
         if (regex_search(message, painterMatch, painterRegex) && painterMatch.size() > 1)
         {
-            // Reset the chosen word
-            chosenWord = "";
-
             // Extract the painter ID
             painterID = stoi(painterMatch.str(1));
             cout << "The painter is: " << painterID << endl;
@@ -329,6 +302,25 @@ void Client::Receive()
             cout << "The game has started." << endl;
             messages.push_back("The game has started.");
 
+            continue;
+        }
+
+        // ROUND_OVER command
+        // Format: "ROUND_OVER"
+        if (message.find("ROUND_OVER") == 0)
+        {
+            cout << "The round is over." << endl;
+
+            this->round_over = true;
+            this->chosenWord = "";
+
+            // Reset the guessedCorrectly flag for all clients
+            for (int i = 0; i < connectedClients.size(); i++)
+            {
+                this->connectedClients[i].guessedCorrectly = false;
+            }
+            this->guessed = false;
+            
             continue;
         }
 

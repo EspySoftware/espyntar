@@ -49,6 +49,7 @@ public:
     int id;
     string name;
     int points;
+    bool guessedCorrectly = false;
 
     OtherClient(int id, string name, int points) { this->id = id, this->name = name, this->points = points; }
 };
@@ -76,6 +77,7 @@ public:
     vector<PaintMessage> paintMessages;
     vector<OtherClient> connectedClients;
     string chosenWord;
+    bool round_over = false;
 
     int adminID = -1;
     int painterID = -1;

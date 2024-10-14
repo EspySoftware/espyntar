@@ -14,7 +14,7 @@ void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock)
         {
             if (client->messages[i] == "The game has started.")
             {
-                SetMaxRounds(client->connectedClients.size() * 2);
+                SetMaxRounds(client->connectedClients.size() * 2); // One round per player
                 started = true;
                 break;
             }
@@ -50,16 +50,12 @@ void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock)
             }
         }
 
-        if (game.GetFinished())
+        if (game.GetFinished() || client->round_over)
         {
             game.SetDefault();
 
             currentRound++;
-            if (game.GetFinished())
-            {
-                game.SetDefault();
-                currentRound++;
-            }
+            client->round_over = false;
         }
     }
     DrawRounds(scene);

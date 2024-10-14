@@ -151,27 +151,28 @@ public:
         cout << msg << endl;
         Broadcast(client, msg);
 
-        // Create a string with the id, name and points of all connected clients
-        // Format: "Connected clients: [1]Client1(100), [2]Client2(0), [3]Client3(200)"
+        // Check if the server is empty and assign the first client as ADMIN
+        if (clients.size() == 1)
+        {
+            adminID = client.id;
+            painterID = client.id;
+        }
+
+        // Create a string with the id, name, points, and admin status of all connected clients
+        // Format: "Connected clients: [1]Client1(100) [ADMIN], [2]Client2(0), [3]Client3(200)"
         string connectedClients = "Connected clients: ";
-        int i = 0; // Counter to keep track of the number of connected clients
         for (const auto &otherClient : clients)
         {
             // Check if the client is still connected
             if (otherClient.second.clientSocket != INVALID_SOCKET)
             {
-                connectedClients += "[" + to_string(otherClient.second.id) + "]" + otherClient.second.name + "(" + to_string(otherClient.second.points) + "), ";
-                i++;
+                connectedClients += "[" + to_string(otherClient.second.id) + "]" + otherClient.second.name + "(" + to_string(otherClient.second.points) + ")";
+                if (otherClient.second.id == adminID)
+                {
+                    connectedClients += " [ADMIN]";
+                }
+                connectedClients += ", ";
             }
-        }
-
-        if (i == 1)
-        {
-            client.adminID = client.id;
-            client.painterID = client.id;
-
-            adminID = client.id;
-            painterID = client.id;
         }
 
         // Remove the trailing comma and space
@@ -179,13 +180,6 @@ public:
         {
             connectedClients = connectedClients.substr(0, connectedClients.length() - 2);
         }
-
-        // Send current admin and painter
-        // Formar: "ADMIN: 1, PAINTER: 2"
-        stringstream ss;
-        ss << "ADMIN: " << adminID << ", PAINTER: " << painterID;
-        string adminPainter = ss.str();
-        send(clientSocket, adminPainter.c_str(), adminPainter.length(), 0);
 
         // Send the list of connected clients to the new client
         send(clientSocket, connectedClients.c_str(), connectedClients.length(), 0);
@@ -276,38 +270,8 @@ public:
             // Format: "ROUND_OVER"
             if (message.find("ROUND_OVER") == 0)
             {
-                chosenWord = "";
-                // // broadcast round over message
-                // Broadcast(client, message);
-
-                // Cycle through clients to set the next painter
-                bool found = false;
-                for (auto &otherClient : clients)
-                {
-                    if (found)
-                    {
-                        painterID = otherClient.first;
-                        break;
-                    }
-
-                    if (otherClient.first == painterID)
-                    {
-                        found = true;
-                    }
-                }
-
-                // If the current painter is the last client, set the painter to the first client
-                if (!found && !clients.empty())
-                {
-                    painterID = clients.begin()->first;
-                }
-
-                // Send the new painter to all clients
-                // Format: "PAINTER: id"
-                stringstream ss;
-                ss << "PAINTER: " << painterID;
-                string painter = ss.str();
-                Broadcast(client, painter);
+                // Send round over message to all clients except the sender
+                Broadcast(client, message);
 
                 continue;
             }

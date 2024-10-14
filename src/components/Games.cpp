@@ -3,7 +3,7 @@
 #include "../headers/Games.h"
 #include "../headers/raygui.h"
 
-#define FRAMES 30
+#define FRAMES 60
 #define BASE_POINTS 200
 using std::endl;
 using std::getline;
@@ -155,15 +155,49 @@ void Games::SetChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 {
     static bool messagesSent = false;
-    if (drawTimer < FRAMES)
+
+    // If admin, check if all clients have guessed the word
+    if (client->id == client->adminID)
     {
+        client->round_over = true;
+
+        // Check if other clients have guessed the word
+        for (auto &c : client->connectedClients)
+        {
+            if ((c.id != client->painterID && !c.guessedCorrectly) && c.id != client->adminID)
+            {
+                client->round_over = false;
+                break;
+            }
+        }
+
+        // Check if admin has guessed the word
+        if (client->id == client->adminID && !client->guessed) {
+            // If the client isnt PAINTER and hasnt guessed the word, set round_over to false
+            if (client->painterID != client->id)
+            {
+                client->round_over = false;
+            }
+        }
+        
+    }
+
+    // If the timer is up, end the round
+    if (drawTimer <= FRAMES) {
+        client->round_over = true;
+    }
+
+    // If the timer is up or all clients have guessed the word, end the round
+    if (client->round_over)
+    {
+        // Reset the chosen word
         if (!chosenWord.empty())
         {
             prevChosenWord = chosenWord;
             chosenWord = "";
         }
 
-        // If admin, update painter ID to the next client (if last client, set painter to the first client)
+        // If admin, update painter ID to the next client
         if (client->id == client->adminID && !messagesSent)
         {
             for (int i = 0; i < client->connectedClients.size(); i++)
@@ -211,10 +245,22 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         censoredString = prevChosenWord;
         drawTimer--;
         DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
-        if (drawTimer < -(5 * FRAMES))
+
+        // If the timer is up, end the round
+        if (client->round_over)
         {
+            // Reset the guessedCorrectly flag for all clients
+            for (int i = 0; i < client->connectedClients.size(); i++)
+            {
+                client->connectedClients[i].guessedCorrectly = false;
+            }
+            client->guessed = false;
+
+            setTimer = 30 * FRAMES; // RESET TIME TO CHOOSE A WORD
             finished = true; // Ends round
             messagesSent = false;
+            client->round_over = false; 
+
             return;
         }
     }
@@ -231,7 +277,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
     // Draw the word
     if (!isGuesser)
     {
-        if (drawTimer > 144)
+        if (drawTimer > 60)
             painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), prevChosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(prevChosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
@@ -270,22 +316,29 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
                         {
                             client->AddPoints(BASE_POINTS + (drawTimer / FRAMES) * 10);
                             client->guessed = true;
-                            guessed = true;
+
+                            cout << "Client " << client->id << " guessed the word!" << endl;
+                            client->connectedClients[client->id].guessedCorrectly = true;
                         }
                     }
                 }
             }
             DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
             DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(censoredString.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            if (drawTimer == (35 * FRAMES))
+            if (drawTimer == (15 * FRAMES))
             {
                 int rand1 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand1) = chosenWord.at(rand1);
             }
-            if (drawTimer == (50 * FRAMES))
+            if (drawTimer == (30 * FRAMES))
             {
                 int rand2 = rand() % static_cast<int>(chosenWord.size());
                 censoredString.at(rand2) = chosenWord.at(rand2);
+            }
+            if (drawTimer == (45 * FRAMES))
+            {
+                int rand3 = rand() % static_cast<int>(chosenWord.size());
+                censoredString.at(rand3) = chosenWord.at(rand3);
             }
         }
         else
@@ -356,7 +409,7 @@ void Games::SetDefault()
     censored = false;
     finished = false;
     isFiltered = false;
-    drawTimer = 80 * FRAMES;
-    setTimer = 10 * FRAMES;
+    drawTimer = 80 * FRAMES; // TIME TO DRAW
+    setTimer = 30 * FRAMES; // TIME TO CHOOSE A WORD
     optionWords = GetRandomWords();
 }

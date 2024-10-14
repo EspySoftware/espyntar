@@ -2,7 +2,7 @@
 #include <iostream>
 #include "../headers/Round.h"
 #include "../headers/raygui.h"
-#define FRAMES 144
+#define FRAMES 60
 
 using std::endl;
 using std::getline;
@@ -108,8 +108,20 @@ void Round::SetChosenWord(shared_ptr<Client> &client)
 
 void Round::DrawChosenWord(shared_ptr<Client> &client)
 {
-    if (drawTimer < 144)
+    // Count correct guesses
+    client->round_over = true;
+    for (auto &c : client->connectedClients)
     {
+        if (c.id != client->painterID && !c.guessedCorrectly)
+        {
+            client->round_over = false;
+            break;
+        }
+    }
+
+    if (drawTimer < 60 || client->round_over)
+    {
+        client->round_over = false;
         painter.SetCanPaint(false);
         censoredString = chosenWord;
         DrawTextPro(GetFontDefault(), "0", {120, 110}, {0, 0}, 0, 20, 4, BLACK);
@@ -133,7 +145,7 @@ void Round::DrawChosenWord(shared_ptr<Client> &client)
     // Draw the word
     if (!isGuesser)
     {
-        if (drawTimer > 144)
+        if (drawTimer > 60)
             painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
@@ -197,7 +209,7 @@ void Round::DrawTimer(int &timer)
     }
     Rectangle backgroundRect = {120 - 10, 110 - 5, 20 + 20, 20 + 10};
     DrawRectangleRec(backgroundRect, Fade(GRAY, 0.5f));
-    DrawTextPro(GetFontDefault(), std::to_string(timer / 144).c_str(), {120, 110}, {0, 0}, 0, 20, 4, BLACK);
+    DrawTextPro(GetFontDefault(), std::to_string(timer / 60).c_str(), {120, 110}, {0, 0}, 0, 20, 4, BLACK);
 }
 
 vector<string> Round::FilterChat(vector<string> messages)
@@ -223,7 +235,7 @@ void Round::SetDefault()
     censored = false;
     finished = false;
     isFiltered = false;
-    drawTimer = 10 * FRAMES;
-    setTimer = 10 * FRAMES;
+    drawTimer = 80 * FRAMES; // TIME TO DRAW
+    setTimer = 30 * FRAMES; // TIME TO CHOOSE A WORD
     optionWords = GetRandomWords();
 }
