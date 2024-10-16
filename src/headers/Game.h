@@ -4,7 +4,6 @@
 #include "./Partida.h"
 using std::array;
 using std::vector;
-#define FRAMES 60
 
 // Tools
 enum Tool
@@ -128,7 +127,7 @@ void drawChat(shared_ptr<Client> &client, Partida *partida)
         }
         else
         {
-            if (partida->GetGame().GetDrawTimer() < 60)
+            if (partida->GetGame().GetElapsedTime() >= partida->GetGame().drawTime)
             {
                 GuiButton({(float)GetScreenWidth() - 215, (float)GetScreenHeight() - 65, 205, 35}, "Se acabó!");
             }

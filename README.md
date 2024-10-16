@@ -16,7 +16,7 @@ Espyntar es un juego multijugador por rondas. En cada ronda, un jugador elige un
 ### Manejo de Juegos
 
 - **Game**: Representa una partida, maneja las rondas del juego y la administración de jugadores.
-- **Round**: Maneja las rondas individuales dentro de una partida, incluyendo la gestión de palabras y la coordinación entre dibujante y adivinadores.
+- **Partida**: Maneja las rondas individuales dentro de una partida, incluyendo la gestión de palabras y la coordinación entre dibujante y adivinadores.
 
 ### Conectividad de Red
 
