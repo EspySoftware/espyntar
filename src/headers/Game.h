@@ -250,12 +250,12 @@ void drawGame(Screen *screen, shared_ptr<Client> &client, Texture2D *espy, Textu
             }
         }
     }
-    else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
-    {
-        painter->SetColor(0); // Set color to white for erasing
-        painter->Paint(position, client);
-        painter->SetColor(colorIndex); // Restore the original color
-    }
+    // else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
+    // {
+    //     painter->SetColor(0); // Set color to white for erasing
+    //     painter->Paint(position, client);
+    //     painter->SetColor(colorIndex); // Restore the original color
+    // }
     else
     {
         painter->ResetLastPosition();
