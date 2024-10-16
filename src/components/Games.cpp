@@ -78,6 +78,18 @@ void Games::SetChosenWord(shared_ptr<Client> &client, Texture2D &clock)
     canvas.Clear();
     if (!isGuesser)
     {
+        // Verify that the client is the painter
+        if (client->id == client->painterID)
+        {
+            SetIsGuesser(false);
+            painter.SetCanPaint(true);
+        }
+        else
+        {
+            SetIsGuesser(true);
+            painter.SetCanPaint(false);
+        }
+
         if (GetElapsedTime() >= setTime && !chosen)
         {
             chosenWord = optionWords[0];
@@ -137,6 +149,18 @@ void Games::SetChosenWord(shared_ptr<Client> &client, Texture2D &clock)
     }
     else
     {
+        // Check if the client is the painter
+        if (client->id == client->painterID)
+        {
+            SetIsGuesser(false);
+            painter.SetCanPaint(true);
+        }
+        else
+        {
+            SetIsGuesser(true);
+            painter.SetCanPaint(false);
+        }
+
         // Look for painter name
         string painterName;
         for (int i = 0; i < client->connectedClients.size(); i++)
@@ -144,6 +168,7 @@ void Games::SetChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             if (client->connectedClients[i].id == client->painterID)
             {
                 painterName = client->connectedClients[i].name;
+
                 break;
             }
         }
