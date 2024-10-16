@@ -75,7 +75,7 @@ void startGUI(Screen *screen, shared_ptr<Client> &client, thread *senderThread, 
     GuiSetStyle(BUTTON, TEXT_COLOR_FOCUSED, ColorToInt(BLACK));
     GuiSetStyle(BUTTON, TEXT_COLOR_PRESSED, ColorToInt(BLACK));
     static char name[16] = "";
-    static char ip[20] = "";
+    static char ip[20] = "169.254.83.107";
     static bool nameFocus = true;
     static bool ipFocus = false;
 

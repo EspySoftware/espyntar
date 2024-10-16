@@ -36,8 +36,8 @@ private:
     high_resolution_clock::time_point startTime; // Start time for the timer
 
 public:
-    const int drawTime = 80; // TIME TO DRAW
-    const int setTime = 30; // TIME TO CHOOSE A WORD
+    const int drawTime = 140; // TIME TO DRAW
+    const int setTime = 120; // TIME TO CHOOSE A WORD
     Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser);
 
     array<string, 3> GetRandomWords() const;
