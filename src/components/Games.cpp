@@ -361,23 +361,23 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
             DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(censoredString.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
             
-            timeRemaining = (drawTime - GetElapsedTime());
+            // timeRemaining = (drawTime - GetElapsedTime());
 
-            // Reveal letters at certain times
-            std::unordered_set<int> revealedIndices;
+            // // Reveal letters at certain times
+            // std::unordered_set<int> revealedIndices;
 
-            // Reveal letters in the word
-            if (timeRemaining == 15 || timeRemaining == 30 || timeRemaining == 60)
-            {
-                int randIndex;
+            // // Reveal letters in the word
+            // if (timeRemaining == 15 || timeRemaining == 30 || timeRemaining == 60)
+            // {
+            //     int randIndex;
 
-                do {
-                    randIndex = rand() % static_cast<int>(chosenWord.size());
-                } while (revealedIndices.find(randIndex) != revealedIndices.end());
+            //     do {
+            //         randIndex = rand() % static_cast<int>(chosenWord.size());
+            //     } while (revealedIndices.find(randIndex) != revealedIndices.end());
 
-                censoredString.at(randIndex) = chosenWord.at(randIndex);
-                revealedIndices.insert(randIndex);
-            }
+            //     censoredString.at(randIndex) = chosenWord.at(randIndex);
+            //     revealedIndices.insert(randIndex);
+            // }
         }
         else
         {
