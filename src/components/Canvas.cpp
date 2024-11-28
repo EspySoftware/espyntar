@@ -1,4 +1,3 @@
-
 #include "../headers/Canvas.h"
 #include <queue>
 
@@ -18,10 +17,6 @@ Canvas::~Canvas()
 
 void Canvas::Draw(Vector2 position, float radius, Color color)
 {
-    // cout << "Draw at " << position.x << ", " << position.y << endl;
-    // cout << "Size: " << radius << endl;
-    // cout << "Target [" << target.texture.id << "] " << target.texture.width << "x" << target.texture.height << endl;
-
     BeginTextureMode(target);
     DrawCircleV(position, radius, color);
     EndTextureMode();
@@ -29,48 +24,40 @@ void Canvas::Draw(Vector2 position, float radius, Color color)
 
 void Canvas::DrawPalette(ColorPalette &palette)
 {
-    int colorsCount = MAX_COLORS_COUNT;
-    int columns = colorsCount;
+    const int columns = MAX_COLORS_COUNT;
+    const float recWidth = static_cast<float>(width) / columns;
+    const float recHeight = 30.0f;
+    const float startX = 230.0f;
+    const float startY = GetScreenHeight() / 2 + 320.0f;
 
-    int colorIndex = 0;
-    float recWidth = (float)width / columns;
-    float recHeight = 30.0f;
-
-    for (int i = 0; i < columns; i++)
+    for (int i = 0; i < columns && i < MAX_COLORS_COUNT; ++i)
     {
-        Rectangle rec = {(recWidth * i) + 230.0f, GetScreenHeight() / 2 + 320.0f, recWidth, recHeight};
-
-        // Draw palette background
-        DrawRectangleRec(rec, palette.GetColor(colorIndex));
+        Rectangle rec = { startX + recWidth * i, startY, recWidth, recHeight };
+        Color color = palette.GetColor(i);
+        DrawRectangleRec(rec, color);
         DrawRectangleLines(rec.x, rec.y, rec.width, rec.height, BLACK);
-
-        colorIndex++;
-        if (colorIndex >= colorsCount)
-            break;
     }
 }
 
 int Canvas::CheckPaletteClick(ColorPalette &palette)
 {
-    int colorsCount = MAX_COLORS_COUNT;
-    int columns = colorsCount;
-
-    float recWidth = (float)width / columns;
-    float recHeight = 30.0f;
+    const int columns = MAX_COLORS_COUNT;
+    const float recWidth = static_cast<float>(width) / columns;
+    const float recHeight = 30.0f;
+    const float startX = 230.0f;
+    const float startY = GetScreenHeight() / 2 + 320.0f;
 
     Vector2 mousePos = GetMousePosition();
-
-    for (int i = 0; i < columns; i++)
+    for (int i = 0; i < columns && i < MAX_COLORS_COUNT; ++i)
     {
-        Rectangle rec = {(recWidth * i) + 230.0f, GetScreenHeight() / 2 + 320.0f, recWidth, recHeight};
-
+        Rectangle rec = { startX + recWidth * i, startY, recWidth, recHeight };
         if (CheckCollisionPointRec(mousePos, rec))
         {
-            return i; // Return the index of the clicked color
+            return i;
         }
     }
 
-    return -1; // Return -1 if no color is clicked
+    return -1; // No color clicked
 }
 
 bool Canvas::IsWithinBounds(int x, int y)
@@ -81,7 +68,7 @@ bool Canvas::IsWithinBounds(int x, int y)
 Color Canvas::GetColorAt(int x, int y)
 {
     Image image = LoadImageFromTexture(target.texture);
-    Color color = GetImageColor(image, x, y); // Get the color of the pixel at (x, y)
+    Color color = GetImageColor(image, x, y);
     UnloadImage(image);
     return color;
 }
@@ -103,13 +90,16 @@ void Canvas::BucketFill(Vector2 position, Color newColor)
 
     Color targetColor = GetColorAt(x, y);
 
+    // Skip if the color is already the same
     if (targetColor.r == newColor.r && targetColor.g == newColor.g && targetColor.b == newColor.b && targetColor.a == newColor.a)
         return;
 
     std::queue<Vector2> nodes;
     nodes.push(position);
 
-    BeginTextureMode(target); // Iniciar modo de dibujo en la textura
+    BeginTextureMode(target);
+
+    // Perform flood fill
     while (!nodes.empty())
     {
         Vector2 node = nodes.front();
@@ -122,18 +112,20 @@ void Canvas::BucketFill(Vector2 position, Color newColor)
             continue;
 
         Color currentColor = GetColorAt(nx, ny);
-
-        if (currentColor.r == targetColor.r && currentColor.g == targetColor.g && currentColor.b == targetColor.b && currentColor.a == targetColor.a)
+        if (currentColor.r == targetColor.r && currentColor.g == targetColor.g &&
+            currentColor.b == targetColor.b && currentColor.a == targetColor.a)
         {
             DrawPixel(nx, ny, newColor);
 
+            // Add adjacent pixels to the queue
             nodes.push(Vector2{node.x + 1, node.y});
             nodes.push(Vector2{node.x - 1, node.y});
             nodes.push(Vector2{node.x, node.y + 1});
             nodes.push(Vector2{node.x, node.y - 1});
         }
     }
-    EndTextureMode(); // Finalizar modo de dibujo en la textura
+
+    EndTextureMode();
 }
 
 void Canvas::Clear()

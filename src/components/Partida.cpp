@@ -1,85 +1,108 @@
 #include "../headers/Partida.h"
 #include "../headers/raygui.h"
 
-Partida::Partida(Games &game, shared_ptr<Client> &client) : game(game)
+Partida::Partida(Games &game, shared_ptr<Client> &client) 
+    : game(game), started(false), currentRound(0), maxRounds(0) 
 {
 }
 
-void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock)
+void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock) 
 {
-    if (!started)
+    if (!started) 
     {
-        // Read "The game has started." from the messages
-        for (int i = 0; i < client->messages.size(); i++)
-        {
-            if (client->messages[i] == "The game has started.")
-            {
-                SetMaxRounds(client->connectedClients.size() * 2); // One round per player
-                started = true;
-                break;
-            }
-        }
-
-        if (client->adminID == client->id)
-        {
-            DrawTextPro(GetFontDefault(), "Esperando jugadores...", {float(GetScreenWidth()) / 2 - MeasureText("Esperando jugadores...", 20) / 2, 80}, {0, 0}, 0, 20, 4, BLACK);
-            DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
-
-            if (GuiButton({(GetScreenWidth() / 2.0f) - 160, 400, 320.0f, 70.0f}, "Iniciar partida"))
-            {
-                client->messages.push_back("The game has started.");
-
-                // Send START message
-                string msg = "START_GAME";
-                client->Send(msg);
-            }
-        }
-    }
-    else
+        VerificarInicio(client);
+        MostrarEsperandoJugadores(client);
+    } 
+    else 
     {
-        if (currentRound <= maxRounds)
-        {
-            // game.UpdateChosenWord(client->chosenWord);
-            if (!game.GetChosen())
-            {
-                game.SetChosenWord(client, clock);
-            }
-            if (game.GetChosen())
-            {
-                game.DrawChosenWord(client, clock);
-            }
-        }
-
-        if (game.GetFinished() || client->round_over)
-        {
-            game.SetDefault();
-
-            currentRound++;
-            client->round_over = false;
-        }
+        ManejarRonda(client, clock);
     }
+
     DrawRounds(scene);
 }
 
-void Partida::DrawRounds(Screen *scene)
+void Partida::VerificarInicio(shared_ptr<Client> &client) 
 {
-    if (!started)
+    for (const auto &mensaje : client->messages) 
     {
-        DrawTextPro(GetFontDefault(), "Calculando rondas", {120, 80}, {0, 0}, 0, 20, 4, BLACK);
+        if (mensaje == "The game has started.") 
+        {
+            SetMaxRounds(client->connectedClients.size() * 2); // Una ronda por jugador
+            started = true;
+            return;
+        }
     }
-    else
-    {
+}
 
-        if (currentRound == maxRounds)
+void Partida::MostrarEsperandoJugadores(shared_ptr<Client> &client) 
+{
+    if (client->adminID == client->id) 
+    {
+        DibujarTextoCentrado("Esperando jugadores...", 80, 20, BLACK);
+        DibujarCuadroTransparente();
+
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 160, 400, 320.0f, 70.0f}, "Iniciar partida")) 
         {
-            DrawTextPro(GetFontDefault(), "Ronda extra!", {120, 80}, {0, 0}, 0, 20, 4, BLACK);
-            scene->scene = WINNER;
-        }
-        else
-        {
-            std::string roundText = "Ronda " + std::to_string(currentRound + 1) + " de " + std::to_string(maxRounds);
-            const char *textToDraw = roundText.c_str();
-            DrawTextPro(GetFontDefault(), textToDraw, {120, 95}, {0, 0}, 0, 20, 4, BLACK);
+            client->messages.push_back("The game has started.");
+            client->Send("START_GAME");
         }
     }
+}
+
+void Partida::ManejarRonda(shared_ptr<Client> &client, Texture2D &clock) 
+{
+    if (currentRound <= maxRounds) 
+    {
+        if (!game.GetChosen()) 
+        {
+            game.SetChosenWord(client, clock);
+        } 
+        else 
+        {
+            game.DrawChosenWord(client, clock);
+        }
+    }
+
+    if (game.GetFinished() || client->round_over) 
+    {
+        game.SetDefault();
+        currentRound++;
+        client->round_over = false;
+    }
+}
+
+void Partida::DrawRounds(Screen *scene) 
+{
+    if (!started) 
+    {
+        DibujarTextoCentrado("Calculando rondas", 80, 20, BLACK);
+    } 
+    else 
+    {
+        if (currentRound == maxRounds) 
+        {
+            DibujarTextoCentrado("Ronda extra!", 80, 20, BLACK);
+            scene->scene = WINNER;
+        } 
+        else 
+        {
+            std::string textoRonda = "Ronda " + std::to_string(currentRound + 1) + " de " + std::to_string(maxRounds);
+            DibujarTextoCentrado(textoRonda.c_str(), 95, 20, BLACK);
+        }
+    }
+}
+
+// Métodos auxiliares
+void Partida::DibujarTextoCentrado(const char *texto, float posicionY, int tamanoFuente, Color color) 
+{
+    DrawTextPro(GetFontDefault(), texto, 
+                {float(GetScreenWidth()) / 2 - MeasureText(texto, tamanoFuente) / 2, posicionY}, 
+                {0, 0}, 0, tamanoFuente, 4, color);
+}
+
+void Partida::DibujarCuadroTransparente() 
+{
+    DrawRectangle(GetScreenWidth() / 2 - 700 / 2, 
+                  GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 
+                  700, 560, {102, 149, 89, 200});
 }
