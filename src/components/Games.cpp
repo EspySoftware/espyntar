@@ -28,9 +28,9 @@ Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGue
 array<string, 3> Games::GetRandomWords() const
 {
     array<string, 3> three_word;
-    for (int i = 0; i < 3; i++)
+    for (string &word : three_word)
     {
-        three_word[i] = words[rand() % words.size()];
+        word = words[rand() % words.size()];
     }
     return three_word;
 }

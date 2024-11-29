@@ -85,7 +85,7 @@ void setupGUIStyles()
 void startGUI(Screen* screen, std::shared_ptr<Client>& client, thread* senderThread, thread* receiverThread)
 {
     static char name[16] = "";
-    static char ip[20] = "169.254.83.107";
+    static char ip[20] = "192.168.0.24";
     static bool nameFocus = true;
     static bool ipFocus = false;
 
