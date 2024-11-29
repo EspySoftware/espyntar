@@ -384,13 +384,9 @@ string Games::CensorWord(string word)
 {
     if (!censored)
     {
-        string toCensorString = chosenWord;
-        for (int i = 0; i < toCensorString.size(); i++)
-        {
-            toCensorString.at(i) = '_';
-        }
-        return toCensorString;
+        return string(word.size(), '_');
     }
+    return word;
 }
 
 void Games::DrawTimer(int &timer, Texture2D &clock)
