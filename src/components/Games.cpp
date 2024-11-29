@@ -9,22 +9,18 @@ using std::endl;
 using std::getline;
 using std::ifstream;
 
-Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser) : painter(painter), canvas(canvas), palette(palette)
+Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser) 
+    : painter(painter), canvas(canvas), palette(palette), isGuesser(isGuesser)
 {
-    this->isGuesser = isGuesser;
-    string line;
     ifstream file("../assets/words.txt");
+    string line;
     while (getline(file, line))
     {
-        words.push_back(line);
-    }
-    file.close();
-    for (int i = 0; i < words.size(); i++)
-    {
-        for (int j = 0; j < words[i].size(); j++)
+        for (char &c : line)
         {
-            words[i][j] = toupper(words[i][j]);
+            c = toupper(c);
         }
+        words.push_back(line);
     }
     optionWords = GetRandomWords();
 }
