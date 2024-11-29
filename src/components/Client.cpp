@@ -1,37 +1,24 @@
 #include "../headers/Client.h"
-// #include "../headers/Painter.h"
-
+#include "../headers/SocketFactory.h"
 
 
 Client::Client(string address, int port, string name)
 {
     this->name = name;
 
-    // Create a socket
-    this->clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (clientSocket == INVALID_SOCKET)
+    // Crear y conectar el socket usando SocketFactory
+    this->clientSocket = SocketFactory::CreateSocket();
+    if (this->clientSocket == INVALID_SOCKET)
     {
-        cout << "Failed to create socket." << endl;
         return;
     }
 
-    // Connect to the server
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(port);
-    inet_pton(AF_INET, address.c_str(), &(serverAddress.sin_addr));
-
-    if (connect(clientSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR)
+    if (!SocketFactory::ConnectSocket(this->clientSocket, address, port, serverAddress))
     {
-        cout << "Failed to connect to the server." << endl;
-        cout << "Error code: " << WSAGetLastError() << endl;
-        closesocket(clientSocket);
-        WSACleanup();
         return;
     }
 
-    cout << "Connected to the server at " << address << ":" << port << endl;
-
-    // Send name to the server
+    // Enviar nombre al servidor
     int bytesent = send(clientSocket, name.c_str(), name.length(), 0);
     if (bytesent == SOCKET_ERROR)
     {
