@@ -14,7 +14,8 @@ void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock)
         {
             if (client->messages[i] == "The game has started.")
             {
-                SetMaxRounds(client->connectedClients.size() * 2); // One round per player
+                SetMaxRounds(client->connectedClients.size()); // One round per player
+                GetGame().StartTimer();                           // Start the timer
                 started = true;
                 break;
             }
@@ -27,6 +28,7 @@ void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock)
 
             if (GuiButton({(GetScreenWidth() / 2.0f) - 160, 400, 320.0f, 70.0f}, "Iniciar partida"))
             {
+                GetGame().StartTimer();                           // Start the timer
                 client->messages.push_back("The game has started.");
 
                 // Send START message
@@ -40,11 +42,12 @@ void Partida::Ronda(shared_ptr<Client> &client, Screen *scene, Texture2D &clock)
         if (currentRound <= maxRounds)
         {
             // game.UpdateChosenWord(client->chosenWord);
+
             if (!game.GetChosen())
             {
                 game.SetChosenWord(client, clock);
             }
-            if (game.GetChosen())
+            else
             {
                 game.DrawChosenWord(client, clock);
             }

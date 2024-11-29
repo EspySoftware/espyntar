@@ -5,6 +5,7 @@
 #include <memory>
 #include <sstream>
 #include <algorithm>
+#include <cmath>
 #include <regex>
 
 // Function collision with raylib
@@ -63,6 +64,11 @@ public:
     float size;
 };
 
+struct Point {
+    int x;
+    int y;
+};
+
 class Client
 {
 public:
@@ -98,6 +104,22 @@ public:
     void AddPoints(int points);
     
     void Disconnect();
+
+    // Función para interpolar puntos entre dos puntos dados
+    std::vector<Point> interpolatePoints(Point p1, Point p2, int brushSize) {
+        std::vector<Point> interpolatedPoints;
+        int distance = std::hypot(p2.x - p1.x, p2.y - p1.y);
+        int steps = distance / brushSize;
+
+        for (int i = 0; i <= steps; ++i) {
+            float t = static_cast<float>(i) / steps;
+            int x = p1.x + t * (p2.x - p1.x);
+            int y = p1.y + t * (p2.y - p1.y);
+            interpolatedPoints.push_back({x, y});
+        }
+
+        return interpolatedPoints;
+    }
 };
 
 bool InitWinsock();
