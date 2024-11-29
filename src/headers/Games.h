@@ -60,4 +60,10 @@ public:
 
     void StartTimer() { startTime = high_resolution_clock::now(); } // Start the timer
     int GetElapsedTime() const { return duration_cast<seconds>(high_resolution_clock::now() - startTime).count(); } // Get the elapsed time in seconds
+    void ParseMessagesForChosenWord(shared_ptr<Client> &client);
+    void SetChosenWordForGuesser(shared_ptr<Client> &client);
+    void HandlePainter(shared_ptr<Client> &client, stringstream &msg);
+    void HandleGuesser(shared_ptr<Client> &client);
+    void DrawSelectionButtons(shared_ptr<Client> &client, stringstream &msg);
+    string GetPainterName(shared_ptr<Client> &client);        
 };
