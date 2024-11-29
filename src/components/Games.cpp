@@ -37,102 +37,143 @@ array<string, 3> Games::GetRandomWords() const
 
 void Games::SetChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 {
+    stringstream msg;
     client->guessed = false;
+
     int timeRemaining = (setTime - GetElapsedTime());
-    DrawTimer(timeRemaining, clock); // No se puede utilizar la asignacion directa de timeRemaining en DrawTimer
+    DrawTimer(timeRemaining, clock);
 
-    if (CheckForChosenWordMessage(client))
-    {
-        SetChosenWordFromClient(client);
-    }
-
-    if (isGuesser && GetElapsedTime() >= setTime && !chosen)
-    {
-        SetChosenWordFromClient(client);
-    }
-
-    painter.SetCanPaint(false);
-    canvas.Clear();
-
-    if (!isGuesser)
-    {
-        HandlePainterSelection(client);
-    }
-    else
-    {
-        DisplayWaitingMessage(client);
-    }
-}
-
-bool Games::CheckForChosenWordMessage(shared_ptr<Client> &client)
-{
+    // Parse messages for "Word has been chosen." message (regular client)
     vector<string> messages = client->getMessages();
-    auto it = std::find(messages.begin(), messages.end(), "Word has been chosen.");
-    if (it != messages.end())
+    for (int i = 0; i < messages.size(); i++)
     {
-        client->messages.erase(it);
-        return true;
-    }
-    return false;
-}
-
-void Games::SetChosenWordFromClient(shared_ptr<Client> &client)
-{
-    chosenWord = client->chosenWord;
-    censoredString = CensorWord(chosenWord);
-    chosen = true;
-    painter.SetColor(22);
-}
-
-void Games::HandlePainterSelection(shared_ptr<Client> &client)
-{
-    if (GetElapsedTime() >= setTime && !chosen)
-    {
-        chosenWord = optionWords[0];
-        client->chosenWord = chosenWord;
-        censoredString = CensorWord(chosenWord);
-        client->Send("ANSWER: " + chosenWord);
-        chosen = true;
-        painter.SetColor(22);
-    }
-
-    DrawSelectionButtons(client);
-}
-
-void Games::DrawSelectionButtons(shared_ptr<Client> &client)
-{
-    DrawRectangle(GetScreenWidth() / 2 - 350, GetScreenHeight() / 2 - 280 + 70, 700, 560, {102, 149, 89, 200});
-    DrawTextPro(GetFontDefault(), "Selecciona:", {(GetScreenWidth() / 2.0f) - (MeasureText("Selecciona:", 35) / 2), (GetScreenWidth() / 2.0f) - 350}, {0, 0}, 0.0f, 35, 3.0f, BLACK);
-
-    for (int i = 0; i < 3; ++i)
-    {
-        if (GuiButton({(GetScreenWidth() / 2.0f) - 320 + i * 240, 400, 160.0f, 70.0f}, optionWords[i].c_str()))
+        if (messages[i] == "Word has been chosen.")
         {
-            chosenWord = optionWords[i];
-            client->chosenWord = chosenWord;
+            // Remove message from messages
+            client->messages.erase(client->messages.begin() + i);
+
+            // Set the chosen word
+            chosenWord = client->chosenWord;
             censoredString = CensorWord(chosenWord);
-            client->Send("ANSWER: " + chosenWord);
             chosen = true;
-            painter.SetColor(22);
-        }
-    }
-}
 
-void Games::DisplayWaitingMessage(shared_ptr<Client> &client)
-{
-    string painterName;
-    for (const auto &c : client->connectedClients)
-    {
-        if (c.id == client->painterID)
-        {
-            painterName = c.name;
             break;
         }
     }
 
-    string esperando = "Esperando a " + painterName;
-    DrawRectangle(GetScreenWidth() / 2 - 350, GetScreenHeight() / 2 - 280 + 70, 700, 560, {102, 149, 89, 200});
-    DrawTextPro(GetFontDefault(), esperando.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(esperando.c_str(), 20) / 2), GetScreenHeight() - 500.0f}, {0, 0}, 0, 20, 4, BLACK);
+    if (isGuesser && GetElapsedTime() >= setTime && !chosen)
+    {
+        chosenWord = client->chosenWord;
+        censoredString = CensorWord(chosenWord);
+
+        chosen = true;
+        painter.SetColor(22);
+    }
+
+    painter.SetCanPaint(false);
+    canvas.Clear();
+    if (!isGuesser)
+    {
+        // Verify that the client is the painter
+        if (client->id == client->painterID)
+        {
+            SetIsGuesser(false);
+            painter.SetCanPaint(true);
+        }
+        else
+        {
+            SetIsGuesser(true);
+            painter.SetCanPaint(false);
+        }
+
+        if (GetElapsedTime() >= setTime && !chosen)
+        {
+            chosenWord = optionWords[0];
+            client->chosenWord = chosenWord;
+            censoredString = CensorWord(chosenWord);
+
+            // Broadcast chosen word
+            msg << "ANSWER: " << chosenWord;
+            client->Send(msg.str());
+
+            chosen = true;
+            painter.SetColor(22);
+        }
+
+        DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
+        DrawTextPro(GetFontDefault(), "Selecciona:", {(GetScreenWidth() / 2.0f) - (MeasureText("Selecciona:", 35) / 2), (GetScreenWidth() / 2.0f) - 350}, {0, 0}, 0.0f, 35, 3.0f, BLACK);
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 320, 400, 160.0f, 70.0f}, optionWords[0].c_str()))
+        {
+            chosenWord = optionWords[0];
+            client->chosenWord = chosenWord;
+            censoredString = CensorWord(chosenWord);
+
+            // Broadcast chosen word
+            msg << "ANSWER: " << chosenWord;
+            client->Send(msg.str());
+
+            chosen = true;
+            painter.SetColor(22);
+        }
+        if (GuiButton({(GetScreenWidth() / 2.0f) - 80, 400, 160.0f, 70.0f}, optionWords[1].c_str()))
+        {
+            chosenWord = optionWords[1];
+            client->chosenWord = chosenWord;
+            censoredString = CensorWord(chosenWord);
+
+            // Broadcast chosen word
+            cout << chosenWord << endl;
+            msg << "ANSWER: " << chosenWord;
+            client->Send(msg.str());
+
+            chosen = true;
+            painter.SetColor(22);
+        }
+        if (GuiButton({(GetScreenWidth() / 2.0f) + 160, 400, 160.0f, 70.0f}, optionWords[2].c_str()))
+        {
+            chosenWord = optionWords[2];
+            client->chosenWord = chosenWord;
+            censoredString = CensorWord(chosenWord);
+
+            // Broadcast chosen word
+            cout << chosenWord << endl;
+            msg << "ANSWER: " << chosenWord;
+            client->Send(msg.str());
+            chosen = true;
+            painter.SetColor(22);
+        }
+    }
+    else
+    {
+        // Check if the client is the painter
+        if (client->id == client->painterID)
+        {
+            SetIsGuesser(false);
+            painter.SetCanPaint(true);
+        }
+        else
+        {
+            SetIsGuesser(true);
+            painter.SetCanPaint(false);
+        }
+
+        // Look for painter name
+        string painterName;
+        for (int i = 0; i < client->connectedClients.size(); i++)
+        {
+            if (client->connectedClients[i].id == client->painterID)
+            {
+                painterName = client->connectedClients[i].name;
+
+                break;
+            }
+        }
+
+        string esperando = "Esperando a " + painterName;
+
+        DrawRectangle(GetScreenWidth() / 2 - 700 / 2, GetScreenHeight() / 2 - 560 / 2.0f + 70.0f, 700, 560, {102, 149, 89, 200}); // cuadro transparente
+        DrawTextPro(GetFontDefault(), esperando.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(esperando.c_str(), 20) / 2), GetScreenHeight() - 500.0f}, {0, 0}, 0, 20, 4, BLACK);
+    }
 }
 
 void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
