@@ -16,6 +16,7 @@ using std::thread;
 
 void PlayGame(shared_ptr<Client> client, thread *senderThread, thread *receiverThread)
 {
+    srand(time(NULL));
     SetTraceLogLevel(LOG_NONE); // Disable raylib logging
     InitWindow(screenWidth, screenHeight, "Espyntar");
     InitAudioDevice();
