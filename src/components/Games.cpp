@@ -176,12 +176,32 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
     int timeRemaining = (drawTime - GetElapsedTime());
     static bool messagesSent = false;
 
-    // If admin, check if all clients have guessed the word
+    CheckRoundOver(client);
+
+    if (GetElapsedTime() >= drawTime)
+    {
+        client->round_over = true;
+    }
+
+    if (client->round_over)
+    {
+        EndRound(client, prevChosenWord, messagesSent);
+    }
+    else
+    {
+        timeRemaining = (drawTime - GetElapsedTime());
+        DrawTimer(timeRemaining, clock);
+    }
+
+    DrawWord(client, timeRemaining);
+}
+
+void Games::CheckRoundOver(shared_ptr<Client> &client)
+{
     if (client->id == client->adminID)
     {
         client->round_over = true;
 
-        // Check if other clients have guessed the word
         for (auto &c : client->connectedClients)
         {
             if ((c.id != client->painterID && !c.guessedCorrectly) && c.id != client->adminID)
@@ -191,189 +211,171 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             }
         }
 
-        // Check if admin has guessed the word
-        if (client->id == client->adminID && !client->guessed) {
-            // If the client isnt PAINTER and hasnt guessed the word, set round_over to false
+        if (client->id == client->adminID && !client->guessed)
+        {
             if (client->painterID != client->id)
             {
                 client->round_over = false;
             }
         }
-        
     }
+}
 
-    // If the timer is up, end the round
-    if (GetElapsedTime() >= drawTime)
+void Games::EndRound(shared_ptr<Client> &client, string &prevChosenWord, bool &messagesSent)
+{
+    if (!chosenWord.empty())
     {
-        client->round_over = true;
+        prevChosenWord = chosenWord;
+        chosenWord = "";
     }
 
-    // If the timer is up or all clients have guessed the word, end the round
+    if (client->id == client->adminID && !messagesSent)
+    {
+        UpdatePainterID(client);
+        messagesSent = true;
+    }
+
+    UpdatePainterStatus(client);
+
+    painter.SetCanPaint(false);
+    censoredString = chosenWord;
+    DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
+
     if (client->round_over)
     {
-        // Reset the chosen word
-        if (!chosenWord.empty())
-        {
-            prevChosenWord = chosenWord;
-            chosenWord = "";
-        }
+        ResetRound(client);
+    }
+}
 
-        // If admin, update painter ID to the next client
-        if (client->id == client->adminID && !messagesSent)
+void Games::UpdatePainterID(shared_ptr<Client> &client)
+{
+    for (int i = 0; i < client->connectedClients.size(); i++)
+    {
+        if (client->connectedClients[i].id == client->painterID)
         {
-            for (int i = 0; i < client->connectedClients.size(); i++)
+            if (i == client->connectedClients.size() - 1)
             {
-                // Find the painter ID and update it
-                if (client->connectedClients[i].id == client->painterID)
-                {
-                    // If last client, set painter to the first client
-                    if (i == client->connectedClients.size() - 1)
-                    {
-                        client->painterID = client->connectedClients[0].id;
-                    }
-                    // Else, set painter to the next client
-                    else
-                    {
-                        client->painterID = client->connectedClients[i + 1].id;
-                    }
-
-                    // Send ROUND_OVER message
-                    string msg = "ROUND_OVER";
-                    client->Send(msg);
-
-                    // Send new painter ID
-                    msg = "PAINTER: " + std::to_string(client->painterID);
-                    cout << "Sending new painter ID: " << msg << endl;
-                    client->Send(msg);
-
-                    messagesSent = true;
-                    break;
-                }
+                client->painterID = client->connectedClients[0].id;
             }
-        }
-
-        // Update if client is painter
-        if (client->painterID == client->id)
-        {
-            SetIsGuesser(false);
-        }
-        else
-        {
-            SetIsGuesser(true);
-        }
-
-        painter.SetCanPaint(false);
-        censoredString = chosenWord;
-        DrawTextPro(GetFontDefault(), "0", {55, 95}, {0, 0}, 0, 20, 4, BLACK);
-
-        // If the timer is up, end the round
-        if (client->round_over)
-        {
-            // Reset the guessedCorrectly flag for all clients
-            for (int i = 0; i < client->connectedClients.size(); i++)
+            else
             {
-                client->connectedClients[i].guessedCorrectly = false;
+                client->painterID = client->connectedClients[i + 1].id;
             }
-            client->guessed = false;
 
-            finished = true; // Ends round
-            messagesSent = false;
-            client->round_over = false; 
-            return;
+            string msg = "ROUND_OVER";
+            client->Send(msg);
+
+            msg = "PAINTER: " + std::to_string(client->painterID);
+            cout << "Sending new painter ID: " << msg << endl;
+            client->Send(msg);
+
+            break;
         }
+    }
+}
+
+void Games::UpdatePainterStatus(shared_ptr<Client> &client)
+{
+    if (client->painterID == client->id)
+    {
+        SetIsGuesser(false);
     }
     else
     {
-        timeRemaining = (drawTime - GetElapsedTime());
-        DrawTimer(timeRemaining, clock);
+        SetIsGuesser(true);
     }
+}
 
-    // Draw the number of letters in the word
+void Games::ResetRound(shared_ptr<Client> &client)
+{
+    for (int i = 0; i < client->connectedClients.size(); i++)
+    {
+        client->connectedClients[i].guessedCorrectly = false;
+    }
+    client->guessed = false;
+
+    finished = true;
+    client->round_over = false;
+}
+
+void Games::DrawWord(shared_ptr<Client> &client, int timeRemaining)
+{
     censoredString = CensorWord(chosenWord);
     int i = censoredString.size();
     std::string str = std::to_string(i);
     DrawTextPro(GetFontDefault(), str.c_str(), {(GetScreenWidth() / 2.0f) + (MeasureText(censoredString.c_str(), 20)), 90}, {0, 0}, 0.0f, 10.0f, 2.0f, BLACK);
 
-    // Draw the word
     if (!isGuesser)
     {
-        int timeRemaining = (setTime - GetElapsedTime());
-        if (timeRemaining > 0)
-            painter.SetCanPaint(true);
-        DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
-        DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-        canvas.DrawPalette(palette); 
+        DrawForPainter(client, timeRemaining);
     }
     else
     {
-        if (!guessed)
+        DrawForGuesser(client);
+    }
+}
+
+void Games::DrawForPainter(shared_ptr<Client> &client, int timeRemaining)
+{
+    if (timeRemaining > 0)
+        painter.SetCanPaint(true);
+    DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
+    DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+    canvas.DrawPalette(palette);
+}
+
+void Games::DrawForGuesser(shared_ptr<Client> &client)
+{
+    if (!guessed)
+    {
+        painter.SetCanPaint(false);
+        vector<string> messages = client->getMessages();
+
+        CheckGuesses(client, messages);
+
+        DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
+        DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(censoredString.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+    }
+    else
+    {
+        DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
+        DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
+        DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +300}, {0, 0}, 0, 20, 4, BLACK);
+    }
+}
+
+void Games::CheckGuesses(shared_ptr<Client> &client, vector<string> &messages)
+{
+    for (int i = 0; i < messages.size(); i++)
+    {
+        string message = messages[i];
+        regex msgRegex("\\((\\d+)\\)\\s+\\[(\\w+)\\]:\\s+(.*)");
+        smatch msgMatch;
+
+        if (regex_search(message, msgMatch, msgRegex) && msgMatch.size() > 3)
         {
-            // cout << chosenWord << endl;
-            painter.SetCanPaint(false);
-            vector<string> messages = client->getMessages();
-            // vector<string> filtered = FilterChat(messages);
+            int id = stoi(msgMatch.str(1));
+            string name = msgMatch.str(2);
+            string msg = msgMatch.str(3);
 
-            // Check if the client guessed the word
-            for (int i = 0; i < messages.size(); i++)
+            string lowerMsg = msg;
+            std::transform(lowerMsg.begin(), lowerMsg.end(), lowerMsg.begin(), ::tolower);
+            string lowerChosenWord = client->chosenWord;
+            std::transform(lowerChosenWord.begin(), lowerChosenWord.end(), lowerChosenWord.begin(), ::tolower);
+
+            if (lowerMsg == lowerChosenWord)
             {
-                string message = messages[i];
-                regex msgRegex("\\((\\d+)\\)\\s+\\[(\\w+)\\]:\\s+(.*)");
-                smatch msgMatch;
-
-                if (regex_search(message, msgMatch, msgRegex) && msgMatch.size() > 3)
+                if (id == client->id)
                 {
-                    int id = stoi(msgMatch.str(1));
-                    string name = msgMatch.str(2);
-                    string msg = msgMatch.str(3);
+                    int timeRemaining = (drawTime - GetElapsedTime());
+                    int points = BASE_POINTS + (timeRemaining) * 10;
+                    client->AddPoints(points);
+                    client->guessed = true;
 
-                    // Lowercased message to lowercased chosenWord
-                    string lowerMsg = msg;
-                    std::transform(lowerMsg.begin(), lowerMsg.end(), lowerMsg.begin(), ::tolower);
-                    string lowerChosenWord = client->chosenWord;
-                    std::transform(lowerChosenWord.begin(), lowerChosenWord.end(), lowerChosenWord.begin(), ::tolower);
-
-                    if (lowerMsg == lowerChosenWord)
-                    {
-                        if (id == client->id)
-                        {
-                            int points = BASE_POINTS + (timeRemaining) * 10; // Points based on time remaining
-                            client->AddPoints(points);
-                            client->guessed = true;
-
-                            cout << "Client " << client->id << " guessed the word!" << endl;
-                            client->connectedClients[client->id].guessedCorrectly = true;
-                        }
-                    }
+                    cout << "Client " << client->id << " guessed the word!" << endl;
+                    client->connectedClients[client->id].guessedCorrectly = true;
                 }
             }
-
-            // Draw the word
-            DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
-            DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(censoredString.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            
-            // timeRemaining = (drawTime - GetElapsedTime());
-
-            // // Reveal letters at certain times
-            // std::unordered_set<int> revealedIndices;
-
-            // // Reveal letters in the word
-            // if (timeRemaining == 15 || timeRemaining == 30 || timeRemaining == 60)
-            // {
-            //     int randIndex;
-
-            //     do {
-            //         randIndex = rand() % static_cast<int>(chosenWord.size());
-            //     } while (revealedIndices.find(randIndex) != revealedIndices.end());
-
-            //     censoredString.at(randIndex) = chosenWord.at(randIndex);
-            //     revealedIndices.insert(randIndex);
-            // }
-        }
-        else
-        {
-            DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Adivina:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
-            DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            DrawTextPro(GetFontDefault(), "ADIVINADO", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINADO", 20) / 2), +300}, {0, 0}, 0, 20, 4, BLACK);
         }
     }
 }

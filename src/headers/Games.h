@@ -66,4 +66,14 @@ public:
     void HandleGuesser(shared_ptr<Client> &client);
     void DrawSelectionButtons(shared_ptr<Client> &client, stringstream &msg);
     string GetPainterName(shared_ptr<Client> &client);        
+    void CheckRoundOver(shared_ptr<Client> &client);
+    void CheckRoundOver(shared_ptr<Client> &client, int timeRemaining);
+    void EndRound(shared_ptr<Client> &client, string &prevChosenWord, bool &messagesSent);
+    void UpdatePainterID(shared_ptr<Client> &client);
+    void UpdatePainterStatus(shared_ptr<Client> &client);
+    void ResetRound(shared_ptr<Client> &client);
+    void DrawWord(shared_ptr<Client> &client, int timeRemaining);
+    void DrawForPainter(shared_ptr<Client> &client, int timeRemaining);
+    void DrawForGuesser(shared_ptr<Client> &client);
+    void CheckGuesses(shared_ptr<Client> &client, vector<string> &messages);
 };
