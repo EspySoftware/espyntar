@@ -7,21 +7,21 @@
 #include <array>
 #include <string>
 #include <sstream>
-#define FRAMES 60
+#include <chrono>
 
 using std::array;
 using std::string;
 using std::stringstream;
 using std::vector;
+using namespace std::chrono;
 
 class Games
 {
 private:
     vector<string> words;
     array<string, 3> optionWords;
-    string chosenWord;
-    string prevChosenWord;
 
+    string chosenWord;
     string censoredString;
     bool censored = false;
     bool chosen = false;
@@ -33,19 +33,23 @@ private:
     Canvas &canvas;
     ColorPalette &palette;
 
+    high_resolution_clock::time_point startTime; // Start time for the timer
+
 public:
-    int drawTimer = 80 * FRAMES; // TIME TO DRAW
-    int setTimer = 30 * FRAMES; // TIME TO CHOOSE A WORD
+    const int drawTime = 140; // TIME TO DRAW
+    const int setTime = 120; // TIME TO CHOOSE A WORD
     Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser);
 
     array<string, 3> GetRandomWords() const;
+
     string GetChosenWord() const { return chosenWord; }
-    void SetChosenWord(shared_ptr<Client> &client, Texture2D &clock);
     void UpdateChosenWord(string word) { chosenWord = word; }
 
-    bool GetChosen() const { return chosen; }
-
+    void SetChosenWord(shared_ptr<Client> &client, Texture2D &clock);
     void DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock);
+
+
+    bool GetChosen() const { return chosen; }
     void SetIsGuesser(bool isGuesser) { this->isGuesser = isGuesser; }
     bool GetIsGuesser() { return isGuesser; }
     string CensorWord(string word);
@@ -53,5 +57,7 @@ public:
     vector<string> FilterChat(vector<string> messages);
     bool GetFinished() { return finished; }
     void SetDefault();
-    int &GetDrawTimer() { return drawTimer; }
+
+    void StartTimer() { startTime = high_resolution_clock::now(); } // Start the timer
+    int GetElapsedTime() const { return duration_cast<seconds>(high_resolution_clock::now() - startTime).count(); } // Get the elapsed time in seconds
 };

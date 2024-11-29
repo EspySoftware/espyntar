@@ -1,6 +1,8 @@
 #include "../headers/Client.h"
 // #include "../headers/Painter.h"
 
+
+
 Client::Client(string address, int port, string name)
 {
     this->name = name;
@@ -199,6 +201,17 @@ void Client::Receive()
                 int y = stoi(match.str(2));
                 int color = stoi(match.str(3));
                 int brushSize = stoi(match.str(4));
+
+                // Interpolate points
+                if (!paintMessages.empty()) {
+                    PaintMessage lastMessage = paintMessages.back();
+                    std::vector<Point> interpolatedPoints = interpolatePoints(
+                        {lastMessage.x, lastMessage.y}, {x, y}, brushSize);
+
+                    for (const auto& point : interpolatedPoints) {
+                        paintMessages.push_back(PaintMessage{point.x, point.y, color, static_cast<float>(brushSize)});
+                    }
+                }
 
                 // Add the paint message to the vector
                 paintMessages.push_back(PaintMessage{x, y, color, static_cast<float>(brushSize)});
