@@ -1,10 +1,27 @@
 #include "../headers/Client.h"
 #include "../headers/SocketFactory.h"
-
+#include "../client/PaintMessageHandler.h"
+#include "../client/AnswerMessageHandler.h"
+#include "../client/PointsMessageHandler.h"
+#include "../client/PainterMessageHandler.h"
+#include "../client/AdminMessageHandler.h"
+#include "../client/StartGameMessageHandler.h"
+#include "../client/RoundOverMessageHandler.h"
+#include "../client/ClientStatusMessageHandler.h"
 
 Client::Client(string address, int port, string name)
 {
     this->name = name;
+    // Initialize handlers
+    handlers["PAINT"] = std::make_unique<PaintMessageHandler>();
+    handlers["ANSWER"] = std::make_unique<AnswerMessageHandler>();
+    handlers["POINTS"] = std::make_unique<PointsMessageHandler>();
+    handlers["PAINTER"] = std::make_unique<PainterMessageHandler>();
+    handlers["ADMIN"] = std::make_unique<AdminMessageHandler>();
+    handlers["START_GAME"] = std::make_unique<StartGameMessageHandler>();
+    handlers["ROUND_OVER"] = std::make_unique<RoundOverMessageHandler>();
+    handlers["CLIENT_STATUS"] = std::make_unique<ClientStatusMessageHandler>();
+
 
     // Crear y conectar el socket usando SocketFactory
     this->clientSocket = SocketFactory::CreateSocket();
@@ -91,6 +108,45 @@ Client::~Client()
     closesocket(clientSocket);
 }
 
+void Client::handleMessage(const std::string& message) {
+    if (message.find("PAINT:") == 0) {
+        handlers["PAINT"]->handle(*this, message);
+    }
+    else if (message.find("ANSWER:") == 0) {
+        handlers["ANSWER"]->handle(*this, message);
+    }
+    else if (message.find("PAINTER:") == 0) {
+        handlers["PAINTER"]->handle(*this, message);
+    }
+    else if (message.find("ADMIN:") == 0) {
+        handlers["ADMIN"]->handle(*this, message);
+    }
+    else if (message.find("START_GAME") == 0) {
+        handlers["START_GAME"]->handle(*this, message);
+    }
+    else if (message.find("ROUND_OVER") == 0) {
+        handlers["ROUND_OVER"]->handle(*this, message);
+    }
+    else if (message.find("(") == 0) {
+        if (message.find("points:") != std::string::npos) {
+            handlers["POINTS"]->handle(*this, message);
+        }
+        else {
+            // Regex for client status
+            regex statusRegex(R"(\(\d+\)\s+\w+\s+(connected|disconnected)\.)");
+            if (regex_match(message, statusRegex)) {
+                handlers["CLIENT_STATUS"]->handle(*this, message);
+            }
+            else {
+                messages.push_back(message);
+            }
+        }
+    }
+    else {
+        messages.push_back(message);
+    }
+}
+
 void Client::Send()
 {
     string message;
@@ -115,14 +171,6 @@ void Client::Send()
         }
 
         messages.push_back(msg);
-
-        // // Debug print
-        // cout << "Current messages after sending: ";
-        // for (const auto &m : messages)
-        // {
-        //     cout << m << " ";
-        // }
-        // cout << endl;
     }
 
     Disconnect();
@@ -146,14 +194,6 @@ void Client::Send(string message)
         int errorCode = WSAGetLastError();
         cout << "Failed to send data to the server. Error code: " << errorCode << endl;
     }
-
-    // // Debug print
-    // cout << "Current messages after sending: ";
-    // for (const auto &m : messages)
-    // {
-    //     cout << m << " ";
-    // }
-    // cout << endl;
 }
 
 void Client::Receive()
@@ -174,174 +214,8 @@ void Client::Receive()
         /* Process the server response */
         buffer[bytesReceived] = '\0';
         string message = buffer;
-
-        // PAINT COMMAND
-        // Format: "PAINT:100,200,1,10" (x, y, color, brushSize)
-        if (message[0] == 'P' && message.find("PAINT:") == 0)
-        {
-            // Extract the paint data
-            regex r("PAINT:(\\d+),(\\d+),(\\d+),(\\d+)");
-            smatch match;
-            if (regex_search(message, match, r) && match.size() > 4)
-            {
-                int x = stoi(match.str(1));
-                int y = stoi(match.str(2));
-                int color = stoi(match.str(3));
-                int brushSize = stoi(match.str(4));
-
-                // Interpolate points
-                if (!paintMessages.empty()) {
-                    PaintMessage lastMessage = paintMessages.back();
-                    std::vector<Point> interpolatedPoints = interpolatePoints(
-                        {lastMessage.x, lastMessage.y}, {x, y}, brushSize);
-
-                    for (const auto& point : interpolatedPoints) {
-                        paintMessages.push_back(PaintMessage{point.x, point.y, color, static_cast<float>(brushSize)});
-                    }
-                }
-
-                // Add the paint message to the vector
-                paintMessages.push_back(PaintMessage{x, y, color, static_cast<float>(brushSize)});
-            }
-
-            continue;
-        }
-
-        // ANSWER command
-        // Format: "ANSWER: WORD"
-        if (message[0] == 'A' && message.find("ANSWER:") == 0)
-        {
-            string word = message.substr(8);
-            cout << "The word is: " << word << endl;
-            chosenWord = word;
-
-            messages.push_back("Word has been chosen.");
-
-            continue;
-        }
-
-        // POINTS command
-        // Format: "(id) points: 100."
-        regex pointsRegex("(\\d+)\\)\\s+points:\\s+(\\d+).");
-        smatch pointsMatch;
-        if (regex_search(message, pointsMatch, pointsRegex) && pointsMatch.size() > 2)
-        {
-            int id = stoi(pointsMatch.str(1));
-            int points = stoi(pointsMatch.str(2));
-            cout << "Server: Giving client ( " << id << " ) " << name << " " << points << " points." << endl;
-
-            // Update the points of the client
-            for (int i = 0; i < connectedClients.size(); i++)
-            {
-                if (connectedClients[i].id == id)
-                {
-                    connectedClients[i].points += points;
-                    connectedClients[i].guessedCorrectly = true;
-                    break;
-                }
-            }
-
-            continue;
-        }
-
-        // Add and remove clients from the vector
-        // Format: (1) Client1 disconnected. or (22) Client22 connected. (add id and name to the vector)
-        regex clientsRegex("(\\d+)\\)\\s+(\\w+)");
-        smatch clientsMatch;
-        if (regex_search(message, clientsMatch, clientsRegex) && clientsMatch.size() > 2)
-        {
-            int id = stoi(clientsMatch.str(1));
-            string name = clientsMatch.str(2);
-
-            // Client disconnected
-            if (message.find("disconnected") != string::npos)
-            {
-                for (int i = 0; i < connectedClients.size(); i++)
-                {
-                    if (connectedClients[i].id == id)
-                    {
-                        connectedClients.erase(connectedClients.begin() + i);
-                        break;
-                    }
-                }
-            }
-            // Client connected
-            else if (message.find("connected") != string::npos)
-            {
-                connectedClients.push_back({id, name, 0});
-            }
-        }
-
-        // PAINTER command
-        // Format: "PAINTER: 1"
-        regex painterRegex("PAINTER:\\s+(\\d+)");
-        smatch painterMatch;
-        if (regex_search(message, painterMatch, painterRegex) && painterMatch.size() > 1)
-        {
-            // Extract the painter ID
-            painterID = stoi(painterMatch.str(1));
-            cout << "The painter is: " << painterID << endl;
-
-            // Update the painter ID in the connected clients vector
-            for (int i = 0; i < connectedClients.size(); i++)
-            {
-                if (connectedClients[i].id == painterID)
-                {
-                    cout << "The painter is: " << connectedClients[i].name << endl;
-                    break;
-                }
-            }
-
-            continue;
-        }
-
-        // START_GAME command
-        // Format: "START_GAME"
-        if (message.find("START_GAME") == 0)
-        {
-            cout << "The game has started." << endl;
-            messages.push_back("The game has started.");
-
-            continue;
-        }
-
-        // ROUND_OVER command
-        // Format: "ROUND_OVER"
-        if (message.find("ROUND_OVER") == 0)
-        {
-            cout << "The round is over." << endl;
-
-            this->round_over = true;
-            this->chosenWord = "";
-
-            // Reset the guessedCorrectly flag for all clients
-            for (int i = 0; i < connectedClients.size(); i++)
-            {
-                this->connectedClients[i].guessedCorrectly = false;
-            }
-            this->guessed = false;
-            
-            continue;
-        }
-
-        // Regular message
-        // Format: "(ID) [name]: message"
-        regex msgRegex("\\((\\d+)\\)\\s+\\[(\\w+)\\]:\\s+(.*)");
-        smatch msgMatch;
-
-        if (regex_search(message, msgMatch, msgRegex) && msgMatch.size() > 3)
-        {
-            int id = stoi(msgMatch.str(1));
-            string name = msgMatch.str(2);
-            string msg = msgMatch.str(3);
-
-            cout << "REGULAR MESSAGE" << endl;
-        }
-
-        cout << buffer << endl;
-        messages.push_back(buffer);
+        handleMessage(message);
     }
-
     Disconnect();
 }
 

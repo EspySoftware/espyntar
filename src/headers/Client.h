@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 #include <regex>
+#include <unordered_map>
+#include "../client/MessageHandler.h"
 
 // Function collision with raylib
 #define Rectangle WIN_Rectangle
@@ -43,6 +45,8 @@ using std::string;
 using std::stringstream;
 using std::to_string;
 using std::vector;
+using std::unordered_map;
+using std::shared_ptr;
 
 class OtherClient
 {
@@ -81,6 +85,7 @@ public:
 
     vector<string> messages;
     vector<PaintMessage> paintMessages;
+    unordered_map<string, shared_ptr<MessageHandler>> handlers;
     vector<OtherClient> connectedClients;
     string chosenWord;
     bool round_over = false;
@@ -120,6 +125,8 @@ public:
 
         return interpolatedPoints;
     }
+
+    void handleMessage(const std::string& message);
 };
 
 bool InitWinsock();

@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
 project(Espyntar)
-# YA LO CAMBIE DANNA
 set(CMAKE_C_STANDARD 99)
 
 # Dependencies
@@ -28,6 +27,16 @@ src/components/Canvas.cpp src/headers/Canvas.h
 src/components/ColorPalette.cpp src/headers/ColorPalette.h
 src/components/Painter.cpp src/headers/Painter.h
 src/components/Client.cpp src/headers/Client.h
+
+src/client/MessageHandler.h
+src/client/AdminMessageHandler.h
+src/client/AnswerMessageHandler.h
+src/client/PainterMessageHandler.h
+src/client/PointsMessageHandler.h
+src/client/RoundOverMessageHandler.h
+src/client/StartGameMessageHandler.h
+src/client/ClientStatusMessageHandler.h
+
 src/components/Games.cpp src/headers/Games.h
 src/headers/Inicio.h
 src/headers/Screen.h
