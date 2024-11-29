@@ -307,7 +307,8 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
     // Draw the word
     if (!isGuesser)
     {
-        if (drawTimer > 144)
+        int timeRemaining = (setTime - GetElapsedTime());
+        if (timeRemaining > 0)
             painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
