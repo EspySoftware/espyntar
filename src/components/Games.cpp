@@ -9,9 +9,16 @@ using std::endl;
 using std::getline;
 using std::ifstream;
 
-Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser) : painter(painter), canvas(canvas), palette(palette)
+Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGuesser) : painter(painter), canvas(canvas), palette(palette), wordService("localhost", 8888)
 {
     this->isGuesser = isGuesser;
+
+    // Obtener configuración global
+    GameConfig *config = GameConfig::GetInstance();
+    this->useWordService = config->GetUseWordService();
+    this->currentTheme = config->GetSelectedTheme();
+
+    // Cargar palabras del archivo como respaldo
     string line;
     ifstream file("../assets/words.txt");
     while (getline(file, line))
@@ -26,7 +33,16 @@ Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGue
             words[i][j] = toupper(words[i][j]);
         }
     }
-    optionWords = GetRandomWords();
+
+    // Intentar obtener palabras del servicio IA, sino usar las del archivo
+    if (useWordService)
+    {
+        optionWords = GetRandomWordsFromService(currentTheme);
+    }
+    else
+    {
+        optionWords = GetRandomWords();
+    }
 }
 
 array<string, 3> Games::GetRandomWords() const
@@ -37,6 +53,44 @@ array<string, 3> Games::GetRandomWords() const
         three_word[i] = words[rand() % words.size()];
     }
     return three_word;
+}
+
+array<string, 3> Games::GetRandomWordsFromService(const string &theme) const
+{
+    array<string, 3> three_word;
+
+    try
+    {
+        // Obtener palabras del servicio de IA
+        vector<string> serviceWords = wordService.GetWordsForTheme(theme, 10);
+
+        if (serviceWords.size() >= 3)
+        {
+            // Seleccionar 3 palabras aleatorias de las obtenidas del servicio
+            for (int i = 0; i < 3; i++)
+            {
+                int randomIndex = rand() % serviceWords.size();
+                three_word[i] = serviceWords[randomIndex];
+
+                // Convertir a mayúsculas para mantener consistencia
+                for (int j = 0; j < three_word[i].size(); j++)
+                {
+                    three_word[i][j] = toupper(three_word[i][j]);
+                }
+            }
+
+            cout << "Using AI-generated words for theme: " << theme << endl;
+            return three_word;
+        }
+    }
+    catch (const std::exception &e)
+    {
+        cout << "Error getting words from AI service: " << e.what() << endl;
+    }
+
+    // Si el servicio falla, usar palabras del archivo
+    cout << "Falling back to static word list" << endl;
+    return GetRandomWords();
 }
 
 void Games::SetChosenWord(shared_ptr<Client> &client, Texture2D &clock)
@@ -202,14 +256,14 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         }
 
         // Check if admin has guessed the word
-        if (client->id == client->adminID && !client->guessed) {
+        if (client->id == client->adminID && !client->guessed)
+        {
             // If the client isnt PAINTER and hasnt guessed the word, set round_over to false
             if (client->painterID != client->id)
             {
                 client->round_over = false;
             }
         }
-        
     }
 
     // If the timer is up, end the round
@@ -288,7 +342,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 
             finished = true; // Ends round
             messagesSent = false;
-            client->round_over = false; 
+            client->round_over = false;
             return;
         }
     }
@@ -312,7 +366,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-        canvas.DrawPalette(palette); 
+        canvas.DrawPalette(palette);
     }
     else
     {
@@ -360,7 +414,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             // Draw the word
             DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
             DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(censoredString.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            
+
             // timeRemaining = (drawTime - GetElapsedTime());
 
             // // Reveal letters at certain times
@@ -450,5 +504,18 @@ void Games::SetDefault()
 
     StartTimer();
 
-    optionWords = GetRandomWords();
+    // Actualizar configuración desde el singleton
+    GameConfig *config = GameConfig::GetInstance();
+    useWordService = config->GetUseWordService();
+    currentTheme = config->GetSelectedTheme();
+
+    // Usar servicio IA si está habilitado, sino usar palabras estáticas
+    if (useWordService)
+    {
+        optionWords = GetRandomWordsFromService(currentTheme);
+    }
+    else
+    {
+        optionWords = GetRandomWords();
+    }
 }

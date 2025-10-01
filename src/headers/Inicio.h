@@ -8,6 +8,8 @@
 #include "./Painter.h"
 #include "./Client.h"
 #include "./Screen.h"
+#include "./ThemeSelector.h"
+#include "./GameConfig.h"
 
 using std::cin;
 using std::cout;
@@ -98,6 +100,11 @@ void startGUI(Screen *screen, shared_ptr<Client> &client, thread *senderThread, 
         ipFocus = true;
         nameFocus = false;
     }
+    // Selector de temática estático
+    static ThemeSelector themeSelector;
+    GameConfig *config = GameConfig::GetInstance();
+    string selectedTheme = config->GetSelectedTheme();
+
     buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f, "JUGAR", {215, 182, 15, 255});
     if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 90.0f, 120.0f, 50.0f}, "JUGAR"))
     {
@@ -106,10 +113,39 @@ void startGUI(Screen *screen, shared_ptr<Client> &client, thread *senderThread, 
             screen->scene = GAME;
         }
     }
-    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 160.0f, 120.0f, 50.0f, "SALIR", {215, 182, 15, 255});
-    if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 160.0f, 120.0f, 50.0f}, "SALIR"))
+
+    // Botón para seleccionar temática
+    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 145.0f, 120.0f, 50.0f, "TEMATICA", {102, 149, 89, 255});
+    if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 145.0f, 120.0f, 50.0f}, "TEMATICA"))
+    {
+        themeSelector.Show();
+    }
+
+    // Mostrar temática seleccionada
+    DrawText(("Tema: " + selectedTheme).c_str(),
+             (GetScreenWidth() / 2.0f) - 60,
+             GetScreenHeight() / 2.0f + 200.0f,
+             14,
+             WHITE);
+
+    buttons(GetScreenWidth() / 2.0f - 60, GetScreenHeight() / 2.0f + 220.0f, 120.0f, 50.0f, "SALIR", {215, 182, 15, 255});
+    if (GuiButton({(GetScreenWidth() / 2.0f) - 60, GetScreenHeight() / 2.0f + 220.0f, 120.0f, 50.0f}, "SALIR"))
     {
         screen->scene = EXIT;
+    }
+
+    // Manejar selector de temática
+    if (themeSelector.IsVisible())
+    {
+        themeSelector.HandleInput();
+        themeSelector.Draw();
+
+        // Actualizar temática seleccionada cuando se cierre el selector
+        if (!themeSelector.IsVisible())
+        {
+            selectedTheme = themeSelector.GetSelectedTheme();
+            config->SetSelectedTheme(selectedTheme);
+        }
     }
 }
 
