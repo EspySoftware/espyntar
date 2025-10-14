@@ -13,7 +13,7 @@ Games::Games(Painter &painter, Canvas &canvas, ColorPalette &palette, bool isGue
 {
     this->isGuesser = isGuesser;
     string line;
-    ifstream file("../assets/words.txt");
+    ifstream file("assets/words.txt");
     while (getline(file, line))
     {
         words.push_back(line);
@@ -202,14 +202,14 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
         }
 
         // Check if admin has guessed the word
-        if (client->id == client->adminID && !client->guessed) {
+        if (client->id == client->adminID && !client->guessed)
+        {
             // If the client isnt PAINTER and hasnt guessed the word, set round_over to false
             if (client->painterID != client->id)
             {
                 client->round_over = false;
             }
         }
-        
     }
 
     // If the timer is up, end the round
@@ -288,7 +288,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
 
             finished = true; // Ends round
             messagesSent = false;
-            client->round_over = false; 
+            client->round_over = false;
             return;
         }
     }
@@ -312,7 +312,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             painter.SetCanPaint(true);
         DrawTextPro(GetFontDefault(), "DIBUJA:", {(GetScreenWidth() / 2.0f) - (MeasureText("Dibuja:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
         DrawTextPro(GetFontDefault(), chosenWord.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(chosenWord.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-        canvas.DrawPalette(palette); 
+        canvas.DrawPalette(palette);
     }
     else
     {
@@ -360,7 +360,7 @@ void Games::DrawChosenWord(shared_ptr<Client> &client, Texture2D &clock)
             // Draw the word
             DrawTextPro(GetFontDefault(), "ADIVINA:", {(GetScreenWidth() / 2.0f) - (MeasureText("ADIVINA:", 25) / 2), 60.0f}, {0, 0}, 0.0f, 25, 3.0f, BLACK);
             DrawTextPro(GetFontDefault(), censoredString.c_str(), {(GetScreenWidth() / 2.0f) - (MeasureText(censoredString.c_str(), 20) / 2), +100}, {0, 0}, 0, 20, 4, BLACK);
-            
+
             // timeRemaining = (drawTime - GetElapsedTime());
 
             // // Reveal letters at certain times

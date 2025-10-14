@@ -18,8 +18,8 @@ public:
     Screen()
     {
         this->scene = START;
-        this->background = LoadTexture("../assets/background.png");
-        this->title = LoadTexture("../assets/espy.png");
+        this->background = LoadTexture("assets/background.png");
+        this->title = LoadTexture("assets/espy.png");
     }
 
     ~Screen()

@@ -37,3 +37,21 @@ src/headers/Game.h
 
 target_link_libraries(Espyntar PUBLIC raylib ws2_32)
 target_compile_definitions(Espyntar PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/" AUDIO_PATH="${CMAKE_CURRENT_SOURCE_DIR}/audio/")
+
+# Copy assets to build directory
+add_custom_command(TARGET Espyntar POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/assets
+    $<TARGET_FILE_DIR:Espyntar>/assets
+    COMMENT "Copying assets to build directory"
+)
+
+# Copy audio to build directory (if exists)
+if(EXISTS ${CMAKE_SOURCE_DIR}/audio)
+    add_custom_command(TARGET Espyntar POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/audio
+        $<TARGET_FILE_DIR:Espyntar>/audio
+        COMMENT "Copying audio to build directory"
+    )
+endif()
